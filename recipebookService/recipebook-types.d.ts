@@ -1,1 +1,1 @@
-export * from '../shared/recipebook-types.d.ts';
+export * from '@shared/recipebook-types';
