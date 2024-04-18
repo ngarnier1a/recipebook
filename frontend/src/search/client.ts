@@ -5,7 +5,7 @@ const api = axios.create({
    withCredentials: true
 });
 
-const search = async (query: string): Promise<SearchType> => {
+/*const search = async (query: string): Promise<SearchType> => {
     const response = await api.get(`${SERVICE_URL}/search?q=${query}`);
     return response.data;
-}
+}*/
