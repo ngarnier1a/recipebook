@@ -99,9 +99,7 @@ export default function Navbar() {
       </MenuButton>
       <MenuList>
         <MenuGroup title={`Hi, ${currentUser.username}`}>
-          <MenuItem onClick={() => navigate("/user/profile")}>
-            Profile
-          </MenuItem>
+          <MenuItem onClick={() => navigate("/user/profile")}>Profile</MenuItem>
           <MenuItem onClick={() => navigate("/user/settings")}>
             Settings
           </MenuItem>
@@ -220,10 +218,13 @@ const DesktopNav = () => {
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.700");
   const navigate = useNavigate();
+  const { currentUser } = useSelector((state: UserState) => state.users);
 
   return (
     <Stack direction={"row"} spacing={1}>
-      {NAV_ITEMS.map((navItem, idx) => (
+      {NAV_ITEMS.filter((navItem) => {
+        return !navItem.userType || navItem.userType === currentUser?.type;
+      }).map((navItem, idx) => (
         <Box key={idx}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
             <PopoverTrigger>
@@ -255,9 +256,15 @@ const DesktopNav = () => {
                 minW={"sm"}
               >
                 <Stack>
-                  {navItem.children.map((child) => (
-                    <DesktopSubNav key={child.label} {...child} />
-                  ))}
+                  {navItem.children
+                    .filter((child) => {
+                      return (
+                        !child.userType || child.userType === currentUser?.type
+                      );
+                    })
+                    .map((child) => (
+                      <DesktopSubNav key={child.label} {...child} />
+                    ))}
                 </Stack>
               </PopoverContent>
             )}
@@ -308,13 +315,17 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
 };
 
 const MobileNav = () => {
+  const { currentUser } = useSelector((state: UserState) => state.users);
+
   return (
     <Stack
       bg={useColorModeValue("white", "gray.700")}
       p={4}
       display={{ md: "none" }}
     >
-      {NAV_ITEMS.map((navItem) => (
+      {NAV_ITEMS.filter(
+        (navItem) => !navItem.userType || navItem.userType === currentUser?.type
+      ).map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
     </Stack>
@@ -324,6 +335,7 @@ const MobileNav = () => {
 const MobileNavItem = ({ label, children, href }: NavItem) => {
   const { isOpen, onToggle } = useDisclosure();
   const navigate = useNavigate();
+  const { currentUser } = useSelector((state: UserState) => state.users);
 
   return (
     <Stack spacing={4} onClick={children && onToggle}>
@@ -364,7 +376,9 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
           align={"start"}
         >
           {children &&
-            children.map((child) => (
+            children.filter(
+              (child) => !child.userType || child.userType === currentUser?.type
+            ).map((child) => (
               <Box
                 as="a"
                 key={child.label}
@@ -385,6 +399,7 @@ interface NavItem {
   subLabel?: string;
   children?: Array<NavItem>;
   href?: string;
+  userType?: UserType;
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -400,6 +415,17 @@ const NAV_ITEMS: Array<NavItem> = [
         label: "New & Noteworthy",
         subLabel: "Up-and-coming Recipes",
         href: "/search/recipes",
+      },
+      {
+        label: "Your Recipes",
+        subLabel: "Recipes you've saved",
+        href: "/profile/recipes",
+      },
+      {
+        label: "Create Recipe",
+        subLabel: "Create or import your own recipe",
+        href: "/recipe/create",
+        userType: "CHEF",
       },
     ],
   },
