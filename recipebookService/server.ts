@@ -34,7 +34,16 @@ if (process.env.NODE_ENV !== "development") {
   };
 }
 app.use(session(sessionOptions));
-app.use(express.json()); 
+app.use(express.json());
+
+// add latency to test real world conditions in development
+if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
+  app.use((req, res, next) => {
+    console.log("Request received", req.method, req.url);
+    setTimeout(next, Math.floor( ( Math.random() * 1000 ) + 100 ) );
+  });
+}
+
 app.get("/api/health", (req, res) => {
   res.sendStatus(200);
 });
