@@ -11,13 +11,16 @@ import {
   Thead,
   Tr,
   Td,
+  Link,
 } from "@chakra-ui/react";
+import { useNavigate } from "react-router-dom";
 
 function RecipeMakerIngredients({
   recipe,
 }: {
   recipe: Recipe;
 }) {
+  const navigate = useNavigate();
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
   }
@@ -27,8 +30,14 @@ function RecipeMakerIngredients({
       <Td pr={0}>{ingredient.name}</Td>
       <Td px={0}>{ingredient.quantity.toString()}</Td>
       <Td px={0}>{ingredient.unit}</Td>
-      {ingredient.stepNumber && <Td px={0}>{ingredient.stepNumber}</Td>}
-      {ingredient.fdcID && <Td pl={0}>{ingredient.fdcID}</Td>}
+      {<Td px={0}>{ingredient.stepNumber && ingredient.stepNumber}</Td>}
+      {ingredient.fdcID &&
+        <Td pl={0}>
+          <Link onClick={() => navigate(`/nutrition/${ingredient.fdcID}`)}>
+              {ingredient.fdcID}
+          </Link>
+        </Td>
+      }
     </Tr>
   );
 
@@ -46,9 +55,9 @@ function RecipeMakerIngredients({
             </Text>
           )}
           {ingredient.fdcID && (
-            <Text>
+            <Link onClick={() => navigate(`/nutrition/${ingredient.fdcID}`)}>
               FDC ID: {ingredient.fdcID}
-            </Text>
+            </Link>
           )}
         </AccordionPanel>
     </AccordionItem>
