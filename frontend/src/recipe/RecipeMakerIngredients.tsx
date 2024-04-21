@@ -1,4 +1,4 @@
-import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
+import { DeleteIcon } from "@chakra-ui/icons";
 import {
   Flex,
   Input,
@@ -7,7 +7,6 @@ import {
   Select,
   IconButton,
   Icon,
-  Button,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -17,22 +16,17 @@ import {
   NumberIncrementStepper,
   NumberInputStepper,
 } from "@chakra-ui/react";
-import recipe from ".";
 
-function RecipeMakerIngredient({
-  index,
+function RecipeMakerIngredients({
   recipe,
   setRecipe,
 }: {
-  index: number;
   recipe: Recipe;
   setRecipe: (recipe: Recipe) => void;
 }) {
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
   }
-
-  const ingredient = recipe.ingredients[index];
 
   const units: RecipeUnit[] = [
     "unit",
@@ -47,7 +41,7 @@ function RecipeMakerIngredient({
     "l",
   ];
 
-  const setIngredient = (ingredient?: RecipeIngredient) => {
+  const setIngredient = (index: number, ingredient?: RecipeIngredient) => {
     if (!recipe.ingredients) {
       throw new Error("Recipe must have ingredients to set");
     }
@@ -61,14 +55,14 @@ function RecipeMakerIngredient({
     }
   };
 
-  const ingredientFields = (
+  const ingredientFields = (ingredient: RecipeIngredient, index: number) => (
     <>
         <Input
         value={ingredient.name}
         placeholder="Eggs"
         title='The name of the ingredient'
         onChange={(e) => {
-            setIngredient({ ...ingredient, name: e.target.value });
+            setIngredient(index, { ...ingredient, name: e.target.value });
         }}
         />
         <NumberInput
@@ -80,7 +74,7 @@ function RecipeMakerIngredient({
         minW='70px'
         precision={2}
         onChange={(e) => {
-            setIngredient({ ...ingredient, quantity: parseFloat(e) || 0 });
+            setIngredient(index, { ...ingredient, quantity: parseFloat(e) || 0 });
         }}
         >
         <NumberInputField />
@@ -117,25 +111,25 @@ function RecipeMakerIngredient({
         title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
         onChange={(e) => {
             ingredient.fdcID = e.target.value;
-            setIngredient({ ...ingredient, fdcID: e.target.value });
+            setIngredient(index, { ...ingredient, fdcID: e.target.value });
         }}
         />
         <IconButton
         ml={1}
         aria-label="Delete Ingredient"
         icon={<Icon as={DeleteIcon} />}
-        onClick={() => setIngredient()}
+        onClick={() => setIngredient(index)}
         />
     </>
   )
 
-  const desktopIngredient = (
+  const desktopIngredient = (ingredient: RecipeIngredient, index: number) => (
     <Flex key={index} display={{ base: "none", md: "flex" }} my={1}>
-        {ingredientFields}
+        {ingredientFields(ingredient, index)}
     </Flex>
   )
 
-  const mobileIngredient = (
+  const mobileIngredient = (ingredient: RecipeIngredient, index: number) => (
     <AccordionItem display={{ md: "none" }} my={1}>
         <AccordionButton
         width='90%'
@@ -144,18 +138,19 @@ function RecipeMakerIngredient({
         </AccordionButton>
         <AccordionPanel>
             <VStack>
-                {ingredientFields}
+                {ingredientFields(ingredient, index)}
             </VStack>
         </AccordionPanel>
     </AccordionItem>
   )
 
+
   return (
-    <>
-    {desktopIngredient}
-    {mobileIngredient}
-    </>
+    <Accordion allowToggle>
+        {recipe.ingredients.map((ingredient, index) => desktopIngredient(ingredient, index))}
+        {recipe.ingredients.map((ingredient, index) => mobileIngredient(ingredient, index))}
+    </Accordion>
   );
 }
 
-export default RecipeMakerIngredient;
+export default RecipeMakerIngredients;

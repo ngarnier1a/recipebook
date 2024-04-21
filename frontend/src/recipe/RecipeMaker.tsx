@@ -2,7 +2,6 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { UserState } from "../store";
 import {
-  Accordion,
   Button,
   Center,
   Container,
@@ -17,14 +16,14 @@ import {
   OrderedList,
   Textarea,
   VStack,
+  useBreakpointValue,
   useColorModeValue,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import RecipeMakerIngredient from "./RecipeMakerIngredient";
 import { useNavigate } from "react-router-dom";
 import * as recipeClient from "./client";
+import RecipeMakerIngredients from "./RecipeMakerIngredients";
 
 const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
   name: "Ingredient",
@@ -45,6 +44,7 @@ function RecipeMaker() {
   const [isPublishing, setIsPublishing] = React.useState<boolean>(false);
   const toast = useToast();
   const navigate = useNavigate();
+  const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
   const [recipe, setRecipe] = React.useState<Recipe>({
     name: "Recipe Name",
     description: "Recipe Description",
@@ -89,10 +89,10 @@ function RecipeMaker() {
   const chefPage = (
     <Center>
       <VStack width="100%">
-        <Heading as="h1" py={5}>
+        <Heading as="h1" py={5} mx={5}>
           Create Recipe
         </Heading>
-        <Container maxW="90%">
+        <Container maxW={gridWidth} px={2}>
           <Grid
             templateAreas={`"name name"
                           "ingredients steps"
@@ -146,15 +146,7 @@ function RecipeMaker() {
                     icon={<AddIcon />}
                   />
                 </Heading>
-                <Accordion allowToggle>
-                  {recipe.ingredients?.map((ingredient, index) => (
-                    <RecipeMakerIngredient
-                      index={index}
-                      recipe={recipe}
-                      setRecipe={setRecipe}
-                    />
-                  ))}
-                </Accordion>
+                <RecipeMakerIngredients recipe={recipe} setRecipe={setRecipe} />
               </VStack>
             </GridItem>
             <GridItem p="2" bg={gridColor} area={"steps"}>
