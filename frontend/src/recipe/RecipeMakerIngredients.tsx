@@ -41,47 +41,53 @@ function RecipeMakerIngredients({
     "l",
   ];
 
-  const setIngredient = (index: number, ingredient?: RecipeIngredient) => {
+  const setIngredient = (ingredient: RecipeIngredient) => {
     if (!recipe.ingredients) {
       throw new Error("Recipe must have ingredients to set");
     }
-    if (!ingredient) {
-      recipe.ingredients.splice(index, 1);
-      setRecipe({ ...recipe, ingredients: recipe.ingredients });
-      return;
-    } else {
-      recipe.ingredients[index] = ingredient;
-      setRecipe({ ...recipe, ingredients: recipe.ingredients });
-    }
+    setRecipe({
+      ...recipe,
+      ingredients: recipe.ingredients
+        .map(i => i.ingredientID === ingredient.ingredientID ? ingredient : i),
+    });
   };
 
-  const ingredientFields = (ingredient: RecipeIngredient, index: number) => (
+  const deleteIngredient = (ingredient: RecipeIngredient) => {
+    if (!recipe.ingredients) {
+      throw new Error("Recipe must have ingredients to set");
+    }
+    setRecipe({
+      ...recipe,
+      ingredients: recipe.ingredients
+        .filter(i => i.ingredientID !== ingredient.ingredientID),
+    });
+  }
+
+  const ingredientFields = (ingredient: RecipeIngredient) => (
     <>
         <Input
         value={ingredient.name}
         placeholder="Eggs"
         title='The name of the ingredient'
         onChange={(e) => {
-            setIngredient(index, { ...ingredient, name: e.target.value });
+            setIngredient({ ...ingredient, name: e.target.value });
         }}
         />
         <NumberInput
-        value={ingredient.quantity.toString()}
-        title='The quantity of the ingredient'
-        ml={1}
-        min={0}
-        max={99}
-        minW='70px'
-        precision={2}
-        onChange={(e) => {
-            setIngredient(index, { ...ingredient, quantity: parseFloat(e) || 0 });
-        }}
+          value={ingredient.quantity.toString()}
+          ml={1}
+          title='The quantity of the ingredient'
+          precision={2}
+          onChange={(valueString) => {
+              const value = parseFloat(valueString);
+              setIngredient({ ...ingredient, quantity: value });
+          }}
         >
-        <NumberInputField />
-        <NumberInputStepper>
-            <NumberIncrementStepper />
-            <NumberDecrementStepper />
-        </NumberInputStepper>
+          <NumberInputField minW="65px" />
+          <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+          </NumberInputStepper>
         </NumberInput>
         <Select ml={1} title='The unit associated with ingredient quantity'>
         {units.map((unit, idx) => (
@@ -110,27 +116,26 @@ function RecipeMakerIngredients({
         placeholder="18069"
         title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
         onChange={(e) => {
-            ingredient.fdcID = e.target.value;
-            setIngredient(index, { ...ingredient, fdcID: e.target.value });
+            setIngredient({ ...ingredient, fdcID: e.target.value });
         }}
         />
         <IconButton
         ml={1}
         aria-label="Delete Ingredient"
         icon={<Icon as={DeleteIcon} />}
-        onClick={() => setIngredient(index)}
+        onClick={() => deleteIngredient(ingredient)}
         />
     </>
   )
 
-  const desktopIngredient = (ingredient: RecipeIngredient, index: number) => (
-    <Flex key={index} display={{ base: "none", md: "flex" }} my={1}>
-        {ingredientFields(ingredient, index)}
+  const desktopIngredient = (ingredient: RecipeIngredient, idx: number) => (
+    <Flex key={idx} display={{ base: "none", md: "flex" }} my={1}>
+        {ingredientFields(ingredient)}
     </Flex>
   )
 
-  const mobileIngredient = (ingredient: RecipeIngredient, index: number) => (
-    <AccordionItem display={{ md: "none" }} my={1}>
+  const mobileIngredient = (ingredient: RecipeIngredient, idx: number) => (
+    <AccordionItem key={idx} display={{ md: "none" }} my={1}>
         <AccordionButton
         width='90%'
         textAlign={{ base: "center" }}>
@@ -138,7 +143,7 @@ function RecipeMakerIngredients({
         </AccordionButton>
         <AccordionPanel>
             <VStack>
-                {ingredientFields(ingredient, index)}
+                {ingredientFields(ingredient)}
             </VStack>
         </AccordionPanel>
     </AccordionItem>
@@ -147,8 +152,8 @@ function RecipeMakerIngredients({
 
   return (
     <Accordion allowToggle>
-        {recipe.ingredients.map((ingredient, index) => desktopIngredient(ingredient, index))}
-        {recipe.ingredients.map((ingredient, index) => mobileIngredient(ingredient, index))}
+        {recipe.ingredients.map((ingredient, idx) => desktopIngredient(ingredient, idx))}
+        {recipe.ingredients.map((ingredient, idx) => mobileIngredient(ingredient, idx))}
     </Accordion>
   );
 }

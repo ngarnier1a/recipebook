@@ -38,6 +38,7 @@ import * as client from "../users/client";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCurrentUser } from "../users/reducer";
+import { useState } from "react";
 
 export default function Navbar() {
   const hamburger = useDisclosure();
@@ -48,6 +49,7 @@ export default function Navbar() {
   const toast = useToast();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const { colorMode, toggleColorMode } = useColorMode();
+  const [ colorModeLoading, setColorModeLoading ] = useState<boolean>(false);
 
   const handleSignout = async () => {
     try {
@@ -74,6 +76,7 @@ export default function Navbar() {
 
   const handleToggleColorMode = async () => {
     try {
+      setColorModeLoading(true);
       if (currentUser) {
         await client.updateProfile({
           ...currentUser,
@@ -81,6 +84,7 @@ export default function Navbar() {
         });
       }
       toggleColorMode();
+      setColorModeLoading(false);
     } catch (error) {
       toast({
         title: "Failed to update color mode",
@@ -89,6 +93,7 @@ export default function Navbar() {
         duration: 5000,
         isClosable: true,
       });
+      setColorModeLoading(false);
     }
   };
 
@@ -200,6 +205,7 @@ export default function Navbar() {
             icon={colorMode === "light" ? <MoonIcon /> : <SunIcon />}
             onClick={handleToggleColorMode}
             variant="ghost"
+            isLoading={colorModeLoading}
             aria-label="Toggle color mode"
           />
           {endContent}

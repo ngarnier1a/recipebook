@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as recipeClient from "./client";
-import { Center, VStack, Heading, Container, Grid, GridItem, Text, OrderedList, ListItem, Button, useColorModeValue, useBreakpointValue } from "@chakra-ui/react";
+import { Center, VStack, Heading, Container, Grid, GridItem, Text, OrderedList, ListItem, Button, useColorModeValue, useBreakpointValue, Link } from "@chakra-ui/react";
 import RecipeIngredients from "./RecipeIngredients";
 
 
@@ -11,6 +11,7 @@ function Recipe() {
   const [recipe, setRecipe] = React.useState<Recipe | null>(null);
   const gridColor = useColorModeValue("gray.100", "gray.700");
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -27,8 +28,18 @@ function Recipe() {
   return ( recipe &&
     <Center>
       <VStack width="100%">
-        <Heading as="h1" py={5} mx={5}>
-          {`${recipe.author?.username}'s ${recipe.name}`}
+        <Heading
+          size='lg'
+          pt={5}
+          mx={5}
+          onClick={() => navigate(`/user/${recipe.author?._id}/profile`)}
+        >
+          <Link>
+            {`${recipe.author?.username}'s`}
+          </Link>
+        </Heading>
+        <Heading size='xl' pb={1} mx={5}>
+          {recipe.name}
         </Heading>
         <Container maxW={gridWidth} px={2}>
           <Grid
@@ -80,7 +91,7 @@ function Recipe() {
                 <OrderedList width="90%">
                   {recipe.notes?.map((note, index) => (
                     <ListItem key={index} mt={2}>
-                      {note}
+                      {note.noteText}
                     </ListItem>
                   ))}
                 </OrderedList>
