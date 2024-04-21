@@ -15,9 +15,9 @@ const userSchema = new mongoose.Schema<User>({
       enum: ["LIGHT", "DARK"],
       default: "LIGHT",
     },
-    likedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "recipes" }],
-    followedChefs: [{ type: mongoose.Schema.Types.ObjectId, ref: "users" }],
-    authoredRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "recipes" }],
+    likedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" }],
+    followedChefs: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserModel" }],
+    authoredRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" }],
   },
   { collection: "users" });
 export default userSchema;

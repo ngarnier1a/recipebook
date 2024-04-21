@@ -15,27 +15,27 @@ type User = {
 }
 
 type Recipe = {
-    _id: RecipeID;
+    _id?: RecipeID;                     // optional: not passed when creating a recipe
     name: string;
-    author: User;
+    description: string;
+    ingredients?: RecipeIngredient[];   // optional: not passed if no ingredients or if not requesting recipe details
+    author?: User;                      // optional: not passed when creating a recipe
     steps?: RecipeStep[];               // optional: not passed if no steps or if not requesting recipe details
     notes?: RecipeNote[];               // optional: not passed if no notes or if not requesting recipe details
     likes?: number;                     // optional: not passed if not requesting recipe details
 }
 
 type RecipeStep = {
-    stepText: string;
-    ingredients?: RecipeIngredient[];   // optional: not passed if no ingredients for this step
-    history?: RecipeStep[];
+    stepTitle: string;
+    stepDescription: string;
 }
 
 type RecipeIngredient = {
     name: string;
-    quantity: number;
+    quantity: Number;
     unit: RecipeUnit;
-    notes?: RecipeNote[];               // optional: not passed if no notes
-    editHistory?: RecipeIngredient[];   // optional: not passed if no change history
-    ftc_id?: string;                    // optional: not passed if not an FTC ingredient
+    fdcID?: string;                     // optional: not passed if not an FDC ingredient
+    stepNumber?: number;                // optional: not passed if not associated with a step
 }
 
 type IngredientNutrient = {
@@ -46,8 +46,8 @@ type IngredientNutrient = {
     unitName: string;
 }
 
-type FTCFoodItem = {
-    ftc_id: string;
+type FDCFoodItem = {
+    fdcID: string;
     name: string;
     nutrients: IngredientNutrient[];
 }

@@ -30,17 +30,17 @@ function App() {
                 {/* <Route path="/search" element={<Search />} /> */}
                 {/* <Route path="/search/:searchType/:searchQuery" element={<Search />} /> */}
                 <Route path="/user/profile" element={<Profile />} />
-                <Route path="/user/:uid/profile/" element={<Profile />} />
+                <Route path="/user/:userId/profile/" element={<Profile />} />
                 <Route path="/user/recipes" element={<Recipe />} />
-                <Route path="/user/:uid/recipes" element={<Recipe />} />
+                <Route path="/user/:userId/recipes" element={<Recipe />} />
                 <Route path="/user/friends" element={<Friends />} />
-                <Route path="/user/:uid/friends" element={<Friends />} />
-                <Route path="/recipe/:rid" element={<Recipe />} />
-                <Route path="/recipe/:rid/cook" element={<RecipeViewer />} />
+                <Route path="/user/:userId/friends" element={<Friends />} />
+                <Route path="/recipe/:recipeId" element={<Recipe />} />
+                <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} />
                 <Route path="/recipe/create" element={<RecipeMaker />} />
-                <Route path="/recipe/:rid/edit" element={<RecipeMaker />} />
+                <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />
                 <Route path="/nutrition" element={<Nutrition />} />
-                <Route path="/nutrition/:iid" element={<Nutrition />} />
+                <Route path="/nutrition/:ingredientId" element={<Nutrition />} />
               </Routes>
             </HashRouter>
           </CurrentUser>
