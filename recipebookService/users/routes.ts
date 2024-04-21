@@ -68,7 +68,7 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(400);
       return;
     }
-    const existingUser = await dao.findUserByUsername(username);
+    const existingUser = await dao.findUserByUsername(username, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
     if (existingUser) {
       if (!existingUser.password) {
         res.sendStatus(500);
@@ -76,7 +76,6 @@ export default function UserRoutes(app: Application) {
         return;
       } else if (await bcrypt.compare(password, existingUser.password)) {
         req.session.user = existingUser;
-        console.error(req.session);
         sendUser(existingUser, res);
       }
     } else {
@@ -92,7 +91,6 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(401);
       return;
     }
-    console.error(req.session);
     sendUser(currentUser, res);
   };
 

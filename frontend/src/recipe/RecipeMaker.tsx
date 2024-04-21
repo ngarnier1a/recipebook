@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { UserState } from "../store";
 import {
@@ -21,7 +21,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import * as recipeClient from "./client";
 import RecipeMakerIngredients from "./RecipeMakerIngredients";
 import { nanoid } from "@reduxjs/toolkit";
@@ -45,6 +45,7 @@ const PLACEHOLDER_NOTE: RecipeNote = {
 }
 
 function RecipeMaker() {
+  const { recipeId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
   const [isPublishing, setIsPublishing] = React.useState<boolean>(false);
@@ -59,18 +60,42 @@ function RecipeMaker() {
     notes: [PLACEHOLDER_NOTE],
   });
 
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      if (!recipeId) {
+        return;
+      }
+      const recipe = await recipeClient.get(recipeId);
+      setRecipe(recipe);
+    };
+
+    fetchRecipe();
+  }, [recipeId]);
+
   const publishRecipe = async () => {
     setIsPublishing(true);
     try {
-      const createdRecipe: Recipe = await recipeClient.create(recipe);
-      toast({
-        title: "Recipe Published",
-        description: "Your recipe has been published",
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
-      navigate(`/recipe/${createdRecipe._id}`);
+      if (recipeId && recipe.author?._id === currentUser?._id) {
+        await recipeClient.update(recipeId, recipe);
+        toast({
+          title: "Recipe Updated",
+          description: "Your changes has been published",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate(`/recipe/${recipeId}`);
+      } else {
+        const createdRecipe: Recipe = await recipeClient.create(recipe);
+        toast({
+          title: "Recipe Published",
+          description: "Your recipe has been published",
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate(`/recipe/${createdRecipe._id}`);
+      }
     } catch (error) {
       toast({
         title: "An error occurred",
@@ -80,7 +105,6 @@ function RecipeMaker() {
         isClosable: true,
       });
     }
-
     setIsPublishing(false);
   };
 
@@ -279,7 +303,7 @@ function RecipeMaker() {
                 loadingText="Publishing..."
                 onClick={publishRecipe}
               >
-                Publish Recipe
+                Publish {(recipeId && recipe.author?._id === currentUser?._id) ? "Changes" : "Recipe"}
               </Button>
             </GridItem>
           </Grid>
@@ -288,7 +312,11 @@ function RecipeMaker() {
     </Center>
   );
 
-  return <>{currentUser?.type === "CHEF" ? chefPage : notChefPage}</>;
+  return <>
+      {
+        currentUser?.type === "CHEF" ? chefPage : notChefPage
+      }
+    </>;
 }
 
 export default RecipeMaker;
