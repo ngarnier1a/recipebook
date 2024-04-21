@@ -1,11 +1,27 @@
 import model from "./model.js";
-export const createUser = async (user: User) => {
-  delete user._id;
-  return await model.create(user);
+export const createRecipe = async (recipe: Recipe) => {
+  delete recipe._id;
+  return await model.create(recipe);
 };
-export const findAllUsers = async () => await model.find();
-export const findUserById = async (userId: UserID) => await model.findById(userId);
-export const findUserByUsername = async (username: string) => await model.findOne({ username: username });
-export const findUserByCredentials = async (username: string, password: string) => await model.findOne({ username, password });
-export const updateUser = async (userId: UserID, user: User) => await model.updateOne({ _id: userId }, { $set: user });
-export const deleteUser = async (userId: UserID) => await model.deleteOne({ _id: userId });
+export const findAllRecipes = async () =>
+  await model.find().populate({
+    path: "author",
+    select: "_id username",
+  });
+export const findRecipeById = async (recipeId: RecipeID) =>
+  await model.findById(recipeId).populate({
+    path: "author",
+    select: "_id username",
+  });
+export const findRecipeByRecipeName = async (recipeName: string) =>
+  await model.findOne({ name: recipeName }).populate({
+    path: "author",
+    select: "_id username",
+  });
+export const findRecipesByChefId = async (chefId: UserID) =>
+  await model.find({ author: chefId }).populate({
+    path: "author",
+    select: "_id username",
+  });
+export const updateRecipe = async (recipeId: RecipeID, recipe: Recipe) => await model.updateOne({ _id: recipeId }, { $set: recipe });
+export const deleteRecipe = async (recipeId: RecipeID) => await model.deleteOne({ _id: recipeId });

@@ -5,7 +5,7 @@ import assert from "assert";
 import session, { SessionOptions } from "express-session";
 import mongoose from "mongoose";
 import UserRoutes from "./users/routes.js";
-import bodyParser from "body-parser";
+import RecipeRoutes from "./recipes/routes.js";
 
 assert(process.env.DB_CONNECTION_STRING, "DB_CONNECTION_STRING is not set");
 assert(process.env.SESSION_SECRET, "SESSION_SECRET is not set");
@@ -49,5 +49,6 @@ app.get("/api/health", (req, res) => {
 });
 
 UserRoutes(app);
+RecipeRoutes(app);
 
 app.listen(port, () => console.log(`recipebookService running on port ${port}`));

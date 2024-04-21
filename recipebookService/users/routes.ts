@@ -1,10 +1,8 @@
 import * as dao from "./dao.js";
 import { Application, Request, Response } from "express";
 import * as bcrypt from "bcrypt";
-import assert from "assert";
 
 const SALT_ROUNDS = 12;
-const PLACEHOLDER_PASSWORD = "*****";
 
 export default function UserRoutes(app: Application) {
   /**
@@ -78,6 +76,7 @@ export default function UserRoutes(app: Application) {
         return;
       } else if (await bcrypt.compare(password, existingUser.password)) {
         req.session.user = existingUser;
+        console.error(req.session);
         sendUser(existingUser, res);
       }
     } else {
@@ -93,6 +92,7 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(401);
       return;
     }
+    console.error(req.session);
     sendUser(currentUser, res);
   };
 
