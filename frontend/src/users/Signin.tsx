@@ -101,7 +101,7 @@ function Signin({
     } else {
       try {
         const user = await client.signin(username, password);
-        if (colorMode !== user.siteTheme?.toLowerCase() || "LIGHT") {
+        if (colorMode !== (user.siteTheme?.toLowerCase() || colorMode)) {
           toggleColorMode();
         }
         dispatch(setCurrentUser(user));

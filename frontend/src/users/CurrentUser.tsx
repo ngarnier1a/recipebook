@@ -11,7 +11,7 @@ export default function CurrentUser({ children }: { children: any }) {
     const fetchCurrentUser = async () => {
       try {
         const currentUser = await client.profile();
-        if ((currentUser.siteTheme?.toLowerCase() || 'LIGHT') !== colorMode) {
+        if ((currentUser.siteTheme?.toLowerCase() || colorMode) !== colorMode) {
           toggleColorMode();
         }
         dispatch(setCurrentUser(currentUser));
