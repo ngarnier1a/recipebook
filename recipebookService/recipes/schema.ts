@@ -29,7 +29,7 @@ const stepSchema = new mongoose.Schema<RecipeStep>({
 const recipeSchema = new mongoose.Schema<Recipe>({
     name: { type: String, required: true },
     description: { type: String },
-    author: { type: mongoose.Schema.Types.ObjectId, ref: "users", required: true },
+    author: { type: mongoose.Schema.Types.ObjectId, ref: "UserModel", required: true },
     ingredients: [ ingredientSchema ],
     steps: [ stepSchema ],
     notes: [ {type: String} ],
