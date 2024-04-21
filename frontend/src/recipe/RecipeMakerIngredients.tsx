@@ -89,7 +89,11 @@ function RecipeMakerIngredients({
               <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-        <Select ml={1} title='The unit associated with ingredient quantity'>
+        <Select
+          ml={1}
+          title='The unit associated with ingredient quantity'
+          onChange={(e) => setIngredient({ ...ingredient, unit: e.target.value as RecipeUnit })}
+        >
         {units.map((unit, idx) => (
             <option key={idx} value={unit}>
             {unit}
@@ -99,7 +103,7 @@ function RecipeMakerIngredients({
         <Select ml={1} title='What step are these ingredients for'>
         {
             <>
-            <option key={0} value={"no-step"} title='No specific step for this ingredient'>
+            <option key={'asjkdfgaskl;fj'} value={"no-step"} title='No specific step for this ingredient'>
                 N/A
             </option>
             {recipe.steps?.map((step, idx) => (

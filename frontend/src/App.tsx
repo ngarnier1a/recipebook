@@ -39,6 +39,7 @@ function App() {
                 <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} />
                 <Route path="/recipe/create" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />
+                <Route path="/recipe/:recipeId/clone" element={<RecipeMaker />} />
                 <Route path="/nutrition" element={<Nutrition />} />
                 <Route path="/nutrition/:ingredientId" element={<Nutrition />} />
               </Routes>

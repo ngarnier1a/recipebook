@@ -46,3 +46,12 @@ export const setLikedStatus = async (userId: UserID, recipe: Recipe, setLikedSta
   await user.save();
   return true;
 }
+
+export const authorNewRecipe = async (userId: UserID, recipe: Recipe) => {
+  const user = await findUserById(userId, ["authoredRecipes"]);
+  if (!user || user.authoredRecipes === undefined) {
+    throw new Error("User/recipes not found");
+  }
+  user.authoredRecipes.push(recipe);
+  await user.save();
+}

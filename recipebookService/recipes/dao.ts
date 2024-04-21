@@ -1,8 +1,10 @@
 import model from "./model.js";
-import { setLikedStatus as setUserLikedStatus } from "../users/dao.js";
-export const createRecipe = async (recipe: Recipe) => {
+import { setLikedStatus as setUserLikedStatus, authorNewRecipe } from "../users/dao.js";
+export const createRecipe = async (userId: UserID, recipe: Recipe) => {
   delete recipe._id;
-  return await model.create(recipe);
+  const newRecipe = await model.create(recipe);
+  await authorNewRecipe(userId, newRecipe);
+  return newRecipe;
 };
 export const findAllRecipes = async () =>
   await model.find().populate({

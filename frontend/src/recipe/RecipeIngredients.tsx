@@ -15,7 +15,7 @@ import {
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
-function RecipeMakerIngredients({
+function RecipeIngredients({
   recipe,
 }: {
   recipe: Recipe;
@@ -42,7 +42,7 @@ function RecipeMakerIngredients({
   );
 
   const mobileIngredient = (ingredient: RecipeIngredient, index: number) => (
-    <AccordionItem display={{ md: "none" }} my={1}>
+    <AccordionItem key={index} display={{ md: "none" }} my={1}>
         <AccordionButton
           width='90%'
           textAlign={{ base: "center" }}>
@@ -89,4 +89,4 @@ function RecipeMakerIngredients({
   );
 }
 
-export default RecipeMakerIngredients;
+export default RecipeIngredients;

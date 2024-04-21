@@ -17,6 +17,7 @@ function Recipe() {
   const [isLiking, setIsLiking] = React.useState<boolean>(false);
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
+  const likeColor = useColorModeValue("red.400", "red.500");
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -44,7 +45,6 @@ function Recipe() {
 
     try {
       const newLikedRecipes = await recipeClient.setLikedStatus(recipeId, setLikedStatus);
-      console.log(newLikedRecipes);
       dispatch(setCurrentUser(
         { ...currentUser, likedRecipes: newLikedRecipes }
       ));
@@ -142,24 +142,34 @@ function Recipe() {
               </VStack>
             </GridItem>
             <GridItem p="2" area={"buttons"} textAlign="end">
-              {currentUser?.type === "CHEF" && 
+              {currentUser?.type === "CHEF" && currentUser._id === recipe.author?._id &&
                 <Button onClick={() => navigate(`/recipe/${recipe._id}/edit`)} size="lg" mr={2}>
-                  {currentUser._id === recipe.author?._id ? "Edit" : "Clone"}
+                  Edit
+                </Button>
+              }
+              {currentUser?.type === "CHEF" && 
+                <Button onClick={() => navigate(`/recipe/${recipe._id}/clone`)} size="lg" mr={2}>
+                  Clone
                 </Button>
               }
               {
                 currentUser && 
                 <Button
-                  bg={recipeLiked ? "red.500" : "gray.500"}
+                  bg={recipeLiked ? likeColor : gridColor }
                   size="lg"
+                  variant={recipeLiked ? "solid" : "ghost"}
                   isDisabled={isLiking}
                   p={5}
                   minW={20}
+                  color={recipeLiked ? "white" : "black"}
                   onClick={() => likeRecipe(!recipeLiked)}
                 >
                   {recipe.likes}
                   <Icon as={recipeLiked ? FaHeart : FaRegHeart } ml={2} />
                 </Button>
+              }
+              { !currentUser &&
+                <>Sign In To Like</>
               }
             </GridItem>
           </Grid>

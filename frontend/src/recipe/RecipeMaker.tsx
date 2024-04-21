@@ -21,7 +21,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import * as recipeClient from "./client";
 import RecipeMakerIngredients from "./RecipeMakerIngredients";
 import { nanoid } from "@reduxjs/toolkit";
@@ -45,6 +45,7 @@ const PLACEHOLDER_NOTE: RecipeNote = {
 }
 
 function RecipeMaker() {
+  const location = useLocation();
   const { recipeId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
@@ -75,7 +76,7 @@ function RecipeMaker() {
   const publishRecipe = async () => {
     setIsPublishing(true);
     try {
-      if (recipeId && recipe.author?._id === currentUser?._id) {
+      if (recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes("edit")) {
         await recipeClient.update(recipeId, recipe);
         toast({
           title: "Recipe Updated",
@@ -296,6 +297,9 @@ function RecipeMaker() {
               </VStack>
             </GridItem>
             <GridItem p="2" area={"buttons"} textAlign="end">
+              <Button onClick={() => navigate(-1)} mr={2} size='lg'>
+                Cancel
+              </Button>
               <Button
                 isLoading={isPublishing}
                 bg="blue.500"
@@ -303,7 +307,7 @@ function RecipeMaker() {
                 loadingText="Publishing..."
                 onClick={publishRecipe}
               >
-                Publish {(recipeId && recipe.author?._id === currentUser?._id) ? "Changes" : "Recipe"}
+                Publish {(recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes('edit')) ? "Changes" : "Recipe"}
               </Button>
             </GridItem>
           </Grid>

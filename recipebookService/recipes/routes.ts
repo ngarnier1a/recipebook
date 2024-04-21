@@ -12,7 +12,7 @@ export default function RecipeRoutes(app: Application) {
 
     req.body.author = req.session.user._id;
     try {
-      const recipe = await dao.createRecipe(req.body);
+      const recipe = await dao.createRecipe(req.session.user._id ?? 'Bad ID', req.body);
       res.json(recipe);
     } catch (e) {
       console.error(e);
@@ -20,6 +20,7 @@ export default function RecipeRoutes(app: Application) {
       return;
     }
   };
+
   const getRecipeDetails = async (req: Request, res: Response) => {
     const { recipeId } = req.params;
     const recipe = await dao.findRecipeById(recipeId);
@@ -29,6 +30,7 @@ export default function RecipeRoutes(app: Application) {
     }
     res.json(recipe);
   };
+
   const updateRecipe = async (req: Request, res: Response) => {
     const { recipeId } = req.params;
     if (!req.session.user || req.session.user.type !== "CHEF") {
@@ -53,7 +55,8 @@ export default function RecipeRoutes(app: Application) {
     } else {
       res.sendStatus(200);
     }
-  }
+  };
+
   const deleteRecipe = async (req: Request, res: Response) => {
     const { recipeId } = req.params;
     if (!req.session.user || req.session.user.type !== "CHEF") {
@@ -72,7 +75,7 @@ export default function RecipeRoutes(app: Application) {
     } else {
       res.sendStatus(200);
     }
-  }
+  };
 
   const likeRecipe = async (req: Request, res: Response) => {
     const { recipeId } = req.params;
@@ -107,7 +110,7 @@ export default function RecipeRoutes(app: Application) {
       res.sendStatus(500);
       return;
     }
-  }
+  };
 
   app.post("/api/recipe", createRecipe);
   app.get("/api/recipe/:recipeId", getRecipeDetails);
