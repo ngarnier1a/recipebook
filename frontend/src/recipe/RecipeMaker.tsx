@@ -24,19 +24,25 @@ import { AddIcon, DeleteIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import * as recipeClient from "./client";
 import RecipeMakerIngredients from "./RecipeMakerIngredients";
+import { nanoid } from "@reduxjs/toolkit";
 
 const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
+  ingredientID: 'placeholder_id',
   name: "Ingredient",
   quantity: 1,
   unit: "unit",
 };
 
 const PLACEHOLDER_STEP: RecipeStep = {
+  stepID: 'placeholder_id',
   stepTitle: "Prepare the ingredients",
   stepDescription: "Get all the ingredients ready to go",
 };
 
-const PLACEHOLDER_NOTE: RecipeNote = "Make sure to be careful with the knife!";
+const PLACEHOLDER_NOTE: RecipeNote = {
+  noteID: 'placeholder_id',
+  noteText: "Make sure to be careful with the knife!",
+}
 
 function RecipeMaker() {
   const { currentUser } = useSelector((state: UserState) => state.users);
@@ -50,7 +56,7 @@ function RecipeMaker() {
     description: "Recipe Description",
     ingredients: [PLACEHOLDER_INGREDIENT],
     steps: [PLACEHOLDER_STEP],
-    notes: ["The best recipe ever!"],
+    notes: [PLACEHOLDER_NOTE],
   });
 
   const publishRecipe = async () => {
@@ -134,12 +140,11 @@ function RecipeMaker() {
                   <IconButton
                     variant="ghost"
                     onClick={() => {
+                      const newIngredients = [...(recipe.ingredients ?? [])];;
+                      newIngredients.push({...PLACEHOLDER_INGREDIENT, ingredientID: nanoid()});
                       setRecipe({
                         ...recipe,
-                        ingredients: [
-                          ...(recipe.ingredients || []),
-                          PLACEHOLDER_INGREDIENT,
-                        ],
+                        ingredients: newIngredients
                       });
                     }}
                     aria-label="Add Ingredient"
@@ -156,9 +161,11 @@ function RecipeMaker() {
                   <IconButton
                     variant="ghost"
                     onClick={() => {
+                      const newSteps = [...(recipe.steps ?? [])];
+                      newSteps.push({...PLACEHOLDER_STEP, stepID: nanoid()});
                       setRecipe({
                         ...recipe,
-                        steps: [...(recipe.steps || []), PLACEHOLDER_STEP],
+                        steps: newSteps,
                       });
                     }}
                     aria-label="Add Step"
@@ -166,23 +173,29 @@ function RecipeMaker() {
                   />
                 </Heading>
                 <OrderedList width="90%">
-                  {recipe.steps?.map((step, index) => (
-                    <ListItem key={index} mt={4}>
+                  {recipe.steps?.map((step, idx) => (
+                    <ListItem key={idx} mt={4}>
                       <HStack>
                         <Input
                           value={step.stepTitle}
                           placeholder="Gather and prepare ingredients"
                           onChange={(e) => {
-                            const newSteps = [...(recipe.steps || [])];
-                            newSteps[index].stepTitle = e.target.value;
-                            setRecipe({ ...recipe, steps: newSteps });
+                            const newSteps = [...(recipe.steps ?? [])];
+                            setRecipe({
+                              ...recipe,
+                              steps: newSteps
+                                .map(s => s.stepID === step.stepID ? {...s, stepTitle: e.target.value} : s)
+                            });
                           }}
                         />
                         <IconButton
                           onClick={() => {
-                            const newSteps = [...(recipe.steps || [])];
-                            newSteps.splice(index, 1);
-                            setRecipe({ ...recipe, steps: newSteps });
+                            const newSteps = [...(recipe.steps ?? [])];
+                            setRecipe({
+                              ...recipe,
+                              steps: newSteps
+                                .filter(s => s.stepID !== step.stepID)
+                            });
                           }}
                           aria-label="Remove Step"
                           icon={<DeleteIcon />}
@@ -194,9 +207,12 @@ function RecipeMaker() {
                         placeholder="Cut vegetables, measure qunatities, etc."
                         resize="vertical"
                         onChange={(e) => {
-                          const newSteps = [...(recipe.steps || [])];
-                          newSteps[index].stepDescription = e.target.value;
-                          setRecipe({ ...recipe, steps: newSteps });
+                          const newSteps = [...(recipe.steps ?? [])];
+                          setRecipe({
+                            ...recipe,
+                            steps: newSteps
+                              .map(s => s.stepID === step.stepID ? {...s, stepDescription: e.target.value} : s)
+                          });
                         }}
                       />
                     </ListItem>
@@ -211,9 +227,11 @@ function RecipeMaker() {
                   <IconButton
                     variant="ghost"
                     onClick={() => {
+                      const newNotes = [...(recipe.notes ?? [])];
+                      newNotes.push({...PLACEHOLDER_NOTE, noteID: nanoid()});
                       setRecipe({
                         ...recipe,
-                        notes: [...(recipe.notes || []), PLACEHOLDER_NOTE],
+                        notes: newNotes,
                       });
                     }}
                     aria-label="Add Step"
@@ -225,20 +243,24 @@ function RecipeMaker() {
                     <ListItem key={index} mt={4}>
                       <HStack>
                         <Textarea
-                          value={note}
+                          value={note.noteText}
                           placeholder="Make sure to use fresh ingredients"
                           minH={"40px"}
                           onChange={(e) => {
-                            const newNotes = [...(recipe.notes || [])];
-                            newNotes[index] = e.target.value;
-                            setRecipe({ ...recipe, notes: newNotes });
+                            setRecipe({
+                              ...recipe,
+                              notes: [...(recipe.notes ?? [])]
+                                .map(n => n.noteID === note.noteID ? {...n, noteText: e.target.value} : n)
+                            });
                           }}
                         />
                         <IconButton
                           onClick={() => {
-                            const newNotes = [...(recipe.notes || [])];
-                            newNotes.splice(index, 1);
-                            setRecipe({ ...recipe, notes: newNotes });
+                            setRecipe({
+                              ...recipe,
+                              notes: [...(recipe.notes ?? [])]
+                                .filter(n => n.noteID !== note.noteID),
+                            });
                           }}
                           aria-label="Remove Step"
                           icon={<DeleteIcon />}

@@ -26,11 +26,13 @@ type Recipe = {
 }
 
 type RecipeStep = {
+    stepID: string;
     stepTitle: string;
     stepDescription: string;
 }
 
 type RecipeIngredient = {
+    ingredientID: string;
     name: string;
     quantity: Number;
     unit: RecipeUnit;
@@ -54,7 +56,10 @@ type FDCFoodItem = {
 
 type RecipeUnit = "tsp" | "tbsp" | "cup" | "oz" | "lb" | "g" | "kg" | "ml" | "l" | "unit";
 
-type RecipeNote = string;
+type RecipeNote = {
+    noteID: string;
+    noteText: string;
+};
 
 type UserID = string;
 

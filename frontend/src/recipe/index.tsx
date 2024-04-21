@@ -80,7 +80,7 @@ function Recipe() {
                 <OrderedList width="90%">
                   {recipe.notes?.map((note, index) => (
                     <ListItem key={index} mt={2}>
-                      {note}
+                      {note.noteText}
                     </ListItem>
                   ))}
                 </OrderedList>
