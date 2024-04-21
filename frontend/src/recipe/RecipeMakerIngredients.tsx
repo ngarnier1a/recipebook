@@ -73,6 +73,22 @@ function RecipeMakerIngredients({
             setIngredient({ ...ingredient, name: e.target.value });
         }}
         />
+        <NumberInput
+          value={ingredient.quantity.toString()}
+          ml={1}
+          title='The quantity of the ingredient'
+          precision={2}
+          onChange={(valueString) => {
+              const value = parseFloat(valueString);
+              setIngredient({ ...ingredient, quantity: value });
+          }}
+        >
+          <NumberInputField minW="65px" />
+          <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+          </NumberInputStepper>
+        </NumberInput>
         <Select ml={1} title='The unit associated with ingredient quantity'>
         {units.map((unit, idx) => (
             <option key={idx} value={unit}>
