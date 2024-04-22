@@ -39,7 +39,7 @@ app.use(express.json());
 // add latency to test real world conditions in development
 if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
-    console.log("Request received", req.method, req.url);
+    console.log("Request received", req.method, req.url, req.body);
     setTimeout(next, Math.floor( ( Math.random() * 1000 ) + 100 ) );
   });
 }

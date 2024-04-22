@@ -15,6 +15,7 @@ import CurrentUser from "./users/CurrentUser";
 import Nutrition from "./nutrition";
 import RecipeMaker from "./recipe/RecipeMaker";
 import RecipeViewer from "./recipe/RecipeViewer";
+import Recipes from "./users/Recipes";
 
 function App() {
   return (
@@ -31,14 +32,15 @@ function App() {
                 {/* <Route path="/search/:searchType/:searchQuery" element={<Search />} /> */}
                 <Route path="/user/profile" element={<Profile />} />
                 <Route path="/user/:userId/profile/" element={<Profile />} />
-                <Route path="/user/recipes" element={<Recipe />} />
-                <Route path="/user/:userId/recipes" element={<Recipe />} />
+                <Route path="/user/recipes" element={<Recipes />} />
+                <Route path="/user/:userId/recipes" element={<Recipes />} />
                 <Route path="/user/friends" element={<Friends />} />
                 <Route path="/user/:userId/friends" element={<Friends />} />
                 <Route path="/recipe/:recipeId" element={<Recipe />} />
                 <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} />
                 <Route path="/recipe/create" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />
+                <Route path="/recipe/:recipeId/clone" element={<RecipeMaker />} />
                 <Route path="/nutrition" element={<Nutrition />} />
                 <Route path="/nutrition/:ingredientId" element={<Nutrition />} />
               </Routes>

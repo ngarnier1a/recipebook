@@ -40,8 +40,9 @@ const recipeSchema = new mongoose.Schema<Recipe>({
     ingredients: [ ingredientSchema ],
     steps: [ stepSchema ],
     notes: [ noteSchema ],
-    likes: { type: Number, default: 0 },
+    likes: { type: Number, default: 0, min: 0 },
   },
-  { collection: "recipes" });
+  { collection: "recipes" }
+);
 
 export default recipeSchema;
