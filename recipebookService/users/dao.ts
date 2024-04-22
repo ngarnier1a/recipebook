@@ -13,6 +13,29 @@ export const findAllUsers = async (populate: string[] = []) =>
 export const findUserById = async (userId: UserID, populate: string[] = []) =>
   await model.findById(userId).populate(populate);
 
+export const findUserByIdRich = async (userId: UserID) =>
+  await model.findById(userId).populate({
+    path: "likedRecipes",
+    populate: {
+      path: "author",
+      select: "_id username",
+    },
+  }).populate({
+    path: "authoredRecipes",
+    populate: {
+      path: "author",
+      select: "_id username",
+    },
+  }).populate({
+    path: "followedChefs",
+    populate: {
+      path: "authoredRecipes",
+      populate: {
+        path: "author",
+      },
+    },
+  });
+
 export const findPublicUserById = async (userId: UserID, populate: string[] = []) =>
   await model.findById(userId).select('-email -siteTheme -lastName').populate(populate);
 
@@ -30,7 +53,7 @@ export const deleteUser = async (userId: UserID) =>
   await model.deleteOne({ _id: userId });
 
 export const setLikedStatus = async (userId: UserID, recipe: Recipe, setLikedStatus: boolean): Promise<{ change: number, user: User }> => {
-  const user = await findUserById(userId, ["likedRecipes", "authoredRecipes", "followedChefs"]);
+  const user = await findUserByIdRich(userId);
   if (!user || user.likedRecipes === undefined) {
     throw new Error("User/liked recipes not found");
   }

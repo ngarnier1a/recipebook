@@ -15,10 +15,11 @@ export default function RecipeRoutes(app: Application) {
     req.body.author = req.session.user._id;
     try {
       const recipe = await dao.createRecipe(req.session.user._id ?? 'Bad ID', req.body);
+      console.error(`RECIPE CREATED: ${JSON.stringify(recipe)}`);
       const user = await updateSessionUser(req);
-      res.json({recipe, user: user});
+      res.send({recipe: recipe.toObject(), user: user});
     } catch (e) {
-      console.error(e);
+      console.error(`Error creating recipe: ${e}`);
       res.sendStatus(500);
       return;
     }
@@ -26,12 +27,21 @@ export default function RecipeRoutes(app: Application) {
 
   const getRecipeDetails = async (req: Request, res: Response) => {
     const { recipeId } = req.params;
-    const recipe = await dao.findRecipeById(recipeId);
-    if (!recipe) {
+    try {
+      if (!recipeId) {
+        res.sendStatus(400);
+        return;
+      }
+      const recipe = await dao.findRecipeById(recipeId);
+      if (!recipe) {
+        res.sendStatus(404);
+        return;
+      }
+      res.send(recipe.toObject());
+    } catch (e) {
+      console.error(`Error getting recipe details: ${e}`);
       res.sendStatus(404);
-      return;
     }
-    res.json(recipe);
   };
 
   const updateRecipe = async (req: Request, res: Response) => {
@@ -40,18 +50,18 @@ export default function RecipeRoutes(app: Application) {
       res.sendStatus(401);
       return;
     }
-    const recipe = await dao.findRecipeById(recipeId);
-    if (!recipe) {
-      res.sendStatus(404);
-      return;
-    }
-
-    if (recipe.author?._id?.toString() !== req.session.user._id) {
-      res.sendStatus(401);
-      return;
-    }
-
     try {
+      const recipe = await dao.findRecipeById(recipeId);
+      if (!recipe) {
+        res.sendStatus(404);
+        return;
+      }
+
+      if (recipe.author?._id?.toString() !== req.session.user._id) {
+        res.sendStatus(401);
+        return;
+      }
+
       const status = await dao.updateRecipe(recipeId, req.body);
       if (status.matchedCount === 0) {
         res.sendStatus(500);
@@ -61,8 +71,8 @@ export default function RecipeRoutes(app: Application) {
         res.send(user);
       }
     } catch (e) {
-      console.error(e);
-      res.sendStatus(500);
+      console.error(`Error updating recipe: ${e}`);
+      res.sendStatus(404);
       return;
     }
   };
@@ -73,20 +83,26 @@ export default function RecipeRoutes(app: Application) {
       res.sendStatus(401);
       return;
     }
-    const recipe = await dao.findRecipeById(recipeId);
-    if (!recipe || recipe.author?._id?.toString() !== req.session.user._id) {
-      console.error("Recipe not found or user not authorized to delete recipe")
-      res.sendStatus(404);
-      return;
-    }
-    const status = await dao.deleteRecipe(recipeId);
-    if (status.deletedCount === 0) {
-      console.error("Recipe not found")
-      res.sendStatus(500);
-      return;
-    } else {
-      const user = await updateSessionUser(req);
-      res.send(user);
+
+    try {
+      const recipe = await dao.findRecipeById(recipeId);
+      if (!recipe || recipe.author?._id?.toString() !== req.session.user._id) {
+        console.error("Recipe not found or user not authorized to delete recipe")
+        res.sendStatus(404);
+        return;
+      }
+      const status = await dao.deleteRecipe(recipeId);
+      if (status.deletedCount === 0) {
+        console.error("Recipe not found")
+        res.sendStatus(500);
+        return;
+      } else {
+        const user = await updateSessionUser(req);
+        res.send(user);
+      }
+    } catch (e) {
+      console.error(`Error deleting recipe: ${e}`);
+      res.sendStatus(401);
     }
   };
 
@@ -114,7 +130,7 @@ export default function RecipeRoutes(app: Application) {
       }
       res.send(user);
     } catch (e) {
-      console.error(e);
+      console.error(`Error liking recipe: ${e}`);
       res.sendStatus(500);
     }
   };
