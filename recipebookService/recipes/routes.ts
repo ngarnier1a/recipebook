@@ -15,8 +15,9 @@ export default function RecipeRoutes(app: Application) {
     req.body.author = req.session.user._id;
     try {
       const recipe = await dao.createRecipe(req.session.user._id ?? 'Bad ID', req.body);
+      console.error(`RECIPE CREATED: ${JSON.stringify(recipe)}`);
       const user = await updateSessionUser(req);
-      res.json({recipe, user: user});
+      res.send({recipe: recipe.toObject(), user: user});
     } catch (e) {
       console.error(e);
       res.sendStatus(500);
@@ -26,12 +27,21 @@ export default function RecipeRoutes(app: Application) {
 
   const getRecipeDetails = async (req: Request, res: Response) => {
     const { recipeId } = req.params;
-    const recipe = await dao.findRecipeById(recipeId);
-    if (!recipe) {
-      res.sendStatus(404);
-      return;
+    try {
+      if (!recipeId) {
+        res.sendStatus(400);
+        return;
+      }
+      const recipe = await dao.findRecipeById(recipeId);
+      if (!recipe) {
+        res.sendStatus(404);
+        return;
+      }
+      res.send(recipe.toObject());
+    } catch (e) {
+      console.error(e);
+      res.sendStatus(500);
     }
-    res.json(recipe);
   };
 
   const updateRecipe = async (req: Request, res: Response) => {
