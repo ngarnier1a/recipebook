@@ -13,6 +13,9 @@ export const findAllUsers = async (populate: string[] = []) =>
 export const findUserById = async (userId: UserID, populate: string[] = []) =>
   await model.findById(userId).populate(populate);
 
+export const findPublicUserById = async (userId: UserID, populate: string[] = []) =>
+  await model.findById(userId).select('-email -siteTheme -lastName').populate(populate);
+
 export const findUserByUsername = async (username: string, populate: string[] = []) =>
   await model.findOne({ username: username }).populate(populate);
 

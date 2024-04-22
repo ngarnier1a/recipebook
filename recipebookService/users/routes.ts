@@ -93,9 +93,20 @@ export default function UserRoutes(app: Application) {
     res.send(user);
   };
 
+  const otherProfile = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    const user = await dao.findUserById(userId, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
+    if (!user) {
+      res.sendStatus(404);
+      return;
+    }
+    res.send(user);
+  }
+
   app.put("/api/auth/:userId", updateUser);
   app.post("/api/auth/signup", signup);
   app.post("/api/auth/signin", signin);
   app.post("/api/auth/signout", signout);
   app.get("/api/auth/profile", profile);
+  app.get("/api/auth/profile/:userId", otherProfile);
 }

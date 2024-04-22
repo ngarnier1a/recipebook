@@ -4,6 +4,7 @@ type User = {
     _id?: UserID;                       // optional: not passed from frontend on signup
     username: string;
     type: UserType;
+    bio: string;                        // optional: not passed for non-chefs
     password?: string;                  // optional: not passed to frontend
     email?: string;                     // optional: not passed when request for other user
     firstName?: string;                 // optional: not passed when request for other user
