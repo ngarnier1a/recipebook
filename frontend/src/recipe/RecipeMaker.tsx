@@ -73,11 +73,14 @@ function RecipeMaker() {
         return;
       }
       const recipe = await recipeClient.get(recipeId);
+      if (location.pathname.includes('clone')) {
+        recipe.name = `Copy of ${recipe.name}`;
+      }
       setRecipe(recipe);
     };
 
     fetchRecipe();
-  }, [recipeId]);
+  }, [recipeId, location]);
 
   const publishRecipe = async () => {
     setIsPublishing(true);
@@ -102,9 +105,6 @@ function RecipeMaker() {
           duration: 5000,
           isClosable: true,
         });
-        console.log(JSON.stringify(serverData));
-        console.log(JSON.stringify(serverData.recipe));
-        console.log(JSON.stringify(serverData.recipe._id));
         dispatch(setCurrentUser(serverData.user));
         navigate(`/recipe/${serverData.recipe._id}`);
       }
