@@ -13,6 +13,7 @@ function RecipeCard({ recipe }: {recipe: Recipe }) {
   const nameDisplay = recipe.name.length > 17 ? recipe.name.slice(0, 17) + "..." : recipe.name;
   const descriptionDisplay = recipe.description.length > 160 ? recipe.description.slice(0, 160) + "..." : recipe.description;
 
+  console.log(`recipename: ${recipe.name}, author: ${recipe.author?.username ?? "NOT FOUND!!!"}`)
   const card = (
     <Card
         w='250px'

@@ -9,7 +9,7 @@ export const updateSessionUser = async (req: Request): Promise<User|null> => {
     return null;
   }
   try {
-    const user = await dao.findUserById(req.session.user._id, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
+    const user = await dao.findUserByIdRich(req.session.user._id);
     req.session.user = (user ? user?.toObject() as User : null);
     if (user) {
       return user.toObject() as User;
@@ -71,7 +71,7 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(400);
     }
   };
-  
+
   const signin = async (req: Request, res: Response) => {
     const { username, password } = req.body;
     if (!username || !password) {
@@ -79,15 +79,18 @@ export default function UserRoutes(app: Application) {
       return;
     }
     try {
-      const existingUser = await dao.findUserByUsernameSecure(username, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
+      const existingUser = await dao.findUserByUsernameSecure(username);
       if (existingUser) {
         if (!existingUser.password) {
           res.sendStatus(500);
           return;
         } else if (await bcrypt.compare(password, existingUser.password)) {
-          const userForSession = existingUser.toObject() as User;
-          delete userForSession.password;
-          req.session.user = userForSession;
+          const richUser = await dao.findUserByIdRich(existingUser._id);
+          if (!richUser) {
+            res.sendStatus(500);
+            return;
+          }
+          req.session.user = richUser;
           if (req.session.user.password) {
             console.error("Password in session");
             res.sendStatus(500);
