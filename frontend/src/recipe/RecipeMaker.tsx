@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { UserState } from "../store";
 import {
   Button,
@@ -25,6 +25,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom";
 import * as recipeClient from "./client";
 import RecipeMakerIngredients from "./RecipeMakerIngredients";
 import { nanoid } from "@reduxjs/toolkit";
+import { setCurrentUser } from "../users/reducer";
 
 const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
   ingredientID: 'placeholder_id',
@@ -52,6 +53,7 @@ function RecipeMaker() {
   const [isPublishing, setIsPublishing] = React.useState<boolean>(false);
   const toast = useToast();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
   const [recipe, setRecipe] = React.useState<Recipe>({
     name: "Recipe Name",
@@ -77,7 +79,7 @@ function RecipeMaker() {
     setIsPublishing(true);
     try {
       if (recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes("edit")) {
-        await recipeClient.update(recipeId, recipe);
+        const newUser = await recipeClient.update(recipeId, recipe);
         toast({
           title: "Recipe Updated",
           description: "Your changes has been published",
@@ -85,9 +87,10 @@ function RecipeMaker() {
           duration: 5000,
           isClosable: true,
         });
+        dispatch(setCurrentUser(newUser));
         navigate(`/recipe/${recipeId}`);
       } else {
-        const createdRecipe: Recipe = await recipeClient.create(recipe);
+        const serverData = await recipeClient.create(recipe);
         toast({
           title: "Recipe Published",
           description: "Your recipe has been published",
@@ -95,7 +98,8 @@ function RecipeMaker() {
           duration: 5000,
           isClosable: true,
         });
-        navigate(`/recipe/${createdRecipe._id}`);
+        dispatch(setCurrentUser(serverData.user));
+        navigate(`/recipe/${serverData.recipe._id}`);
       }
     } catch (error) {
       toast({

@@ -44,10 +44,8 @@ function Recipe() {
     }
 
     try {
-      const newLikedRecipes = await recipeClient.setLikedStatus(recipeId, setLikedStatus);
-      dispatch(setCurrentUser(
-        { ...currentUser, likedRecipes: newLikedRecipes }
-      ));
+      const newUser = await recipeClient.setLikedStatus(recipeId, setLikedStatus);
+      dispatch(setCurrentUser(newUser));
       setRecipe({ ...recipe, likes: setLikedStatus ? (recipe.likes ?? 0) + 1 : (recipe.likes ?? 0) - 1 });
     } catch (error) {
       toast({

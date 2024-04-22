@@ -1,4 +1,6 @@
+import { updateSessionUser } from "../users/routes.js";
 import * as dao from "./dao.js";
+import * as userDao from "../users/dao.js";
 import { Application, Request, Response } from "express";
 
 
@@ -13,7 +15,8 @@ export default function RecipeRoutes(app: Application) {
     req.body.author = req.session.user._id;
     try {
       const recipe = await dao.createRecipe(req.session.user._id ?? 'Bad ID', req.body);
-      res.json(recipe);
+      const user = await updateSessionUser(req);
+      res.json({recipe, user: user});
     } catch (e) {
       console.error(e);
       res.sendStatus(500);
@@ -48,12 +51,19 @@ export default function RecipeRoutes(app: Application) {
       return;
     }
 
-    const status = await dao.updateRecipe(recipeId, req.body);
-    if (status.matchedCount === 0) {
+    try {
+      const status = await dao.updateRecipe(recipeId, req.body);
+      if (status.matchedCount === 0) {
+        res.sendStatus(500);
+        return;
+      } else {
+        const user = await updateSessionUser(req);
+        res.send(user);
+      }
+    } catch (e) {
+      console.error(e);
       res.sendStatus(500);
       return;
-    } else {
-      res.sendStatus(200);
     }
   };
 
@@ -73,7 +83,8 @@ export default function RecipeRoutes(app: Application) {
       res.sendStatus(404);
       return;
     } else {
-      res.sendStatus(200);
+      const user = await updateSessionUser(req);
+      res.send(user);
     }
   };
 
@@ -85,7 +96,6 @@ export default function RecipeRoutes(app: Application) {
     }
 
     const like = req.body.like;
-    console.error(`typeof like: ${typeof like}`)
 
     try {
       const recipe = await dao.findRecipeById(recipeId);
@@ -94,21 +104,16 @@ export default function RecipeRoutes(app: Application) {
         return;
       }
 
-      const updated = await dao.setLikedStatus(recipeId, req.session.user._id, like);
-
-      console.error(`Like: ${like} Updated: ${updated}`)
-      if (updated && like) {
-        req.session.user.likedRecipes = [...(req.session.user.likedRecipes || []), recipe];
-      } else if (updated && !like) {
-        req.session.user.likedRecipes = req.session.user.likedRecipes?.filter((likedRecipe) => likedRecipe._id?.toString() !== recipeId);
+      const { change, user } = await userDao.setLikedStatus(req.session.user._id, recipe, like);
+      if (change !== 0) {
+        recipe.likes = (recipe.likes || 0) + change;
+        await recipe.save();
+        req.session.user = user;
       }
-
-      console.error(req.session.user.likedRecipes);
-      res.send(req.session.user.likedRecipes);
+      res.send(user);
     } catch (e) {
       console.error(e);
       res.sendStatus(500);
-      return;
     }
   };
 

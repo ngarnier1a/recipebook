@@ -4,26 +4,19 @@ import * as bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 12;
 
-export default function UserRoutes(app: Application) {
-  /**
-  const createUser = async (req: Request, res: Response) => {
-    const user = await dao.createUser(req.body);
-    res.json(user);
-  };
-  const deleteUser = async (req: Request, res: Response) => {
-    const status = await dao.deleteUser(req.params.userId);
-    res.json(status);
-  };
-  const findAllUsers = async (req: Request, res: Response) => {
-    const users = await dao.findAllUsers();
-    res.json(users);
-  };
-  const findUserById = async (req: Request, res: Response) => {};
-  */
-  const sendUser = (user: User, res: Response) => {
-    delete user.password;
-    res.json(user);
+export const updateSessionUser = async (req: Request): Promise<User|null> => {
+  if (!req.session.user || !req.session.user._id) {
+    return null;
   }
+  const user = await dao.findUserById(req.session.user._id, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
+  req.session.user = (user ? user?.toObject() as User : null);
+  if (user) {
+    return user.toObject() as User;
+  }
+  return null;
+}
+
+export default function UserRoutes(app: Application) {
 
   const updateUser = async (req: Request, res: Response) => {
     const { userId } = req.params;
@@ -37,8 +30,8 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(404);
       return;
     } else {
-      req.session.user = req.body;
-      res.sendStatus(200);
+      const user = await updateSessionUser(req);
+      res.send(user);
     }
   };
   const signup = async (req: Request, res: Response) => {
@@ -59,8 +52,8 @@ export default function UserRoutes(app: Application) {
     }
 
     const currentUser = await dao.createUser(userBody);
-    req.session.user = currentUser;
-    sendUser(currentUser, res);
+    req.session.user = currentUser.toObject();
+    res.send(currentUser);
   };
   const signin = async (req: Request, res: Response) => {
     const { username, password } = req.body;
@@ -68,15 +61,20 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(400);
       return;
     }
-    const existingUser = await dao.findUserByUsername(username, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
+    const existingUser = await dao.findUserByUsernameSecure(username, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
     if (existingUser) {
       if (!existingUser.password) {
         res.sendStatus(500);
-        console.error(`User ${username} has no password in database.`);
         return;
       } else if (await bcrypt.compare(password, existingUser.password)) {
-        req.session.user = existingUser;
-        sendUser(existingUser, res);
+        const userForSession = existingUser.toObject() as User;
+        delete userForSession.password;
+        req.session.user = userForSession;
+        if (req.session.user.password) {
+          console.error("Password in session");
+          res.sendStatus(500);
+        }
+        res.send(req.session.user);
       }
     } else {
       res.sendStatus(401);
@@ -91,14 +89,11 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(401);
       return;
     }
-    sendUser(currentUser, res);
+    const user = await updateSessionUser(req);
+    res.send(user);
   };
 
-  //app.post("/api/auth", createUser);
-  //app.get("/api/auth", findAllUsers);
-  //app.get("/api/auth/:userId", findUserById);
   app.put("/api/auth/:userId", updateUser);
-  //app.delete("/api/auth/:userId", deleteUser);
   app.post("/api/auth/signup", signup);
   app.post("/api/auth/signin", signin);
   app.post("/api/auth/signout", signout);

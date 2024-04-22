@@ -25,6 +25,11 @@ export const profile = async (): Promise<User> => {
     return response.data;
 }
 
+export const otherProfile = async (uid: UserID): Promise<User> => {
+    const response = await api.get(`${SECURITY_API}/profile/${uid}`);
+    return response.data;
+}
+
 export const updateProfile = async (user: User): Promise<void> => {
     await api.put(`${SECURITY_API}/${user._id}`, user);
 };
