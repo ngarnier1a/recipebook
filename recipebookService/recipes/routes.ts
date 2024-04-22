@@ -74,13 +74,15 @@ export default function RecipeRoutes(app: Application) {
       return;
     }
     const recipe = await dao.findRecipeById(recipeId);
-    if (!recipe || recipe.author?._id !== req.session.user._id) {
+    if (!recipe || recipe.author?._id?.toString() !== req.session.user._id) {
+      console.error("Recipe not found or user not authorized to delete recipe")
       res.sendStatus(404);
       return;
     }
     const status = await dao.deleteRecipe(recipeId);
     if (status.deletedCount === 0) {
-      res.sendStatus(404);
+      console.error("Recipe not found")
+      res.sendStatus(500);
       return;
     } else {
       const user = await updateSessionUser(req);

@@ -32,6 +32,7 @@ const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
   name: "Ingredient",
   quantity: 1,
   unit: "unit",
+  fdcID: '1',
 };
 
 const PLACEHOLDER_STEP: RecipeStep = {
@@ -50,6 +51,7 @@ function RecipeMaker() {
   const { recipeId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
+  const deleteColor = useColorModeValue("red.400", "red.500");
   const [isPublishing, setIsPublishing] = React.useState<boolean>(false);
   const toast = useToast();
   const navigate = useNavigate();
@@ -62,6 +64,8 @@ function RecipeMaker() {
     steps: [PLACEHOLDER_STEP],
     notes: [PLACEHOLDER_NOTE],
   });
+
+  const isEditing = (recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes('edit'))
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -78,7 +82,7 @@ function RecipeMaker() {
   const publishRecipe = async () => {
     setIsPublishing(true);
     try {
-      if (recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes("edit")) {
+      if (isEditing) {
         const newUser = await recipeClient.update(recipeId, recipe);
         toast({
           title: "Recipe Updated",
@@ -113,6 +117,36 @@ function RecipeMaker() {
     setIsPublishing(false);
   };
 
+  const deleteRecipe = async () => {
+    if (!isEditing) {
+      return;
+    }
+
+    try {
+      if (!recipe || !recipe._id) {
+        throw new Error("No recipe found");
+      }
+      const newUser = await recipeClient.deleteRecipe(recipe._id);
+      toast({
+        title: "Recipe Deleted",
+        description: "Your recipe has been deleted",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      dispatch(setCurrentUser(newUser));
+      navigate(-1);
+    } catch (error) {
+      toast({
+        title: "An error occurred",
+        description: "There was an error deleting your recipe",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+  }
+
   const notChefPage = (
     <Center>
       <Heading mt={5} size="lg">
@@ -125,7 +159,7 @@ function RecipeMaker() {
     <Center>
       <VStack width="100%">
         <Heading as="h1" py={5} mx={5}>
-          Create Recipe
+          {isEditing ? 'Edit' : 'Create'} Recipe
         </Heading>
         <Container maxW={gridWidth} px={2}>
           <Grid
@@ -304,6 +338,11 @@ function RecipeMaker() {
               <Button onClick={() => navigate(-1)} mr={2} size='lg'>
                 Cancel
               </Button>
+              {(recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes('edit')) && 
+                <Button onClick={deleteRecipe} bg={deleteColor} size="lg" mr={2}>
+                  Delete
+                </Button>
+              }
               <Button
                 isLoading={isPublishing}
                 bg="blue.500"
@@ -311,7 +350,7 @@ function RecipeMaker() {
                 loadingText="Publishing..."
                 onClick={publishRecipe}
               >
-                Publish {(recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes('edit')) ? "Changes" : "Recipe"}
+                Publish {isEditing ? "Changes" : "Recipe"}
               </Button>
             </GridItem>
           </Grid>

@@ -291,7 +291,7 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
       display={"block"}
       p={2}
       rounded={"md"}
-      _hover={{ bg: useColorModeValue("blue.50", "gray.900") }}
+      _hover={{ bg: useColorModeValue("blue.50", "gray.900"), cursor: "pointer" }}
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
@@ -418,11 +418,6 @@ const NAV_ITEMS: Array<NavItem> = [
         href: "/search/recipes",
       },
       {
-        label: "New & Noteworthy",
-        subLabel: "Up-and-coming Recipes",
-        href: "/search/recipes",
-      },
-      {
         label: "Your Recipes",
         subLabel: "Recipes you've created or liked",
         href: "/user/recipes",
@@ -436,19 +431,8 @@ const NAV_ITEMS: Array<NavItem> = [
     ],
   },
   {
-    label: "People",
-    children: [
-      {
-        label: "Friends",
-        subLabel: "Connect with your fellow food afficionados",
-        href: "/user/friends",
-      },
-      {
-        label: "Explore Chefs",
-        subLabel: "Discover your new favorite chef",
-        href: "/search/chefs",
-      },
-    ],
+    label: "Chefs",
+    href: "/search/chefs",
   },
   {
     label: "Nutrition",

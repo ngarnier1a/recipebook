@@ -28,12 +28,24 @@ function Recipe() {
       if (!recipeId) {
         return;
       }
-      const recipe = await recipeClient.get(recipeId);
-      setRecipe(recipe);
+      try {
+        const recipe = await recipeClient.get(recipeId);
+        setRecipe(recipe);
+      } catch (error) {
+        console.error("Error fetching recipe", error);
+        toast({
+          title: "Error displaying recipe",
+          description: "The specified recipe was not found",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+        navigate('/home');
+      }
     };
 
     fetchRecipe();
-  }, [recipeId]);
+  }, [recipeId, navigate, toast]);
 
   const likeRecipe = async (setLikedStatus: boolean) => {
     setIsLiking(true);

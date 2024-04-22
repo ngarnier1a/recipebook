@@ -8,17 +8,16 @@ import {
   Divider,
   Flex,
   Heading,
-  Stack,
-  Text,
   useBreakpointValue,
 } from "@chakra-ui/react";
 import RecipeCard from "../recipe/RecipeCard";
+import { nanoid } from "@reduxjs/toolkit";
 
 function Recipes() {
   const { userId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const [userData, setUserData] = React.useState<User | null>(null);
-  const maxW = useBreakpointValue({ base: "100%", md: "90%" });
+  const justifyVal = useBreakpointValue({ base: "center", md: "start" });
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -33,30 +32,40 @@ function Recipes() {
     fetchUserData();
   }, [userId, currentUser]);
 
-  return (
-    userData && (
-      <>
+  const userAuthoredRecipes = (
+    <>
         <Center p={5}>
-          <Heading>{userData.username}'s Recipes</Heading>
+            <Heading>{userData?.username}'s Recipes</Heading>
         </Center>
         <Divider mb={5}/>
-        <Flex justifyContent={'start'} wrap='wrap' ml={5}>
-          {userData.authoredRecipes &&
-            userData.authoredRecipes.map((recipe) => (
-              <RecipeCard recipe={recipe} />
+        <Flex justifyContent={justifyVal} wrap='wrap' ml={3} mr={3}>
+            {userData?.authoredRecipes?.map((recipe) => (
+                <RecipeCard recipe={recipe} key={recipe._id ?? nanoid()} />
             ))}
         </Flex>
         <Divider mt={5}/>
+    </>
+  )
+
+  const userLikedRecipes = (
+    <>
+    <Flex justifyContent={'start'} wrap='wrap' ml={5}>
+        {userData?.likedRecipes?.map((recipe) => (
+            <RecipeCard recipe={recipe} key={recipe._id ?? nanoid()} />
+        ))}
+    </Flex>
+    </> 
+  )
+
+  return (
+    userData && (
+      <>
+        {(userData.authoredRecipes?.length ?? 0) > 0 && userAuthoredRecipes}
         <Center p={5}>
           <Heading>{userData.username}'s Liked Recipes</Heading>
         </Center>
         <Divider mb={5}/>
-        <Flex justifyContent={'start'} wrap='wrap' ml={5}>
-          {userData.likedRecipes &&
-            userData.likedRecipes.map((recipe) => (
-              <RecipeCard recipe={recipe} />
-            ))}
-        </Flex>
+        {(userData.likedRecipes?.length ?? 0) > 0 ? userLikedRecipes : <Center>{userData.username} has not liked any recipes yet</Center>}
       </>
     )
   );

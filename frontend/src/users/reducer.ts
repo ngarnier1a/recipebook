@@ -14,7 +14,9 @@ const usersSlice = createSlice({
   initialState,
   reducers: {
     setCurrentUser: (state, action: PayloadAction<User | null>) => {
-      console.log(`setting current user: ${JSON.stringify(action.payload)}`)
+      if (process.env.NODE_ENV === "development") {
+        console.log(`setting current user: ${JSON.stringify(action.payload)}`);
+      }
       state.currentUser = action.payload;
     },
   },
