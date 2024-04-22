@@ -28,7 +28,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { setCurrentUser } from "../users/reducer";
 
 const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
-  ingredientID: 'placeholder_id',
+  ingredientID: nanoid(),
   name: "Ingredient",
   quantity: 1,
   unit: "unit",
@@ -36,13 +36,13 @@ const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
 };
 
 const PLACEHOLDER_STEP: RecipeStep = {
-  stepID: 'placeholder_id',
+  stepID: nanoid(),
   stepTitle: "Prepare the ingredients",
   stepDescription: "Get all the ingredients ready to go",
 };
 
 const PLACEHOLDER_NOTE: RecipeNote = {
-  noteID: 'placeholder_id',
+  noteID: nanoid(),
   noteText: "Make sure to be careful with the knife!",
 }
 
@@ -102,6 +102,9 @@ function RecipeMaker() {
           duration: 5000,
           isClosable: true,
         });
+        console.log(JSON.stringify(serverData));
+        console.log(JSON.stringify(serverData.recipe));
+        console.log(JSON.stringify(serverData.recipe._id));
         dispatch(setCurrentUser(serverData.user));
         navigate(`/recipe/${serverData.recipe._id}`);
       }
