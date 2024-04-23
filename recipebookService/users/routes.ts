@@ -123,12 +123,43 @@ export default function UserRoutes(app: Application) {
 
   const otherProfile = async (req: Request, res: Response) => {
     const { userId } = req.params;
-    const user = await dao.findUserById(userId, ['likedRecipes', 'followedChefs', 'authoredRecipes']);
-    if (!user) {
+    try {
+      const user = await dao.findPublicUserByIdRich(userId);
+      if (!user) {
+        res.sendStatus(404);
+        return;
+      }
+      res.send(user.toObject());
+    } catch (e) {
+      console.error(`Error getting user profile: ${e}`);
       res.sendStatus(404);
+    }
+  }
+
+  const followUser = async (req: Request, res: Response) => {
+    if (!req.session.user || !req.session.user._id) {
+      res.sendStatus(401);
       return;
     }
-    res.send(user);
+
+    const { userId } = req.params;
+    const toFollow = req.body.follow;
+
+    const isFollowing = (req.session.user.followedChefs?.findIndex(chef => chef._id === userId) ?? -1) >= 0;
+
+    if (isFollowing === toFollow) {
+      res.sendStatus(400);
+      return;
+    }
+
+    try {
+      const user = await dao.updateFollowUser(req.session.user._id, userId, toFollow);
+      req.session.user = user;
+      res.send(user);
+    } catch (e) {
+      console.error(`Error following user: ${e}`);
+      res.sendStatus(400);
+    }
   }
 
   app.put("/api/auth/:userId", updateUser);
@@ -137,4 +168,5 @@ export default function UserRoutes(app: Application) {
   app.post("/api/auth/signout", signout);
   app.get("/api/auth/profile", profile);
   app.get("/api/auth/profile/:userId", otherProfile);
+  app.put("/api/auth/follow/:userId", followUser);
 }
