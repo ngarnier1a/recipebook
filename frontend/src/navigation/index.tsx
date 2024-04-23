@@ -97,13 +97,21 @@ export default function Navbar() {
     }
   };
 
+  // pick first name if avaliable for greeting
+  const greeting = currentUser
+    ? (currentUser.firstName
+        ? `Hi, ${currentUser.firstName}`
+        : `Hi, ${currentUser.username}`
+      )
+    : "";
+
   const endContent = currentUser ? (
     <Menu isLazy variant="filled">
       <MenuButton>
         <Avatar size="sm" />
       </MenuButton>
       <MenuList>
-        <MenuGroup title={`Hi, ${currentUser.username}`}>
+        <MenuGroup title={greeting}>
           <MenuItem onClick={() => navigate("/user/profile")}>Profile</MenuItem>
           <MenuItem onClick={() => navigate("/user/settings")}>
             Settings
