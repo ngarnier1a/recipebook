@@ -142,7 +142,7 @@ function Profile() {
         mt={5}
         mb={3}
         >
-        {userProfile?.username}'s Profile
+        {isCurrentUser ? 'Your' : `${userProfile?.username ?? 'Unknown'}'s`} Profile
         </Heading>
         <Spacer />
         <Box h="40px" mr={5}>
@@ -160,7 +160,7 @@ function Profile() {
             mt={5}
             mb={0}
             >
-            {userProfile?.username}'s Profile
+            {isCurrentUser ? 'Your' : `${userProfile?.username ?? 'Unknown'}'s`} Profile
         </Heading>
         <HStack>
             { (currentUser && isCurrentUser) && editButton }

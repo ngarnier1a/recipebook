@@ -50,7 +50,7 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
   const userAuthoredRecipes = (
     <>
         <Center p={5}>
-            <Heading>{userData?.username}'s Recipes</Heading>
+            <Heading>{(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} Recipes</Heading>
         </Center>
         <Divider mb={5}/>
         <Flex justifyContent={justifyVal} wrap='wrap' ml={3} mr={3}>
@@ -79,12 +79,13 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
         {(userData.type === "CHEF" && (userData.authoredRecipes?.length ?? 0) === 0) &&
             <>
             <Center>
-                <Heading p={5}>{userData.username}'s Recipes</Heading>
+                <Heading p={5}>{(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} Recipes</Heading>
             </Center>
 
             <Divider mb={10} />
             <Center>
-                {userData.username} has not published any recipes
+                {(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `}
+                published recipes appear here
             </Center>
             <Divider mt={10}/>
             </>
@@ -92,12 +93,14 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
         {showLiked &&
             <>
             <Center p={5}>
-                <Heading>Liked Recipes</Heading>
+                <Heading>{(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} Liked Recipes</Heading>
             </Center>
             <Divider mb={5}/>
             {(userData.likedRecipes?.length ?? 0) > 0 
                 ? userLikedRecipes
-                : <Center mb={10}>{userData.username} has not liked any recipes yet</Center>}
+                : <Center mb={10}>
+                    {(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} liked recipes appear here
+                </Center>}
             </>
         }
 
