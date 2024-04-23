@@ -76,6 +76,7 @@ function RecipeMakerIngredients({
         <NumberInput
           value={ingredient.quantity.toString()}
           ml={1}
+          min={0}
           title='The quantity of the ingredient'
           precision={2}
           onChange={(valueString) => {
@@ -92,6 +93,7 @@ function RecipeMakerIngredients({
         <Select
           ml={1}
           title='The unit associated with ingredient quantity'
+          value={ingredient.unit}
           onChange={(e) => setIngredient({ ...ingredient, unit: e.target.value as RecipeUnit })}
         >
         {units.map((unit, idx) => (
@@ -100,22 +102,31 @@ function RecipeMakerIngredients({
             </option>
         ))}
         </Select>
-        <Select ml={1} title='What step are these ingredients for'>
-        {
+        <Select
+          ml={1}
+          title='What step are these ingredients for'
+          onChange={(e) => {
+            if (e.target.value !== "no-step") {
+              setIngredient({ ...ingredient, stepNumber: parseInt(e.target.value) });
+            }
+          }}
+          value={ingredient.stepNumber ?? "no-step"}
+        >
+          {
             <>
             <option key={'asjkdfgaskl;fj'} value={"no-step"} title='No specific step for this ingredient'>
                 N/A
             </option>
             {recipe.steps?.map((step, idx) => (
-                <option key={idx + 1} value={idx}>
+                <option key={step.stepID} value={idx}>
                 {idx + 1}
                 </option>
             ))}
             </>
-        }
+          }
         </Select>
         <Input
-        value={ingredient.fdcID}
+        value={ingredient.fdcID || ""}
         ml={1}
         placeholder="18069"
         title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'

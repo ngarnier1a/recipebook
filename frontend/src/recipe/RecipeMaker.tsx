@@ -32,7 +32,6 @@ const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
   name: "Ingredient",
   quantity: 1,
   unit: "unit",
-  fdcID: '1',
 };
 
 const PLACEHOLDER_STEP: RecipeStep = {
