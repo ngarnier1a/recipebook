@@ -237,7 +237,7 @@ const DesktopNav = () => {
   return (
     <Stack direction={"row"} spacing={1}>
       {NAV_ITEMS.filter((navItem) => {
-        return !navItem.userType || navItem.userType === currentUser?.type;
+        return !navItem.userType || navItem.userType === currentUser?.type || (navItem.userType === "ANY" && currentUser);
       }).map((navItem, idx) => (
         <Box key={idx}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
@@ -273,7 +273,7 @@ const DesktopNav = () => {
                   {navItem.children
                     .filter((child) => {
                       return (
-                        !child.userType || child.userType === currentUser?.type
+                        !child.userType || child.userType === currentUser?.type || (child.userType === "ANY" && currentUser)
                       );
                     })
                     .map((child) => (
@@ -338,7 +338,7 @@ const MobileNav = () => {
       display={{ md: "none" }}
     >
       {NAV_ITEMS.filter(
-        (navItem) => !navItem.userType || navItem.userType === currentUser?.type
+        (navItem) => !navItem.userType || navItem.userType === currentUser?.type || (navItem.userType === "ANY" && currentUser)
       ).map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
@@ -393,7 +393,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         >
           {children &&
             children.filter(
-              (child) => !child.userType || child.userType === currentUser?.type
+              (child) => !child.userType || child.userType === currentUser?.type || (child.userType === "ANY" && currentUser)
             ).map((child) => (
               <Box
                 as="a"
@@ -415,7 +415,7 @@ interface NavItem {
   subLabel?: string;
   children?: Array<NavItem>;
   href?: string;
-  userType?: UserType;
+  userType?: UserType | "ANY";
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -431,6 +431,7 @@ const NAV_ITEMS: Array<NavItem> = [
         label: "Your Recipes",
         subLabel: "Recipes you've created or liked",
         href: "/user/recipes",
+        userType: "ANY"
       },
       {
         label: "Create Recipe",
@@ -442,7 +443,7 @@ const NAV_ITEMS: Array<NavItem> = [
   },
   {
     label: "Chefs",
-    href: "/browse/chefs",
+    href: "/browse/chefs?by=followers&dir=dsc",
   },
   {
     label: "Nutrition",
