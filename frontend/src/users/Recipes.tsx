@@ -76,7 +76,7 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
     userData && (
       <>
         {(userData.authoredRecipes?.length ?? 0) > 0 && userAuthoredRecipes}
-        {(!showLiked && (userData.authoredRecipes?.length ?? 0) === 0) &&
+        {(userData.type === "CHEF" && (userData.authoredRecipes?.length ?? 0) === 0) &&
             <>
             <Center>
                 <Heading p={5}>{userData.username}'s Recipes</Heading>
@@ -86,6 +86,7 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
             <Center>
                 {userData.username} has not published any recipes
             </Center>
+            <Divider mt={10}/>
             </>
         }
         {showLiked &&
