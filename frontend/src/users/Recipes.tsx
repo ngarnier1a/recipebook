@@ -13,7 +13,7 @@ import {
 import RecipeCard from "../recipe/RecipeCard";
 import { nanoid } from "@reduxjs/toolkit";
 
-function Recipes() {
+function Recipes({showLiked = true} : {showLiked?: boolean}) {
   const { userId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const [userData, setUserData] = React.useState<User | null>(null);
@@ -76,13 +76,30 @@ function Recipes() {
     userData && (
       <>
         {(userData.authoredRecipes?.length ?? 0) > 0 && userAuthoredRecipes}
-        <Center p={5}>
-          <Heading>Liked Recipes</Heading>
-        </Center>
-        <Divider mb={5}/>
-        {(userData.likedRecipes?.length ?? 0) > 0 
-            ? userLikedRecipes
-            : <Center mb={10}>{userData.username} has not liked any recipes yet</Center>}
+        {(!showLiked && (userData.authoredRecipes?.length ?? 0) === 0) &&
+            <>
+            <Center>
+                <Heading p={5} >Recipes</Heading>
+            </Center>
+
+            <Divider mb={10} />
+            <Center>
+                {userData.username} has not published any recipes
+            </Center>
+            </>
+        }
+        {showLiked &&
+            <>
+            <Center p={5}>
+                <Heading>Liked Recipes</Heading>
+            </Center>
+            <Divider mb={5}/>
+            {(userData.likedRecipes?.length ?? 0) > 0 
+                ? userLikedRecipes
+                : <Center mb={10}>{userData.username} has not liked any recipes yet</Center>}
+            </>
+        }
+
       </>
     )
   );

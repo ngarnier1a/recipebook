@@ -7,15 +7,15 @@ import Home from "./home";
 import Profile from "./users/Profile";
 import Recipe from "./recipe";
 import Navigation from "./navigation";
-import Friends from "./friend";
 import { ChakraProvider, ColorModeProvider } from "@chakra-ui/react";
 import store from "./store";
 import { Provider } from "react-redux";
 import CurrentUser from "./users/CurrentUser";
 import Nutrition from "./nutrition";
 import RecipeMaker from "./recipe/RecipeMaker";
-import RecipeViewer from "./recipe/RecipeViewer";
 import Recipes from "./users/Recipes";
+import ProfileEdit from "./users/ProfileEdit";
+import Chefs from "./users/Chefs";
 
 function App() {
   return (
@@ -31,13 +31,13 @@ function App() {
                 {/* <Route path="/search" element={<Search />} /> */}
                 {/* <Route path="/search/:searchType/:searchQuery" element={<Search />} /> */}
                 <Route path="/user/profile" element={<Profile />} />
+                <Route path="/user/profile/edit" element={<ProfileEdit />} />
                 <Route path="/user/:userId/profile/" element={<Profile />} />
                 <Route path="/user/recipes" element={<Recipes />} />
-                <Route path="/user/:userId/recipes" element={<Recipes />} />
-                <Route path="/user/friends" element={<Friends />} />
-                <Route path="/user/:userId/friends" element={<Friends />} />
+                <Route path="/user/:userId/recipes" element={<Recipes showLiked={false} />} />
                 <Route path="/recipe/:recipeId" element={<Recipe />} />
-                <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} />
+                <Route path="/browse/chefs/:sortBy" element={<Chefs />} />
+                {/* <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} /> */}
                 <Route path="/recipe/create" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/clone" element={<RecipeMaker />} />
