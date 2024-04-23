@@ -43,6 +43,7 @@ function Chefs() {
       const sortByParam = searchParams.get("by") ?? "followers";
       const sortDirParam = searchParams.get("dir") ?? "dsc";
       if (!searchParams.get("by") || !searchParams.get("dir")) {
+        console.log(`navigating to /browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
         navigate(`/browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
         return;
       }
@@ -55,10 +56,6 @@ function Chefs() {
 
     fetchPopularChefs();
   }, [location, navigate]);
-
-  useEffect(() => {
-    navigate(`/browse/chefs?by=${sortBy}&dir=${sortDir}`);
-  }, [sortDir, sortBy, navigate]);
 
   const sortFunctions: Record<string, (a: User, b: User) => number> = {
     likes: (a, b) => {
@@ -109,7 +106,7 @@ function Chefs() {
             width='200px'
             value={sortBy ?? 'followers'}
             isDisabled={isLoading}
-            onChange={(e) => setSortBy(e.target.value)}
+            onChange={(e) => navigate(`/browse/chefs?by=${e.target.value}&dir=${sortDir}`)}
         >
             <option value='followers'>Followers</option>
             <option value='recipes'>Total Recipes</option>
@@ -122,7 +119,7 @@ function Chefs() {
             ml={0}
             variant='ghost'
             isLoading={isLoading}
-            onClick={() => setSortDir(sortDir === 'dsc' ? 'asc' : 'dsc')}
+            onClick={() => navigate(`/browse/chefs?by=${sortBy}&dir=${sortDir === 'dsc' ? 'asc' : 'dsc'}`)}
             icon={sortDir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
         />
     </HStack>
