@@ -124,20 +124,57 @@ function Profile() {
     </Text>
   )
 
+  const desktopHeader = (
+    <HStack
+        justifyContent="space-between"
+        align="center"
+        w="full"
+        mt={5}
+        mb={4}
+        display={{ base: "none", md: "flex" }}
+    >
+        <Heading
+        position="absolute"
+        left="50%"
+        transform="translateX(-50%)"
+        zIndex="1"
+        size="xl"
+        mt={5}
+        mb={3}
+        >
+        {userProfile?.username}'s Profile
+        </Heading>
+        <Spacer />
+        <Box h="40px" mr={5}>
+          { (currentUser && isCurrentUser) && editButton }
+          { (currentUser && !isCurrentUser && userProfile?.type === 'CHEF') && followButton }
+          { (!currentUser && userProfile?.type === 'CHEF') && AnonymousInfo }
+        </Box>
+    </HStack>
+  )
+
+  const mobileHeader = (
+    <VStack display={{ base: "flex", md: "none" }}>
+        <Heading
+            size="xl"
+            mt={5}
+            mb={0}
+            >
+            {userProfile?.username}'s Profile
+        </Heading>
+        <HStack>
+            { (currentUser && isCurrentUser) && editButton }
+            { (currentUser && !isCurrentUser && userProfile?.type === 'CHEF') && followButton }
+            { (!currentUser && userProfile?.type === 'CHEF') && AnonymousInfo }
+        </HStack>
+    </VStack>
+  )
+
   return (userProfile &&
     <div>
       <VStack>
-          <HStack justifyContent="space-between" align='center' w='full' mt={5} mb={4}>
-            <Heading position="absolute" left="50%" transform="translateX(-50%)" zIndex="1" size='xl' mt={5} mb={3}>
-              {userProfile.username}'s Profile
-            </Heading>
-            <Spacer />
-            <Box h='40px' mr={5}>
-              { (currentUser && isCurrentUser) && editButton }
-              { (currentUser && !isCurrentUser && userProfile.type === 'CHEF') && followButton }
-              { (!currentUser && userProfile.type === 'CHEF') && AnonymousInfo }
-            </Box>
-          </HStack>
+          {desktopHeader}
+          {mobileHeader}
           <Divider />
       </VStack>
       <Text fontSize='xl' m={5} ml={8} mb={3} fontWeight='bold'>Biography</Text>
