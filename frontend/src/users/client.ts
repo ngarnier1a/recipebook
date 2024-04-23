@@ -30,6 +30,17 @@ export const otherProfile = async (uid: UserID): Promise<User> => {
     return response.data;
 }
 
-export const updateProfile = async (user: User): Promise<void> => {
-    await api.put(`${SECURITY_API}/${user._id}`, user);
+export const updateProfile = async (user: User): Promise<User> => {
+    const response = await api.put(`${SECURITY_API}/${user._id}`, user);
+    return response.data;
 };
+
+export const setFollowUser = async (uid: UserID, follow: boolean): Promise<User> => {
+    const response = await api.put(`${SECURITY_API}/follow/${uid}`, { follow });
+    return response.data;
+}
+
+export const popularChefs = async (sortBy: string, sortDir: string): Promise<User[]> => {
+    const response = await api.post(`${SERVICE_URL}/chefs`, null, { params: { sortBy, sortDir }});
+    return response.data;
+}

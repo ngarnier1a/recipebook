@@ -123,11 +123,15 @@ export default function RecipeRoutes(app: Application) {
       }
 
       const { change, user } = await userDao.setLikedStatus(req.session.user._id, recipe, like);
-      if (change !== 0) {
-        recipe.likes = (recipe.likes || 0) + change;
-        await recipe.save();
-        req.session.user = user;
+      
+      if (change === 0) {
+        res.sendStatus(400);
+        return;
       }
+
+      const modifiableRecipe = recipe.toObject();
+      await dao.updateRecipe(recipeId, {...modifiableRecipe, likes: Math.max(0, (modifiableRecipe.likes ?? 0) + change)});
+
       res.send(user);
     } catch (e) {
       console.error(`Error liking recipe: ${e}`);
@@ -139,5 +143,5 @@ export default function RecipeRoutes(app: Application) {
   app.get("/api/recipe/:recipeId", getRecipeDetails);
   app.put("/api/recipe/:recipeId", updateRecipe);
   app.delete("/api/recipe/:recipeId", deleteRecipe);
-  app.post("/api/recipe/:recipeId/like", likeRecipe);
+  app.put("/api/recipe/:recipeId/like", likeRecipe);
 }

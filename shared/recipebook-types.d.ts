@@ -4,6 +4,7 @@ type User = {
     _id?: UserID;                       // optional: not passed from frontend on signup
     username: string;
     type: UserType;
+    bio?: string;                       // optional: not passed for non-chefs and if not set
     password?: string;                  // optional: not passed to frontend
     email?: string;                     // optional: not passed when request for other user
     firstName?: string;                 // optional: not passed when request for other user
@@ -12,6 +13,7 @@ type User = {
     likedRecipes?: Recipe[];            // optional: not passed if user has not liked any recipes or if not requesting user profile
     followedChefs?: User[];             // optional: not passed if user has not followed any chefs or if not requesting user profile
     authoredRecipes?: Recipe[];         // optional: not passed if user has not authored any recipes, is not a chef, or if not requesting user profile
+    numFollowers?: number;             // optional: not passed if not a chef
 }
 
 type Recipe = {

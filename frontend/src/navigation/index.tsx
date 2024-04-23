@@ -97,15 +97,23 @@ export default function Navbar() {
     }
   };
 
+  // pick first name if avaliable for greeting
+  const greeting = currentUser
+    ? (currentUser.firstName
+        ? `Hi, ${currentUser.firstName}`
+        : `Hi, ${currentUser.username}`
+      )
+    : "";
+
   const endContent = currentUser ? (
     <Menu isLazy variant="filled">
       <MenuButton>
         <Avatar size="sm" />
       </MenuButton>
       <MenuList>
-        <MenuGroup title={`Hi, ${currentUser.username}`}>
+        <MenuGroup title={greeting}>
           <MenuItem onClick={() => navigate("/user/profile")}>Profile</MenuItem>
-          <MenuItem onClick={() => navigate("/user/settings")}>
+          <MenuItem onClick={() => navigate("/user/profile/edit")}>
             Settings
           </MenuItem>
           <MenuItem onClick={handleSignout}>Sign Out</MenuItem>
@@ -229,7 +237,7 @@ const DesktopNav = () => {
   return (
     <Stack direction={"row"} spacing={1}>
       {NAV_ITEMS.filter((navItem) => {
-        return !navItem.userType || navItem.userType === currentUser?.type;
+        return !navItem.userType || navItem.userType === currentUser?.type || (navItem.userType === "ANY" && currentUser);
       }).map((navItem, idx) => (
         <Box key={idx}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
@@ -265,7 +273,7 @@ const DesktopNav = () => {
                   {navItem.children
                     .filter((child) => {
                       return (
-                        !child.userType || child.userType === currentUser?.type
+                        !child.userType || child.userType === currentUser?.type || (child.userType === "ANY" && currentUser)
                       );
                     })
                     .map((child) => (
@@ -330,7 +338,7 @@ const MobileNav = () => {
       display={{ md: "none" }}
     >
       {NAV_ITEMS.filter(
-        (navItem) => !navItem.userType || navItem.userType === currentUser?.type
+        (navItem) => !navItem.userType || navItem.userType === currentUser?.type || (navItem.userType === "ANY" && currentUser)
       ).map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
@@ -353,6 +361,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         alignItems="center"
         _hover={{
           textDecoration: "none",
+          cursor: "pointer",
         }}
       >
         <Text
@@ -380,10 +389,11 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
           borderStyle={"solid"}
           borderColor={useColorModeValue("gray.200", "gray.700")}
           align={"start"}
+          _hover={{ cursor: "pointer" }}
         >
           {children &&
             children.filter(
-              (child) => !child.userType || child.userType === currentUser?.type
+              (child) => !child.userType || child.userType === currentUser?.type || (child.userType === "ANY" && currentUser)
             ).map((child) => (
               <Box
                 as="a"
@@ -405,7 +415,7 @@ interface NavItem {
   subLabel?: string;
   children?: Array<NavItem>;
   href?: string;
-  userType?: UserType;
+  userType?: UserType | "ANY";
 }
 
 const NAV_ITEMS: Array<NavItem> = [
@@ -421,6 +431,7 @@ const NAV_ITEMS: Array<NavItem> = [
         label: "Your Recipes",
         subLabel: "Recipes you've created or liked",
         href: "/user/recipes",
+        userType: "ANY"
       },
       {
         label: "Create Recipe",
@@ -432,7 +443,7 @@ const NAV_ITEMS: Array<NavItem> = [
   },
   {
     label: "Chefs",
-    href: "/search/chefs",
+    href: "/browse/chefs?by=followers&dir=dsc",
   },
   {
     label: "Nutrition",

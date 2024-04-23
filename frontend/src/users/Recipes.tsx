@@ -13,7 +13,7 @@ import {
 import RecipeCard from "../recipe/RecipeCard";
 import { nanoid } from "@reduxjs/toolkit";
 
-function Recipes() {
+function Recipes({showLiked = true} : {showLiked?: boolean}) {
   const { userId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const [userData, setUserData] = React.useState<User | null>(null);
@@ -32,6 +32,21 @@ function Recipes() {
     fetchUserData();
   }, [userId, currentUser]);
 
+  const sortRecipesByLikes = (a: Recipe, b: Recipe) => {
+    if (!a.likes) {
+        if (!b.likes) return 0;
+        return 1;
+    }
+    if (!b.likes) {
+        if (!a.likes) return 0;
+        return -1;
+    }
+    return b.likes - a.likes;
+  }
+
+  const sortedAuthoredRecipes = [...(userData?.authoredRecipes ?? [])].sort(sortRecipesByLikes);
+  const sortedLikedRecipes = [...(userData?.likedRecipes ?? [])].sort(sortRecipesByLikes);
+
   const userAuthoredRecipes = (
     <>
         <Center p={5}>
@@ -39,7 +54,7 @@ function Recipes() {
         </Center>
         <Divider mb={5}/>
         <Flex justifyContent={justifyVal} wrap='wrap' ml={3} mr={3}>
-            {userData?.authoredRecipes?.map((recipe) => (
+            {sortedAuthoredRecipes.map((recipe) => (
                 <RecipeCard recipe={recipe} key={recipe._id ?? nanoid()} />
             ))}
         </Flex>
@@ -49,8 +64,8 @@ function Recipes() {
 
   const userLikedRecipes = (
     <>
-    <Flex justifyContent={'start'} wrap='wrap' ml={5}>
-        {userData?.likedRecipes?.map((recipe) => (
+    <Flex justifyContent={'start'} wrap='wrap' ml={5} mb={10}>
+        {sortedLikedRecipes.map((recipe) => (
             <RecipeCard recipe={recipe} key={recipe._id ?? nanoid()} />
         ))}
     </Flex>
@@ -61,11 +76,30 @@ function Recipes() {
     userData && (
       <>
         {(userData.authoredRecipes?.length ?? 0) > 0 && userAuthoredRecipes}
-        <Center p={5}>
-          <Heading>{userData.username}'s Liked Recipes</Heading>
-        </Center>
-        <Divider mb={5}/>
-        {(userData.likedRecipes?.length ?? 0) > 0 ? userLikedRecipes : <Center>{userData.username} has not liked any recipes yet</Center>}
+        {(!showLiked && (userData.authoredRecipes?.length ?? 0) === 0) &&
+            <>
+            <Center>
+                <Heading p={5}>{userData.username}'s Recipes</Heading>
+            </Center>
+
+            <Divider mb={10} />
+            <Center>
+                {userData.username} has not published any recipes
+            </Center>
+            </>
+        }
+        {showLiked &&
+            <>
+            <Center p={5}>
+                <Heading>Liked Recipes</Heading>
+            </Center>
+            <Divider mb={5}/>
+            {(userData.likedRecipes?.length ?? 0) > 0 
+                ? userLikedRecipes
+                : <Center mb={10}>{userData.username} has not liked any recipes yet</Center>}
+            </>
+        }
+
       </>
     )
   );

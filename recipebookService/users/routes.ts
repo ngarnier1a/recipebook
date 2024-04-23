@@ -121,9 +121,65 @@ export default function UserRoutes(app: Application) {
     res.send(user);
   };
 
+  const otherProfile = async (req: Request, res: Response) => {
+    const { userId } = req.params;
+    try {
+      const user = await dao.findPublicUserByIdRich(userId);
+      if (!user) {
+        res.sendStatus(404);
+        return;
+      }
+      res.send(user.toObject());
+    } catch (e) {
+      console.error(`Error getting user profile: ${e}`);
+      res.sendStatus(404);
+    }
+  }
+
+  const followUser = async (req: Request, res: Response) => {
+    if (!req.session.user || !req.session.user._id) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const { userId } = req.params;
+    const toFollow = req.body.follow;
+
+    const isFollowing = (req.session.user.followedChefs?.findIndex(chef => chef._id === userId) ?? -1) >= 0;
+
+    if (isFollowing === toFollow) {
+      res.sendStatus(400);
+      return;
+    }
+
+    try {
+      const user = await dao.updateFollowUser(req.session.user._id, userId, toFollow);
+      req.session.user = user;
+      res.send(user);
+    } catch (e) {
+      console.error(`Error following user: ${e}`);
+      res.sendStatus(400);
+    }
+  }
+
+  const getChefs = async (req: Request, res: Response) => {
+    const { sortBy = 'followers', sortDir = 'dsc' } = req.query;
+    
+    try {
+      const chefs = await dao.findChefs(sortBy as string, sortDir as string);
+      res.send(chefs);
+    } catch (e) {
+      console.error(`Error getting chefs: ${e}`);
+      res.sendStatus(404);
+    }
+  }
+
   app.put("/api/auth/:userId", updateUser);
   app.post("/api/auth/signup", signup);
   app.post("/api/auth/signin", signin);
   app.post("/api/auth/signout", signout);
   app.get("/api/auth/profile", profile);
+  app.get("/api/auth/profile/:userId", otherProfile);
+  app.put("/api/auth/follow/:userId", followUser);
+  app.post("/api/chefs", getChefs);
 }

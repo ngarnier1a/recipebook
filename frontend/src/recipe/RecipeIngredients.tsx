@@ -25,12 +25,23 @@ function RecipeIngredients({
     throw new Error("Recipe must have ingredients to render");
   }
 
-  const desktopIngredient = (ingredient: RecipeIngredient, index: number) => (
-    <Tr key={index}>
+  const sortedIngredients = recipe.ingredients.sort((a, b) => {
+    if (a.stepNumber === b.stepNumber) {
+      if (a.name === b.name) {
+        return a.ingredientID.localeCompare(b.ingredientID);
+      } else {
+        return a.name.localeCompare(b.name);
+      }
+    }
+    return (a.stepNumber ?? -1) - (b.stepNumber ?? -1);
+  });
+
+  const desktopIngredient = (ingredient: RecipeIngredient) => (
+    <Tr key={ingredient.ingredientID}>
       <Td pr={0}>{ingredient.name}</Td>
       <Td px={0}>{ingredient.quantity.toString()}</Td>
       <Td px={0}>{ingredient.unit}</Td>
-      {<Td px={0}>{ingredient.stepNumber && ingredient.stepNumber}</Td>}
+      {<Td px={0}>{ingredient.stepNumber && (ingredient.stepNumber ?? -1) >= 0 ? ingredient.stepNumber + 1 : ''}</Td>}
       {ingredient.fdcID &&
         <Td pl={0}>
           <Link onClick={() => navigate(`/nutrition/${ingredient.fdcID}`)}>
@@ -39,10 +50,14 @@ function RecipeIngredients({
         </Td>
       }
     </Tr>
-  );
+  )
 
-  const mobileIngredient = (ingredient: RecipeIngredient, index: number) => (
-    <AccordionItem key={index} display={{ md: "none" }} my={1}>
+  const mobileIngredient = (ingredient: RecipeIngredient) => (
+    <AccordionItem
+      key={ingredient.ingredientID}
+      display={{ md: "none" }}
+      my={1}
+      >
         <AccordionButton
           width='90%'
           textAlign={{ base: "center" }}>
@@ -78,12 +93,12 @@ function RecipeIngredients({
             </Tr>
           </Thead>
           <Tbody>
-            {recipe.ingredients.map((ingredient, index) => desktopIngredient(ingredient, index))}
+            {sortedIngredients.map((ingredient) => desktopIngredient(ingredient))}
           </Tbody>
         </Table>
       </TableContainer>
       <Accordion allowToggle width='100%' display={{ md: "none" }}>
-        {recipe.ingredients.map((ingredient, index) => mobileIngredient(ingredient, index))}
+        {sortedIngredients.map((ingredient) => mobileIngredient(ingredient))}
       </Accordion>
     </>
   );

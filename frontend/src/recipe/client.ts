@@ -26,6 +26,6 @@ export const deleteRecipe = async (rid: RecipeID): Promise<User> => {
 }   
 
 export const setLikedStatus = async (rid: RecipeID, like: boolean): Promise<User> => {
-    const response = await api.post(`${SERVICE_URL}/recipe/${rid}/like`, { like });
+    const response = await api.put(`${SERVICE_URL}/recipe/${rid}/like`, { like });
     return response.data;
 }
