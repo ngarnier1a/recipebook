@@ -29,9 +29,12 @@ export default function UserRoutes(app: Application) {
       res.sendStatus(401);
       return;
     }
-    delete req.body.password;
+    const newUser = { ...req.body };
+    if (newUser.password) {
+      newUser.password = await bcrypt.hash(req.body.password, SALT_ROUNDS);
+    }
     try {
-      const status = await dao.updateUser(userId, req.body);
+      const status = await dao.updateUser(userId, newUser);
       if (status.matchedCount === 0) {
         res.sendStatus(404);
         return;
