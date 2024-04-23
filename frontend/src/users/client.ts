@@ -33,3 +33,8 @@ export const otherProfile = async (uid: UserID): Promise<User> => {
 export const updateProfile = async (user: User): Promise<void> => {
     await api.put(`${SECURITY_API}/${user._id}`, user);
 };
+
+export const setFollowUser = async (uid: UserID, follow: boolean): Promise<User> => {
+    const response = await api.put(`${SECURITY_API}/follow/${uid}`, { follow });
+    return response.data;
+}

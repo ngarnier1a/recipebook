@@ -35,7 +35,7 @@ function Recipes() {
   const userAuthoredRecipes = (
     <>
         <Center p={5}>
-            <Heading>{userData?.username}'s Recipes</Heading>
+            <Heading>Recipes</Heading>
         </Center>
         <Divider mb={5}/>
         <Flex justifyContent={justifyVal} wrap='wrap' ml={3} mr={3}>
@@ -62,7 +62,7 @@ function Recipes() {
       <>
         {(userData.authoredRecipes?.length ?? 0) > 0 && userAuthoredRecipes}
         <Center p={5}>
-          <Heading>{userData.username}'s Liked Recipes</Heading>
+          <Heading>Liked Recipes</Heading>
         </Center>
         <Divider mb={5}/>
         {(userData.likedRecipes?.length ?? 0) > 0 ? userLikedRecipes : <Center>{userData.username} has not liked any recipes yet</Center>}
