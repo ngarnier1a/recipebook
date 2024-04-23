@@ -144,6 +144,11 @@ function Profile() {
       <Text fontSize='large' ml={10} mr={10} mb={10}>
         {userProfile.bio ? userProfile.bio : "No bio available"}
       </Text>
+      {userProfile.type === 'CHEF' && (
+        <Text fontSize='medium' ml={10} mr={10} mb={5}>
+          {`${Math.max(0, userProfile.numFollowers ?? 0)} followers | ${userProfile.authoredRecipes?.length ?? 0} recipes published`}
+        </Text>
+      )}
       <Divider />
       <Recipes />
     </div>
