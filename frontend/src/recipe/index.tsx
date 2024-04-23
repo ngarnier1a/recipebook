@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as recipeClient from "./client";
-import { Center, VStack, Heading, Container, Grid, GridItem, Text, OrderedList, ListItem, Button, useColorModeValue, useBreakpointValue, Link, Icon, useToast } from "@chakra-ui/react";
+import { Center, VStack, Heading, Container, Grid, GridItem, Text, OrderedList, ListItem, Button, useColorModeValue, useBreakpointValue, Link, Icon, useToast, useColorMode } from "@chakra-ui/react";
 import RecipeIngredients from "./RecipeIngredients";
 import { useDispatch, useSelector } from "react-redux";
 import { UserState } from "../store";
@@ -19,6 +19,7 @@ function Recipe() {
   const gridColor = useColorModeValue("gray.100", "gray.700");
   const likeColor = useColorModeValue("red.400", "red.500");
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
+  const { colorMode } = useColorMode();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const toast = useToast();
@@ -73,6 +74,8 @@ function Recipe() {
   };
 
   const recipeLiked = (currentUser?.likedRecipes?.findIndex((likedRecipe) => likedRecipe._id === recipeId) ?? -1) > -1;
+
+  const likeButtonColor = (!recipeLiked && colorMode === 'light') ? 'black' : 'white';
 
   return ( recipe &&
     <Center>
@@ -171,7 +174,7 @@ function Recipe() {
                   isDisabled={isLiking}
                   p={5}
                   minW={20}
-                  color={recipeLiked ? "white" : "black"}
+                  color={likeButtonColor}
                   onClick={() => likeRecipe(!recipeLiked)}
                 >
                   {recipe.likes}
