@@ -36,7 +36,7 @@ function App() {
                 <Route path="/user/recipes" element={<Recipes />} />
                 <Route path="/user/:userId/recipes" element={<Recipes showLiked={false} />} />
                 <Route path="/recipe/:recipeId" element={<Recipe />} />
-                <Route path="/browse/chefs/:sortBy" element={<Chefs />} />
+                <Route path="/browse/chefs" element={<Chefs />} />
                 {/* <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} /> */}
                 <Route path="/recipe/create" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />

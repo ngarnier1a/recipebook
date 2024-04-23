@@ -361,6 +361,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
         alignItems="center"
         _hover={{
           textDecoration: "none",
+          cursor: "pointer",
         }}
       >
         <Text
@@ -388,6 +389,7 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
           borderStyle={"solid"}
           borderColor={useColorModeValue("gray.200", "gray.700")}
           align={"start"}
+          _hover={{ cursor: "pointer" }}
         >
           {children &&
             children.filter(
@@ -440,7 +442,7 @@ const NAV_ITEMS: Array<NavItem> = [
   },
   {
     label: "Chefs",
-    href: "/search/chefs",
+    href: "/browse/chefs",
   },
   {
     label: "Nutrition",

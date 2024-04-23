@@ -39,3 +39,8 @@ export const setFollowUser = async (uid: UserID, follow: boolean): Promise<User>
     const response = await api.put(`${SECURITY_API}/follow/${uid}`, { follow });
     return response.data;
 }
+
+export const popularChefs = async (sortBy: string): Promise<User[]> => {
+    const response = await api.get(`${SERVICE_URL}/chefs?sortBy=${sortBy}`);
+    return response.data;
+}
