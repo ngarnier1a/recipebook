@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserState } from "../store";
-import { Divider, Heading, useToast, Text, VStack, HStack, Spacer, Button } from "@chakra-ui/react";
+import { Divider, Heading, useToast, Text, VStack, HStack, Spacer, Button, Box } from "@chakra-ui/react";
 import * as client from "./client";
 import Recipes from "./Recipes";
 import { setCurrentUser } from "./reducer";
@@ -57,10 +57,6 @@ function Profile() {
     }
   }, [userId, currentUser, navigate, toast]);
 
-  if (!userProfile || !userProfile._id) {
-    return <div>404: No user found</div>;
-  }
-
   const handleFollow = async (setFollowingStatus: boolean) => {
     setIsPressingFollow(true);
     if (!userProfile || !currentUser) {
@@ -70,7 +66,7 @@ function Profile() {
     }
 
     try {
-      const newUser = await client.setFollowUser(userProfile._id || '', true);
+      const newUser = await client.setFollowUser(userProfile._id || '', setFollowingStatus);
       if (newUser._id) {
         dispatch(setCurrentUser(newUser));
       }
@@ -108,7 +104,7 @@ function Profile() {
   const followButton = (
     <Button
       isLoading={isPressingFollow}
-      mr={5}
+      m={0}
       onClick={() => handleFollow(!isFollowing)}
       colorScheme={isFollowing ? "red" : "blue"}
     >
@@ -117,13 +113,13 @@ function Profile() {
   )
 
   const editButton = (
-    <Button mr={5} onClick={handleEdit} colorScheme="blue">
+    <Button m={0} onClick={handleEdit} colorScheme="blue">
       Edit Profile
     </Button>
   )
 
   const AnonymousInfo = (
-    <Text mr={5}>
+    <Text m={0}>
       Sign in to follow
     </Text>
   )
@@ -136,7 +132,11 @@ function Profile() {
               {userProfile.username}'s Profile
             </Heading>
             <Spacer />
-            {currentUser ? (isCurrentUser ? editButton : followButton) : AnonymousInfo}
+            <Box h='40px' mr={5}>
+              { (currentUser && isCurrentUser) && editButton }
+              { (currentUser && !isCurrentUser && userProfile.type === 'CHEF') && followButton }
+              { (!currentUser && userProfile.type === 'CHEF') && AnonymousInfo }
+            </Box>
           </HStack>
           <Divider />
       </VStack>
