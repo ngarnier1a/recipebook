@@ -50,7 +50,7 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
   const userAuthoredRecipes = (
     <>
         <Center p={5}>
-            <Heading>Recipes</Heading>
+            <Heading>{userData?.username}'s Recipes</Heading>
         </Center>
         <Divider mb={5}/>
         <Flex justifyContent={justifyVal} wrap='wrap' ml={3} mr={3}>
@@ -79,7 +79,7 @@ function Recipes({showLiked = true} : {showLiked?: boolean}) {
         {(!showLiked && (userData.authoredRecipes?.length ?? 0) === 0) &&
             <>
             <Center>
-                <Heading p={5} >Recipes</Heading>
+                <Heading p={5}>{userData.username}'s Recipes</Heading>
             </Center>
 
             <Divider mb={10} />
