@@ -15,29 +15,46 @@ export const findUserById = async (userId: UserID, populate: string[] = []) =>
 
 export const findUserByIdRich = async (userId: UserID) =>
   await model.findById(userId).populate({
-    path: "likedRecipes",
-    populate: {
-      path: "author",
-      select: "_id username",
-    },
-  }).populate({
-    path: "authoredRecipes",
-    populate: {
-      path: "author",
-      select: "_id username",
-    },
-  }).populate({
-    path: "followedChefs",
-    populate: {
+      path: "likedRecipes",
+      select: "_id name author likes description",
+      populate: {
+        path: "author",
+        select: "_id username",
+      },
+    }).populate({
+      path: "authoredRecipes",
+      select: "_id name author likes description",
+      populate: {
+        path: "author",
+        select: "_id username",
+      },
+    }).populate({
+      path: "followedChefs",
+      select: "_id username authoredRecipes numFollowers",
+      populate: {
+        path: "authoredRecipes",
+        select: "_id name likes",
+      },
+    });
+
+export const findPublicUserByIdRich = async (userId: UserID) => {
+  return await model
+    .findById(userId)
+    .select('-email -siteTheme -firstName -lastName')
+    .populate({
+      path: "likedRecipes",
+      populate: {
+        path: "author",
+        select: "_id username",
+      },
+    }).populate({
       path: "authoredRecipes",
       populate: {
         path: "author",
+        select: "_id username",
       },
-    },
-  });
-
-export const findPublicUserById = async (userId: UserID, populate: string[] = []) =>
-  await model.findById(userId).select('-email -siteTheme -lastName').populate(populate);
+    });
+}
 
 export const findUserByUsername = async (username: string, populate: string[] = []) =>
   await model.findOne({ username: username }).populate(populate);
@@ -53,25 +70,23 @@ export const deleteUser = async (userId: UserID) =>
   await model.deleteOne({ _id: userId });
 
 export const setLikedStatus = async (userId: UserID, recipe: Recipe, setLikedStatus: boolean): Promise<{ change: number, user: User }> => {
-  const user = await findUserByIdRich(userId);
-  if (!user || user.likedRecipes === undefined) {
-    throw new Error("User/liked recipes not found");
-  }
+  let result;
   let change = 0;
-  if (setLikedStatus && user.likedRecipes.findIndex(r => r._id?.toString() === recipe._id?.toString()) === -1) {
-    // user wants to like and has not liked
-    user.likedRecipes.push(recipe);
-    change = 1;
-  } else if (!setLikedStatus && user.likedRecipes.findIndex(r => r._id?.toString() === recipe._id?.toString()) > -1) {
-    // user wants to unlike and has liked
-    user.likedRecipes = user.likedRecipes.filter(r => r._id?.toString() !== recipe._id?.toString());
-    change = -1;
+  if (setLikedStatus) {
+    result = await model.findById(userId).updateOne({ $addToSet: { likedRecipes: recipe._id } });
   } else {
-    // no change
-    return {change, user}
+    result = await model.findById(userId).updateOne({ $pull: { likedRecipes: recipe._id } });
   }
-  await user.save();
-  return {change, user: user.toObject() as User};
+
+  if (result.modifiedCount === 1) {
+    change = setLikedStatus ? 1 : -1;
+  }
+
+  const user = await findUserByIdRich(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return { change, user: user.toObject() as User };
 }
 
 export const authorNewRecipe = async (userId: UserID, recipe: Recipe) => {
@@ -81,4 +96,23 @@ export const authorNewRecipe = async (userId: UserID, recipe: Recipe) => {
   }
   user.authoredRecipes.push(recipe);
   await user.save();
+}
+
+export const updateFollowUser = async (userId: UserID, followUserId: UserID, toFollow: boolean): Promise<User> => {
+  let result;
+  if (toFollow) {
+    result = await model.findById(userId).updateOne({ $addToSet: { followedChefs: followUserId } });
+  } else {
+    result = await model.findById(userId).updateOne({ $pull: { followedChefs: followUserId } });
+  }
+
+  if (result.modifiedCount === 1) {
+    await model.findByIdAndUpdate(followUserId, { $inc: { numFollowers: (toFollow ? 1 : -1) } });
+  }
+
+  const user = await findUserByIdRich(userId);
+  if (!user) {
+    throw new Error("User not found");
+  }
+  return user.toObject() as User;
 }
