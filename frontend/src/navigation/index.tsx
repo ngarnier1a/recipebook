@@ -113,7 +113,7 @@ export default function Navbar() {
       <MenuList>
         <MenuGroup title={greeting}>
           <MenuItem onClick={() => navigate("/user/profile")}>Profile</MenuItem>
-          <MenuItem onClick={() => navigate("/user/settings")}>
+          <MenuItem onClick={() => navigate("/user/profile/edit")}>
             Settings
           </MenuItem>
           <MenuItem onClick={handleSignout}>Sign Out</MenuItem>

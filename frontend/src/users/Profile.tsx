@@ -183,7 +183,11 @@ function Profile() {
       </Text>
       {userProfile.type === 'CHEF' && (
         <Text fontSize='medium' ml={10} mr={10} mb={5}>
-          {`${Math.max(0, userProfile.numFollowers ?? 0)} followers | ${userProfile.authoredRecipes?.length ?? 0} recipes published`}
+          {
+            `${Math.max(0, userProfile.numFollowers ?? 0)}
+            follower${(userProfile.numFollowers ?? 0) === 1 ? '' : 's' }
+            | ${userProfile.authoredRecipes?.length ?? 0} recipes published`
+          }
         </Text>
       )}
       <Divider />
