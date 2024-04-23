@@ -162,6 +162,18 @@ export default function UserRoutes(app: Application) {
     }
   }
 
+  const getChefs = async (req: Request, res: Response) => {
+    const { sortBy = 'followers', sortDir = 'dsc' } = req.query;
+    
+    try {
+      const chefs = await dao.findChefs(sortBy as string, sortDir as string);
+      res.send(chefs);
+    } catch (e) {
+      console.error(`Error getting chefs: ${e}`);
+      res.sendStatus(404);
+    }
+  }
+
   app.put("/api/auth/:userId", updateUser);
   app.post("/api/auth/signup", signup);
   app.post("/api/auth/signin", signin);
@@ -169,4 +181,5 @@ export default function UserRoutes(app: Application) {
   app.get("/api/auth/profile", profile);
   app.get("/api/auth/profile/:userId", otherProfile);
   app.put("/api/auth/follow/:userId", followUser);
+  app.post("/api/chefs", getChefs);
 }

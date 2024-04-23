@@ -116,3 +116,62 @@ export const updateFollowUser = async (userId: UserID, followUserId: UserID, toF
   }
   return user.toObject() as User;
 }
+
+export const findChefs = async (sortBy: string, dir: string) => {
+  const sortConditions = {
+    likes: { $sort: { "totalLikes": dir === "dsc" ? -1 : 1 } },
+    followers: { $sort: { "numFollowers": dir === "dsc" ? -1 : 1 } },
+    recipes: { $sort: { "totalRecipes": dir === "dsc" ? -1 : 1 } },
+  }
+
+  const pipeline: any[] = [
+    { $match: { type: "CHEF" } },
+    { $project: { username: 1, authoredRecipes: 1, numFollowers: 1, bio: 1 } }
+  ]
+
+  if (sortBy === "likes") {
+    const likeAggregateSteps = [
+      {
+        $lookup: {
+          from: 'recipes',
+          localField: 'authoredRecipes',
+          foreignField: '_id',
+          as: 'recipeDetails',
+          pipeline: [{ $project: { likes: 1 } }],
+        }
+      },
+      {
+        $unwind: {
+          path: '$recipeDetails',
+          preserveNullAndEmptyArrays: true,
+        }
+      },
+      {
+        $group: {
+          _id: '$_id',
+          username: { $first: '$username' },
+          bio: { $first: '$bio' },
+          authoredRecipes: { $first: '$authoredRecipes' },
+          numFollowers: { $first: '$numFollowers' },
+          totalLikes: { $sum: '$recipeDetails.likes' },
+        }
+      },
+    ]
+    pipeline.push(...likeAggregateSteps);
+  } else if (sortBy === "recipes") {
+    const recipeAggregateStep =
+      { $addFields: { totalRecipes: { $size: { $ifNull: [ '$authoredRecipes', [] ] } } } }
+    pipeline.push(recipeAggregateStep);
+  }
+
+  pipeline.push(sortConditions[sortBy as keyof typeof sortConditions]);
+
+  try {
+    const chefs = await model.aggregate(pipeline);
+    console.log(JSON.stringify(chefs));
+    return chefs;
+  } catch (e) {
+    console.error(`Error getting chefs: ${e}`);
+    throw e;
+  }
+}
