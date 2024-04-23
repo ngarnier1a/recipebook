@@ -1,13 +1,15 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
 import * as userClient from "./client";
 import {
   Center,
-  Divider,
   Flex,
+  HStack,
   Heading,
+  IconButton,
+  Select,
   Tab,
   TabList,
   TabPanel,
@@ -16,10 +18,11 @@ import {
   useBreakpointValue,
 } from "@chakra-ui/react";
 import ChefCard from "./ChefCard";
-import { tab } from "@testing-library/user-event/dist/tab";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 
 function Chefs() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const headerMargin = useBreakpointValue({ base: 4, md: -5 });
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });
@@ -31,24 +34,31 @@ function Chefs() {
   const [sortDir, setSortDir] = React.useState<string>("dsc");
   const [popularChefs, setPopularChefs] = React.useState<User[] | null>(null);
   const [tabSelected, setTabSelected] = React.useState<string>("popular");
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   useEffect(() => {
+    setIsLoading(true);
     const fetchPopularChefs = async () => {
       const searchParams = new URLSearchParams(location.search);
       const sortByParam = searchParams.get("by") ?? "followers";
-      const sortDir = searchParams.get("dir") ?? "dsc";
-      setSortDir(sortDir);
-      setSortBy(sortByParam);
-      const popularChefs = await userClient.popularChefs(sortByParam);
-      if (sortDir === "asc") {
-        // default sort is dsc
-        popularChefs.reverse();
+      const sortDirParam = searchParams.get("dir") ?? "dsc";
+      if (!searchParams.get("by") || !searchParams.get("dir")) {
+        navigate(`/browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
+        return;
       }
+      setSortDir(sortDirParam);
+      setSortBy(sortByParam);
+      const popularChefs = await userClient.popularChefs(sortByParam, sortDirParam);
       setPopularChefs(popularChefs);
+      setIsLoading(false);
     };
 
     fetchPopularChefs();
-  }, [location]);
+  }, [location, navigate]);
+
+  useEffect(() => {
+    navigate(`/browse/chefs?by=${sortBy}&dir=${sortDir}`);
+  }, [sortDir, sortBy, navigate]);
 
   const sortFunctions: Record<string, (a: User, b: User) => number> = {
     likes: (a, b) => {
@@ -87,7 +97,36 @@ function Chefs() {
 
   const noPopularChefsText = "Popular Chefs appear here";
 
-  const noFollowedChefsText = "Follow Chefs to see them here";
+  const noFollowedChefsText = "Followed Chefs appear here";
+
+  const changeSort = (
+    <HStack mt={5} gap={0} justifyContent={tabLocation}>
+        <Select
+            mt={0}
+            pt={0}
+            mr={0}
+            ml={tabMargin}
+            width='200px'
+            value={sortBy ?? 'followers'}
+            isDisabled={isLoading}
+            onChange={(e) => setSortBy(e.target.value)}
+        >
+            <option value='followers'>Followers</option>
+            <option value='recipes'>Total Recipes</option>
+            <option value='likes'>Total Likes</option>
+        </Select>
+        <IconButton
+            aria-label="Change sort direction"
+            mt={0}
+            pt={0}
+            ml={0}
+            variant='ghost'
+            isLoading={isLoading}
+            onClick={() => setSortDir(sortDir === 'dsc' ? 'asc' : 'dsc')}
+            icon={sortDir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
+        />
+    </HStack>
+  )
 
   const userFollowedChefs = (
     <>
@@ -103,8 +142,9 @@ function Chefs() {
         </TabList>
         <TabPanels>
           <TabPanel>
+            {changeSort}
             {(popularChefs?.length ?? 0) > 0 ? (
-              <Flex justifyContent="center" wrap="wrap" ml={5} mb={10}>
+              <Flex justifyContent={tabLocation} wrap="wrap" mt={5} ml={5} mb={10}>
                 {popularChefs?.map((chef) => (
                   <ChefCard chef={chef} key={chef._id ?? "unknown"} />
                 ))}
@@ -117,8 +157,9 @@ function Chefs() {
           </TabPanel>
           {currentUser && (
             <TabPanel>
+                {changeSort}
               {sortedFollowedChefs.length > 0 ? (
-                <Flex justifyContent="center" wrap="wrap" ml={5} mb={10}>
+                <Flex justifyContent={tabLocation} wrap="wrap" mt={5} ml={5} mb={10}>
                   {sortedFollowedChefs.map((chef) => (
                     <ChefCard chef={chef} key={chef._id ?? "unknown"} />
                   ))}

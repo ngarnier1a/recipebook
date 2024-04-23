@@ -40,7 +40,7 @@ export const setFollowUser = async (uid: UserID, follow: boolean): Promise<User>
     return response.data;
 }
 
-export const popularChefs = async (sortBy: string): Promise<User[]> => {
-    const response = await api.get(`${SERVICE_URL}/chefs?sortBy=${sortBy}`);
+export const popularChefs = async (sortBy: string, sortDir: string): Promise<User[]> => {
+    const response = await api.post(`${SERVICE_URL}/chefs`, null, { params: { sortBy, sortDir }});
     return response.data;
 }
