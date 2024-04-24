@@ -1,112 +1,151 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
 import * as userClient from "./client";
 import {
   Center,
-  Divider,
   Flex,
+  HStack,
   Heading,
+  IconButton,
+  Select,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
   useBreakpointValue,
 } from "@chakra-ui/react";
+import { ChevronDownIcon, ChevronUpIcon } from "@chakra-ui/icons";
 import RecipeCard from "../recipe/RecipeCard";
-import { nanoid } from "@reduxjs/toolkit";
 
-function Recipes({showLiked = true} : {showLiked?: boolean}) {
-  const { userId } = useParams();
+function Recipes() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const { currentUser } = useSelector((state: UserState) => state.users);
-  const [userData, setUserData] = React.useState<User | null>(null);
-  const justifyVal = useBreakpointValue({ base: "center", md: "start" });
+  const headerMargin = useBreakpointValue({ base: 4, md: -5 });
+  const tabLocation = useBreakpointValue({ base: "center", md: "start" });
+  const tabMargin = useBreakpointValue({ base: 0, md: 5 });
+  const tabSize = useBreakpointValue({ base: "md", md: "md" });
+
+  const [sortDir, setSortDir] = React.useState<string>("dsc");
+  const [popularRecipes, setPopularRecipes] = React.useState<Recipe[] | null>(null);
+  const [popularFollowedRecipes, setPopularFollowedRecipes] = React.useState<Recipe[] | null>(null);
+  const [tabSelected, setTabSelected] = React.useState<string>("top");
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      if (!userId) {
-        setUserData(currentUser);
-      } else {
-        const userData = await userClient.otherProfile(userId);
-        setUserData(userData);
+    setIsLoading(true);
+    const fetchPopularRecipes = async () => {
+      const searchParams = new URLSearchParams(location.search);
+      const sortDirParam = searchParams.get("dir") ?? "dsc";
+      if (!searchParams.get("dir")) {
+        navigate(`/browse/recipes?dir=${sortDirParam}`);
+        return;
+      }
+      setSortDir(sortDirParam);
+      try {
+        const [followed, popular] = await Promise.all([
+            userClient.popularFollowedRecipes(sortDirParam),
+            userClient.popularRecipes(sortDirParam),
+        ]);
+        setPopularRecipes(popular);
+        setPopularFollowedRecipes(followed);
+      } catch (error) {
+        console.error("Error fetching popular recipes", error);
+        return;
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchUserData();
-  }, [userId, currentUser]);
+    fetchPopularRecipes();
+  }, [location, navigate]);
 
-  const sortRecipesByLikes = (a: Recipe, b: Recipe) => {
-    if (!a.likes) {
-        if (!b.likes) return 0;
-        return 1;
-    }
-    if (!b.likes) {
-        if (!a.likes) return 0;
-        return -1;
-    }
-    return b.likes - a.likes;
-  }
+  const headerText =
+    tabSelected === "top" ? "Top Recipes" : "For You";
 
-  const sortedAuthoredRecipes = [...(userData?.authoredRecipes ?? [])].sort(sortRecipesByLikes);
-  const sortedLikedRecipes = [...(userData?.likedRecipes ?? [])].sort(sortRecipesByLikes);
+  const noPopularRecipesText = "Popular Recipes appear here";
 
-  const userAuthoredRecipes = (
+  const noFollowedChefRecipesText = "Popular recipes from followed Chefs appear here";
+
+  const changeSort = (
+    <HStack mt={5} gap={0} justifyContent={tabLocation}>
+        <Select
+            mt={0}
+            pt={0}
+            mr={0}
+            ml={tabMargin}
+            width='200px'
+            value={'likes'}
+            isDisabled={isLoading}
+            isReadOnly
+        >
+            <option value='likes'>Total Likes</option>
+        </Select>
+        <IconButton
+            aria-label="Change sort direction"
+            mt={0}
+            pt={0}
+            ml={0}
+            variant='ghost'
+            isLoading={isLoading}
+            onClick={() => navigate(`/browse/recipes?dir=${sortDir === 'dsc' ? 'asc' : 'dsc'}`)}
+            icon={sortDir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
+        />
+    </HStack>
+  )
+
+  const popularRecipesElement = (
     <>
-        <Center p={5}>
-            <Heading>{(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} Recipes</Heading>
-        </Center>
-        <Divider mb={5}/>
-        <Flex justifyContent={justifyVal} wrap='wrap' ml={3} mr={3}>
-            {sortedAuthoredRecipes.map((recipe) => (
-                <RecipeCard recipe={recipe} key={recipe._id ?? nanoid()} />
-            ))}
-        </Flex>
-        <Divider mt={5}/>
+      <Center pt={5} px={5} pb={-10} mb={headerMargin}>
+        <Heading>{headerText}</Heading>
+      </Center>
+      <Tabs variant="enclosed" size={tabSize} pt={0} mt={0}>
+        <TabList justifyContent={tabLocation}>
+          <Tab ml={tabMargin} onClick={() => setTabSelected("top")}>
+            Top Recipes
+          </Tab>
+          {currentUser && <Tab onClick={() => setTabSelected("followed")}>Recipes For You</Tab>}
+        </TabList>
+        <TabPanels>
+          <TabPanel>
+            {changeSort}
+            {(popularRecipes?.length ?? 0) > 0 ? (
+              <Flex justifyContent={tabLocation} wrap="wrap" mt={5} ml={5} mb={10}>
+                {popularRecipes?.map((recipe) => (
+                  <RecipeCard recipe={recipe} key={recipe._id ?? "unknown"} />
+                ))}
+              </Flex>
+            ) : (
+              <Center mt={5}>
+                {noPopularRecipesText}
+              </Center>
+            )}
+          </TabPanel>
+          {currentUser && (
+            <TabPanel>
+                {changeSort}
+              {popularFollowedRecipes && popularFollowedRecipes.length > 0 ? (
+                <Flex justifyContent={tabLocation} wrap="wrap" mt={5} ml={5} mb={10}>
+                  {popularFollowedRecipes.map((recipe) => (
+                    <RecipeCard recipe={recipe} key={recipe._id ?? "unknown"} />
+                  ))}
+                </Flex>
+              ) : (
+                <Center mt={5}>
+                  {noFollowedChefRecipesText}
+                </Center>
+              )}
+            </TabPanel>
+          )}
+        </TabPanels>
+      </Tabs>
     </>
-  )
-
-  const userLikedRecipes = (
-    <>
-    <Flex justifyContent={'start'} wrap='wrap' ml={5} mb={10}>
-        {sortedLikedRecipes.map((recipe) => (
-            <RecipeCard recipe={recipe} key={recipe._id ?? nanoid()} />
-        ))}
-    </Flex>
-    </> 
-  )
-
-  return (
-    userData && (
-      <>
-        {(userData.authoredRecipes?.length ?? 0) > 0 && userAuthoredRecipes}
-        {(userData.type === "CHEF" && (userData.authoredRecipes?.length ?? 0) === 0) &&
-            <>
-            <Center>
-                <Heading p={5}>{(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} Recipes</Heading>
-            </Center>
-
-            <Divider mb={10} />
-            <Center>
-                {(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `}
-                published recipes appear here
-            </Center>
-            <Divider mt={10}/>
-            </>
-        }
-        {showLiked &&
-            <>
-            <Center p={5}>
-                <Heading>{(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} Liked Recipes</Heading>
-            </Center>
-            <Divider mb={5}/>
-            {(userData.likedRecipes?.length ?? 0) > 0 
-                ? userLikedRecipes
-                : <Center mb={10}>
-                    {(userData?._id === (currentUser?._id ?? 'N/A')) ? 'Your' : `${userData?.username ?? 'Unknown'}'s `} liked recipes appear here
-                </Center>}
-            </>
-        }
-
-      </>
-    )
   );
+
+  return popularRecipesElement;
 }
 
 export default Recipes;
