@@ -112,7 +112,13 @@ function Recipes() {
       <Center pt={5} px={5} pb={-10} mb={headerMargin}>
         <Heading>{headerText}</Heading>
       </Center>
-      <Tabs variant="enclosed" size={tabSize} pt={0} mt={0}>
+      <Tabs
+        variant="enclosed"
+        size={tabSize}
+        pt={0}
+        mt={0}
+        index={searchParams.type === 'top' ? 0 : 1}
+      >
         <TabList justifyContent={tabLocation}>
           <Tab ml={tabMargin} onClick={() => searchNav({...searchParams, type: 'top'})}>
             Top Recipes
