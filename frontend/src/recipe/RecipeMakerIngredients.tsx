@@ -1,10 +1,8 @@
 import { ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
-  Flex,
   Input,
   NumberInput,
   NumberInputField,
-  Select,
   IconButton,
   Icon,
   Accordion,

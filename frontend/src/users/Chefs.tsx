@@ -14,7 +14,6 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
-  Select,
   Tab,
   TabList,
   TabPanel,
