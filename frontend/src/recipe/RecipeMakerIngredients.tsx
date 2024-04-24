@@ -1,4 +1,4 @@
-import { DeleteIcon } from "@chakra-ui/icons";
+import { ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Flex,
   Input,
@@ -12,9 +12,16 @@ import {
   AccordionButton,
   AccordionPanel,
   VStack,
-  NumberDecrementStepper,
+  NumberDecrementStepper, 
   NumberIncrementStepper,
   NumberInputStepper,
+  Menu,
+  Button,
+  MenuButton,
+  MenuItem,
+  MenuList,
+  Text,
+  HStack
 } from "@chakra-ui/react";
 
 function RecipeMakerIngredients({
@@ -77,6 +84,7 @@ function RecipeMakerIngredients({
           value={ingredient.quantity.toString()}
           ml={1}
           min={0}
+          width='100%'
           title='The quantity of the ingredient'
           precision={2}
           onChange={(valueString) => {
@@ -90,41 +98,71 @@ function RecipeMakerIngredients({
               <NumberDecrementStepper />
           </NumberInputStepper>
         </NumberInput>
-        <Select
-          ml={1}
-          title='The unit associated with ingredient quantity'
-          value={ingredient.unit}
-          onChange={(e) => setIngredient({ ...ingredient, unit: e.target.value as RecipeUnit })}
-        >
-        {units.map((unit, idx) => (
-            <option key={idx} value={unit}>
-            {unit}
-            </option>
-        ))}
-        </Select>
-        <Select
-          ml={1}
-          title='What step are these ingredients for'
-          onChange={(e) => {
-            if (e.target.value !== "no-step") {
-              setIngredient({ ...ingredient, stepNumber: parseInt(e.target.value) });
-            }
-          }}
-          value={ingredient.stepNumber ?? "no-step"}
-        >
-          {
-            <>
-            <option key={'asjkdfgaskl;fj'} value={"no-step"} title='No specific step for this ingredient'>
-                N/A
-            </option>
-            {recipe.steps?.map((step, idx) => (
-                <option key={step.stepID} value={idx}>
-                {idx + 1}
-                </option>
+
+        <Menu>
+          <MenuButton
+            ml={1}
+            as={Button}
+            variant='outline'
+            width='100%'
+            textAlign='start'
+            title='The unit associated with ingredient quantity'
+            rightIcon={<ChevronDownIcon ml={7} boxSize={5}/>} 
+          >
+            <Text ml={1}>
+              {ingredient.unit.toString()}
+            </Text>
+          </MenuButton>
+          <MenuList>
+            {units.map((unit, idx) => (
+              <MenuItem key={idx} onClick={() => setIngredient({ ...ingredient, unit })}>
+                {unit}
+              </MenuItem>
             ))}
+          </MenuList>
+        </Menu>
+        <Menu>
+          <MenuButton
+            ml={1}
+            as={Button}
+            variant='outline'
+            width='100%'
+            textAlign='start'
+            title='What step is this ingredient for'
+            rightIcon={<ChevronDownIcon ml={7} boxSize={5}/>} 
+          >
+            <Text ml={1}>
+              {ingredient.stepNumber !== undefined ? (ingredient.stepNumber + 1).toString() : 'N/A'}
+            </Text>
+          </MenuButton>
+          <MenuList>
+            <>
+              <MenuItem
+                key={'fillerkey'}
+                title='No specific step for this ingredient'
+                onClick={() => {
+                  const { stepNumber, ...rest } = ingredient;
+                  console.log('removing step number: ' + JSON.stringify(rest));
+                  setIngredient(rest);
+                }}
+              >
+                N/A
+              </MenuItem>
+              {recipe.steps?.map((step, idx) => (
+                <MenuItem
+                  key={step.stepID}
+                  title={`This ingredient is used on step ${idx + 1}`}
+                  onClick={() => {
+                    console.log('setting step number: ' + idx);
+                    setIngredient({ ...ingredient, stepNumber: idx})
+                  }}
+                >
+                  {idx + 1}
+                </MenuItem>
+              ))}
             </>
-          }
-        </Select>
+          </MenuList>
+        </Menu>
         <Input
         value={ingredient.fdcID || ""}
         ml={1}
@@ -143,14 +181,14 @@ function RecipeMakerIngredients({
     </>
   )
 
-  const desktopIngredient = (ingredient: RecipeIngredient, idx: number) => (
-    <Flex key={idx} display={{ base: "none", md: "flex" }} my={1}>
+  const desktopIngredient = (ingredient: RecipeIngredient) => (
+    <HStack width='100%' key={ingredient.ingredientID} display={{ base: "none", lg: "flex" }} my={1}>
         {ingredientFields(ingredient)}
-    </Flex>
+    </HStack>
   )
 
-  const mobileIngredient = (ingredient: RecipeIngredient, idx: number) => (
-    <AccordionItem key={idx} display={{ md: "none" }} my={1}>
+  const mobileIngredient = (ingredient: RecipeIngredient) => (
+    <AccordionItem key={ingredient.ingredientID} display={{ lg: "none" }} my={1}>
         <AccordionButton
         width='90%'
         textAlign={{ base: "center" }}>
@@ -166,9 +204,9 @@ function RecipeMakerIngredients({
 
 
   return (
-    <Accordion allowToggle>
-        {recipe.ingredients.map((ingredient, idx) => desktopIngredient(ingredient, idx))}
-        {recipe.ingredients.map((ingredient, idx) => mobileIngredient(ingredient, idx))}
+    <Accordion allowToggle width='100%'>
+        {recipe.ingredients.map((ingredient) => desktopIngredient(ingredient))}
+        {recipe.ingredients.map((ingredient) => mobileIngredient(ingredient))}
     </Accordion>
   );
 }
