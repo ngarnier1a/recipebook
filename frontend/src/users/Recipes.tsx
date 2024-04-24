@@ -4,11 +4,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
 import * as userClient from "./client";
 import {
+    Button,
   Center,
   Flex,
   HStack,
   Heading,
   IconButton,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Select,
   Tab,
   TabList,
@@ -81,18 +86,26 @@ function Recipes() {
 
   const changeSort = (
     <HStack mt={5} gap={0} justifyContent={tabLocation}>
-        <Select
+
+        <Menu>
+          <MenuButton
+            as={Button}
             mt={0}
             pt={0}
             mr={0}
             ml={tabMargin}
             width='200px'
-            value={'likes'}
             isDisabled={isLoading}
-            isReadOnly
-        >
-            <option value='likes'>Total Likes</option>
-        </Select>
+            textAlign={'start'}
+            rightIcon={<ChevronDownIcon boxSize={6} />}
+            variant='outline'
+          >
+            Total Likes
+          </MenuButton>
+          <MenuList>
+            <MenuItem>Total Likes</MenuItem>
+          </MenuList>
+        </Menu>
         <IconButton
             aria-label="Change sort direction"
             mt={0}
