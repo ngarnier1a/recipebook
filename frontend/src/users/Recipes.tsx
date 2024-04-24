@@ -27,7 +27,6 @@ function Recipes() {
   const headerMargin = useBreakpointValue({ base: 4, md: -5 });
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });
   const tabMargin = useBreakpointValue({ base: 0, md: 5 });
-  const tabSize = useBreakpointValue({ base: "md", md: "md" });
 
   const [popularRecipes, setPopularRecipes] = React.useState<Recipe[] | null>(null);
   const [popularFollowedRecipes, setPopularFollowedRecipes] = React.useState<Recipe[] | null>(null);
@@ -114,7 +113,7 @@ function Recipes() {
       </Center>
       <Tabs
         variant="enclosed"
-        size={tabSize}
+        size='md'
         pt={0}
         mt={0}
         index={searchParams.type === 'top' ? 0 : 1}

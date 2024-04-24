@@ -27,7 +27,6 @@ function Chefs() {
   const headerMargin = useBreakpointValue({ base: 4, md: -5 });
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });
   const tabMargin = useBreakpointValue({ base: 0, md: 5 });
-  const tabSize = useBreakpointValue({ base: "md", md: "lg" });
 
   const [popularChefs, setPopularChefs] = React.useState<User[] | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
@@ -138,7 +137,7 @@ function Chefs() {
       </Center>
       <Tabs
         variant="enclosed"
-        size={tabSize}
+        size='md'
         pt={0}
         mt={0}
         index={searchParams.type === "top" ? 0 : 1}
