@@ -1,7 +1,6 @@
 import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
 import {
   Button,
-  Flex,
   Input,
   InputGroup,
   InputLeftElement,
@@ -17,7 +16,7 @@ import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 
 function Search() {
-  const { searchType, searchQuery } = useParams();
+  const { searchType } = useParams();
   const [ localSearchType, setLocalSearchType ] = useState(searchType || 'RECIPE');
 
   const friendlySearchType: Record<SearchType,string> = {

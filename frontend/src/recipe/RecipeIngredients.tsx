@@ -41,7 +41,7 @@ function RecipeIngredients({
       <Td pr={0}>{ingredient.name}</Td>
       <Td px={0}>{ingredient.quantity.toString()}</Td>
       <Td px={0}>{ingredient.unit}</Td>
-      {<Td px={0}>{ingredient.stepNumber && (ingredient.stepNumber ?? -1) >= 0 ? ingredient.stepNumber + 1 : ''}</Td>}
+      {<Td px={0}>{ingredient.stepNumber !== undefined ? ingredient.stepNumber + 1 : ''}</Td>}
       {ingredient.fdcID &&
         <Td pl={0}>
           <Link onClick={() => navigate(`/nutrition/${ingredient.fdcID}`)}>

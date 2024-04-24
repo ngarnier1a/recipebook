@@ -4,12 +4,16 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
 import * as userClient from "./client";
 import {
+  Button,
   Center,
   Flex,
   HStack,
   Heading,
   IconButton,
-  Select,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Tab,
   TabList,
   TabPanel,
@@ -101,22 +105,47 @@ function Chefs() {
 
   const noFollowedChefsText = "Followed Chefs appear here";
 
+  const friendlyBy = {
+    'followers': "Followers",
+    'recipes': "Total Recipes",
+    'likes': "Total Likes",
+  }
+
   const changeSort = (
     <HStack mt={5} gap={0} justifyContent={tabLocation}>
-        <Select
+        <Menu>
+          <MenuButton
+            as={Button}
             mt={0}
             pt={0}
             mr={0}
             ml={tabMargin}
             width='200px'
-            value={searchParams.by ?? 'followers'}
             isDisabled={isLoading}
-            onChange={(e) => searchNav({...searchParams, by: e.target.value})}
-        >
-            <option value='followers'>Followers</option>
-            <option value='recipes'>Total Recipes</option>
-            <option value='likes'>Total Likes</option>
-        </Select>
+            textAlign={'start'}
+            rightIcon={<ChevronDownIcon boxSize={6} />}
+            variant='outline'
+          >
+            {friendlyBy[searchParams.by as keyof typeof friendlyBy]}
+          </MenuButton>
+          <MenuList>
+            <MenuItem
+              onClick={() => searchNav({...searchParams, by: 'followers'})}
+            >
+              {friendlyBy['followers']}
+            </MenuItem>
+            <MenuItem
+              onClick={() => searchNav({...searchParams, by: 'recipes'})}
+            >
+              {friendlyBy['recipes']}
+            </MenuItem>
+            <MenuItem
+              onClick={() => searchNav({...searchParams, by: 'likes'})}
+            >
+              {friendlyBy['likes']}
+            </MenuItem>
+          </MenuList>
+        </Menu>
         <IconButton
             aria-label="Change sort direction"
             mt={0}
