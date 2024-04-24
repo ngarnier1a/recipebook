@@ -43,16 +43,16 @@ type RecipeIngredient = {
 }
 
 type IngredientNutrient = {
-    _id: number;
-    number: string;
+    nutrientId: string;
     name: string;
-    rank: number;
+    amount: number;
     unitName: string;
 }
 
 type FDCFoodItem = {
-    fdcID: string;
-    name: string;
+    _id: string;                        // the FDC ID
+    description: string;
+    foodCategory: string;
     nutrients: IngredientNutrient[];
 }
 

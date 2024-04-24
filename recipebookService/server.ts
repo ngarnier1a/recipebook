@@ -6,6 +6,8 @@ import session, { SessionOptions } from "express-session";
 import mongoose from "mongoose";
 import UserRoutes from "./users/routes.js";
 import RecipeRoutes from "./recipes/routes.js";
+import NutritionRoutes from "./nutrition/routes.js";
+import { Express } from "express-serve-static-core";
 
 assert(process.env.DB_CONNECTION_STRING, "DB_CONNECTION_STRING is not set");
 assert(process.env.SESSION_SECRET, "SESSION_SECRET is not set");
@@ -48,6 +50,7 @@ app.get("/api/health", (req, res) => {
   res.sendStatus(200);
 });
 
+NutritionRoutes(app);
 UserRoutes(app);
 RecipeRoutes(app);
 
