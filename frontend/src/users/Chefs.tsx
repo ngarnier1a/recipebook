@@ -27,14 +27,14 @@ function Chefs() {
   const headerMargin = useBreakpointValue({ base: 4, md: -5 });
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });
   const tabMargin = useBreakpointValue({ base: 0, md: 5 });
-  const tabSize = useBreakpointValue({ base: "md", md: "lg" });
 
-  // likes | followers | recipes
-  const [sortBy, setSortBy] = React.useState<string>("followers");
-  const [sortDir, setSortDir] = React.useState<string>("dsc");
   const [popularChefs, setPopularChefs] = React.useState<User[] | null>(null);
-  const [tabSelected, setTabSelected] = React.useState<string>("popular");
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+
+  const [searchParams, setSearchParams]
+    = React.useState<{ type: string; by: string; dir: string; }>(
+      { type: 'top', by: 'followers', dir: 'dsc' }
+    );
 
   useEffect(() => {
     setIsLoading(true);
@@ -42,20 +42,25 @@ function Chefs() {
       const searchParams = new URLSearchParams(location.search);
       const sortByParam = searchParams.get("by") ?? "followers";
       const sortDirParam = searchParams.get("dir") ?? "dsc";
-      if (!searchParams.get("by") || !searchParams.get("dir")) {
-        console.log(`navigating to /browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
-        navigate(`/browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
+      const sortTypeParam = searchParams.get("type") ?? "top";
+      if (!searchParams.get("type") || !searchParams.get("by") || !searchParams.get("dir")) {
+        navigate(`/browse/chefs?type=${sortTypeParam}&by=${sortByParam}&dir=${sortDirParam}`);
         return;
       }
-      setSortDir(sortDirParam);
-      setSortBy(sortByParam);
-      const popularChefs = await userClient.popularChefs(sortByParam, sortDirParam);
-      setPopularChefs(popularChefs);
+      setSearchParams({ type: sortTypeParam, by: sortByParam, dir: sortDirParam });
+      if (sortTypeParam === 'top') {
+        const popularChefs = await userClient.popularChefs(sortByParam, sortDirParam);
+        setPopularChefs(popularChefs);
+      }
       setIsLoading(false);
     };
 
     fetchPopularChefs();
   }, [location, navigate]);
+
+  const searchNav = ({ type, by, dir }: { type: string; by: string; dir: string }) => {
+    navigate(`/browse/chefs?type=${type}&by=${by}&dir=${dir}`);
+  };
 
   const sortFunctions: Record<string, (a: User, b: User) => number> = {
     likes: (a, b) => {
@@ -69,27 +74,27 @@ function Chefs() {
           (acc, recipe) => acc + (recipe.likes ?? 0),
           0
         ) ?? -1;
-      return (sortDir === "dsc" ? 1 : -1) * (bLikes - aLikes);
+      return (searchParams.dir === "dsc" ? 1 : -1) * (bLikes - aLikes);
     },
     followers: (a, b) => {
       return (
-        (sortDir === "dsc" ? 1 : -1) *
+        (searchParams.dir === "dsc" ? 1 : -1) *
         ((b.numFollowers ?? -1) - (a.numFollowers ?? -1))
       );
     },
     recipes: (a, b) => {
       return (
-        (sortDir === "dsc" ? 1 : -1) *
+        (searchParams.dir === "dsc" ? 1 : -1) *
         ((b.authoredRecipes?.length ?? -1) - (a.authoredRecipes?.length ?? -1))
       );
     },
   };
 
   const headerText =
-    tabSelected === "popular" ? "Popular Chefs" : "Followed Chefs";
+    searchParams.type === "top" ? "Popular Chefs" : "Followed Chefs";
 
   const sortedFollowedChefs = [...(currentUser?.followedChefs ?? [])].sort(
-    sortFunctions[sortBy]
+    sortFunctions[searchParams.by]
   );
 
   const noPopularChefsText = "Popular Chefs appear here";
@@ -104,9 +109,9 @@ function Chefs() {
             mr={0}
             ml={tabMargin}
             width='200px'
-            value={sortBy ?? 'followers'}
+            value={searchParams.by ?? 'followers'}
             isDisabled={isLoading}
-            onChange={(e) => navigate(`/browse/chefs?by=${e.target.value}&dir=${sortDir}`)}
+            onChange={(e) => searchNav({...searchParams, by: e.target.value})}
         >
             <option value='followers'>Followers</option>
             <option value='recipes'>Total Recipes</option>
@@ -119,8 +124,8 @@ function Chefs() {
             ml={0}
             variant='ghost'
             isLoading={isLoading}
-            onClick={() => navigate(`/browse/chefs?by=${sortBy}&dir=${sortDir === 'dsc' ? 'asc' : 'dsc'}`)}
-            icon={sortDir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
+            onClick={() => searchNav({...searchParams, dir: searchParams.dir === 'dsc' ? 'asc' : 'dsc'})}
+            icon={searchParams.dir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
         />
     </HStack>
   )
@@ -130,12 +135,18 @@ function Chefs() {
       <Center pt={5} px={5} pb={-10} mb={headerMargin}>
         <Heading>{headerText}</Heading>
       </Center>
-      <Tabs variant="enclosed" size={tabSize} pt={0} mt={0}>
+      <Tabs
+        variant="enclosed"
+        size='md'
+        pt={0}
+        mt={0}
+        index={searchParams.type === "top" ? 0 : 1}
+      >
         <TabList justifyContent={tabLocation}>
-          <Tab ml={tabMargin} onClick={() => setTabSelected("popular")}>
+          <Tab ml={tabMargin} onClick={() => searchNav({...searchParams, type: 'top'})}>
             Popular
           </Tab>
-          {currentUser && <Tab onClick={() => setTabSelected("following")}>Followed</Tab>}
+          {currentUser && <Tab onClick={() => searchNav({...searchParams, type: 'following'})}>Followed</Tab>}
         </TabList>
         <TabPanels>
           <TabPanel>

@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserState } from "../store";
 import { Divider, Heading, useToast, Text, VStack, HStack, Spacer, Button, Box } from "@chakra-ui/react";
 import * as client from "./client";
-import Recipes from "./Recipes";
+import UserRecipes from "./UserRecipes";
 import { setCurrentUser } from "./reducer";
 
 
@@ -142,7 +142,7 @@ function Profile() {
         mt={5}
         mb={3}
         >
-        {userProfile?.username}'s Profile
+        {isCurrentUser ? 'Your' : `${userProfile?.username ?? 'Unknown'}'s`} Profile
         </Heading>
         <Spacer />
         <Box h="40px" mr={5}>
@@ -160,7 +160,7 @@ function Profile() {
             mt={5}
             mb={0}
             >
-            {userProfile?.username}'s Profile
+            {isCurrentUser ? 'Your' : `${userProfile?.username ?? 'Unknown'}'s`} Profile
         </Heading>
         <HStack>
             { (currentUser && isCurrentUser) && editButton }
@@ -191,7 +191,7 @@ function Profile() {
         </Text>
       )}
       <Divider />
-      <Recipes />
+      <UserRecipes />
     </div>
   );
 }

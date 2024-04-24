@@ -13,9 +13,10 @@ import { Provider } from "react-redux";
 import CurrentUser from "./users/CurrentUser";
 import Nutrition from "./nutrition";
 import RecipeMaker from "./recipe/RecipeMaker";
-import Recipes from "./users/Recipes";
+import UserRecipes from "./users/UserRecipes";
 import ProfileEdit from "./users/ProfileEdit";
 import Chefs from "./users/Chefs";
+import Recipes from "./users/Recipes";
 
 function App() {
   return (
@@ -33,10 +34,11 @@ function App() {
                 <Route path="/user/profile" element={<Profile />} />
                 <Route path="/user/profile/edit" element={<ProfileEdit />} />
                 <Route path="/user/:userId/profile/" element={<Profile />} />
-                <Route path="/user/recipes" element={<Recipes />} />
-                <Route path="/user/:userId/recipes" element={<Recipes showLiked={false} />} />
+                <Route path="/user/recipes" element={<UserRecipes />} />
+                <Route path="/user/:userId/recipes" element={<UserRecipes showLiked={false} />} />
                 <Route path="/recipe/:recipeId" element={<Recipe />} />
                 <Route path="/browse/chefs" element={<Chefs />} />
+                <Route path="/browse/recipes" element={<Recipes />} />
                 {/* <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} /> */}
                 <Route path="/recipe/create" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />

@@ -425,7 +425,7 @@ const NAV_ITEMS: Array<NavItem> = [
       {
         label: "Explore Popular",
         subLabel: "Trending Recipes to enjoy",
-        href: "/search/recipes",
+        href: "/browse/recipes?type=top&dir=dsc",
       },
       {
         label: "Your Recipes",
