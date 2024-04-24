@@ -168,7 +168,6 @@ export const findChefs = async (sortBy: string, dir: string) => {
 
   try {
     const chefs = await model.aggregate(pipeline);
-    console.log(JSON.stringify(chefs));
     return chefs;
   } catch (e) {
     console.error(`Error getting chefs: ${e}`);

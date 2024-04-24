@@ -95,7 +95,7 @@ export default function UserRoutes(app: Application) {
           }
           req.session.user = richUser;
           if (req.session.user.password) {
-            console.error("Password in session");
+            console.error("Password in session!!");
             res.sendStatus(500);
           }
           res.send(req.session.user);

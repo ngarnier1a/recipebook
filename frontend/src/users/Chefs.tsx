@@ -43,7 +43,6 @@ function Chefs() {
       const sortByParam = searchParams.get("by") ?? "followers";
       const sortDirParam = searchParams.get("dir") ?? "dsc";
       if (!searchParams.get("by") || !searchParams.get("dir")) {
-        console.log(`navigating to /browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
         navigate(`/browse/chefs?by=${sortByParam}&dir=${sortDirParam}`);
         return;
       }

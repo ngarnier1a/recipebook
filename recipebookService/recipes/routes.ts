@@ -15,7 +15,6 @@ export default function RecipeRoutes(app: Application) {
     req.body.author = req.session.user._id;
     try {
       const recipe = await dao.createRecipe(req.session.user._id ?? 'Bad ID', req.body);
-      console.error(`RECIPE CREATED: ${JSON.stringify(recipe)}`);
       const user = await updateSessionUser(req);
       res.send({recipe: recipe.toObject(), user: user});
     } catch (e) {
@@ -143,7 +142,6 @@ export default function RecipeRoutes(app: Application) {
     const { sortDir } = req.query;
     try {
       const recipes = await dao.getPopularRecipes(sortDir as string);
-      console.error(recipes);
       res.send(recipes);
     } catch (e) {
       console.error(`Error getting popular recipes: ${e}`);
@@ -160,7 +158,6 @@ export default function RecipeRoutes(app: Application) {
 
     try {
       const recipes = await dao.getPopularFollowedRecipes(req.session.user, sortDir as string);
-      console.error(recipes);
       res.send(recipes);
     } catch (e) {
       console.error(`Error getting popular followed recipes: ${e}`);
