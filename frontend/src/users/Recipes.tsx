@@ -29,29 +29,35 @@ function Recipes() {
   const tabMargin = useBreakpointValue({ base: 0, md: 5 });
   const tabSize = useBreakpointValue({ base: "md", md: "md" });
 
-  const [sortDir, setSortDir] = React.useState<string>("dsc");
   const [popularRecipes, setPopularRecipes] = React.useState<Recipe[] | null>(null);
   const [popularFollowedRecipes, setPopularFollowedRecipes] = React.useState<Recipe[] | null>(null);
-  const [tabSelected, setTabSelected] = React.useState<string>("top");
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
+
+  const [searchParams, setSearchParams]
+    = React.useState<{ type: string; dir: string; }>({ type: 'top', dir: 'dsc' });
 
   useEffect(() => {
     setIsLoading(true);
     const fetchPopularRecipes = async () => {
-      const searchParams = new URLSearchParams(location.search);
-      const sortDirParam = searchParams.get("dir") ?? "dsc";
-      if (!searchParams.get("dir")) {
-        navigate(`/browse/recipes?dir=${sortDirParam}`);
+      const locationSearchParams = new URLSearchParams(location.search);
+
+      const searchParams = {
+        type: locationSearchParams.get("type") ?? "top",
+        dir: locationSearchParams.get("dir") ?? "dsc",
+      };
+      if (!locationSearchParams.get("dir") || !locationSearchParams.get("type")) {
+        navigate(`/browse/recipes?type=${searchParams.type}&dir=${searchParams.dir}`)
         return;
       }
-      setSortDir(sortDirParam);
+      setSearchParams(searchParams);
       try {
-        const [followed, popular] = await Promise.all([
-            userClient.popularFollowedRecipes(sortDirParam),
-            userClient.popularRecipes(sortDirParam),
-        ]);
-        setPopularRecipes(popular);
-        setPopularFollowedRecipes(followed);
+        if (currentUser && searchParams.type === 'followed') {
+            const followed = await userClient.popularFollowedRecipes(searchParams.dir);
+            setPopularFollowedRecipes(followed);
+        } else if (searchParams.type === 'top') {
+            const popular = await userClient.popularRecipes(searchParams.dir);
+            setPopularRecipes(popular);
+        }
       } catch (error) {
         console.error("Error fetching popular recipes", error);
         return;
@@ -61,10 +67,14 @@ function Recipes() {
     };
 
     fetchPopularRecipes();
-  }, [location, navigate]);
+  }, [location, currentUser, navigate]);
+
+  const searchNav = (params: { type: string; dir: string; }) => {
+    navigate(`/browse/recipes?type=${params.type}&dir=${params.dir}`);
+  }
 
   const headerText =
-    tabSelected === "top" ? "Top Recipes" : "For You";
+    searchParams.type === "top" ? "Top Recipes" : "For You";
 
   const noPopularRecipesText = "Popular Recipes appear here";
 
@@ -91,8 +101,8 @@ function Recipes() {
             ml={0}
             variant='ghost'
             isLoading={isLoading}
-            onClick={() => navigate(`/browse/recipes?dir=${sortDir === 'dsc' ? 'asc' : 'dsc'}`)}
-            icon={sortDir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
+            onClick={() => searchNav({...searchParams, dir: searchParams.dir === 'dsc' ? 'asc' : 'dsc'})}
+            icon={searchParams.dir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
         />
     </HStack>
   )
@@ -104,10 +114,10 @@ function Recipes() {
       </Center>
       <Tabs variant="enclosed" size={tabSize} pt={0} mt={0}>
         <TabList justifyContent={tabLocation}>
-          <Tab ml={tabMargin} onClick={() => setTabSelected("top")}>
+          <Tab ml={tabMargin} onClick={() => searchNav({...searchParams, type: 'top'})}>
             Top Recipes
           </Tab>
-          {currentUser && <Tab onClick={() => setTabSelected("followed")}>Recipes For You</Tab>}
+          {currentUser && <Tab onClick={() => searchNav({...searchParams, type: 'followed'})}>Recipes For You</Tab>}
         </TabList>
         <TabPanels>
           <TabPanel>

@@ -1,5 +1,6 @@
 import model from "./model.js";
 import { authorNewRecipe } from "../users/dao.js";
+import mongoose from "mongoose";
 export const createRecipe = async (userId: UserID, recipe: Recipe) => {
   delete recipe._id;
   const newRecipe = await model.create(recipe);
@@ -28,3 +29,32 @@ export const findRecipesByChefId = async (chefId: UserID) =>
   });
 export const updateRecipe = async (recipeId: RecipeID, recipe: Recipe) => await model.updateOne({ _id: recipeId }, { $set: recipe });
 export const deleteRecipe = async (recipeId: RecipeID) => await model.deleteOne({ _id: recipeId });
+
+export const getPopularRecipes = async (sortDir: string) => {
+  const recipes = await model
+    .find()
+    .sort({ likes: sortDir === 'dsc' ? -1 : 1 })
+    .populate({
+      path: "author",
+      select: "_id username",
+    })
+    .select('_id name likes description')
+    .exec();
+  return recipes;
+}
+
+export const getPopularFollowedRecipes = async (user: User, sortDir: string) => {
+  const recipes = await model
+    .find({
+      author: { $in: (user.followedChefs ?? []).map(chef => new mongoose.Types.ObjectId(chef._id)) }
+    })
+    .sort({ likes: sortDir === 'dsc' ? -1 : 1 })
+    .populate({
+      path: 'author',
+      select: '_id username'
+    })
+    .select('_id name likes description')
+    .exec();
+
+  return recipes;
+}

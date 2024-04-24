@@ -139,9 +139,40 @@ export default function RecipeRoutes(app: Application) {
     }
   };
 
+  const popularRecipes = async (req: Request, res: Response) => {
+    const { sortDir } = req.query;
+    try {
+      const recipes = await dao.getPopularRecipes(sortDir as string);
+      console.error(recipes);
+      res.send(recipes);
+    } catch (e) {
+      console.error(`Error getting popular recipes: ${e}`);
+      res.sendStatus(500);
+    }
+  }
+
+  const popularFollowedRecipes = async (req: Request, res: Response) => {
+    const { sortDir } = req.query;
+    if (!req.session.user || !req.session.user._id) {
+      res.sendStatus(401);
+      return;
+    }
+
+    try {
+      const recipes = await dao.getPopularFollowedRecipes(req.session.user, sortDir as string);
+      console.error(recipes);
+      res.send(recipes);
+    } catch (e) {
+      console.error(`Error getting popular followed recipes: ${e}`);
+      res.sendStatus(500);
+    }
+  }
+
   app.post("/api/recipe", createRecipe);
   app.get("/api/recipe/:recipeId", getRecipeDetails);
   app.put("/api/recipe/:recipeId", updateRecipe);
   app.delete("/api/recipe/:recipeId", deleteRecipe);
   app.put("/api/recipe/:recipeId/like", likeRecipe);
+  app.post("/api/recipes", popularRecipes);
+  app.post("/api/recipes/followed", popularFollowedRecipes);
 }
