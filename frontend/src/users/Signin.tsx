@@ -40,6 +40,7 @@ function Signin({
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
   const { colorMode, toggleColorMode } = useColorMode();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const dispatch = useDispatch();
   const toast = useToast();
 
@@ -58,10 +59,12 @@ function Signin({
     setUserType("FOODIE");
     setShowPassword(false);
     setShowConfirmPassword(false);
+    setIsLoading(false);
     onClose();
   };
 
   const sendCreds = async () => {
+    setIsLoading(true);
     if (isSignUp) {
       if (password !== passwordConfirm) {
         toast({
@@ -71,6 +74,7 @@ function Signin({
           duration: 5000,
           isClosable: true,
         });
+        setIsLoading(false);
         return;
       }
       try {
@@ -88,6 +92,7 @@ function Signin({
           duration: 5000,
           isClosable: true,
         });
+        setIsLoading(false);
         handleClose();
       } catch (error) {
         toast({
@@ -97,6 +102,7 @@ function Signin({
           duration: 5000,
           isClosable: true,
         });
+        setIsLoading(false);
       }
     } else {
       try {
@@ -112,6 +118,7 @@ function Signin({
           duration: 5000,
           isClosable: true,
         });
+        setIsLoading(false);
         handleClose();
       } catch (error) {
         toast({
@@ -121,6 +128,7 @@ function Signin({
           duration: 5000,
           isClosable: true,
         });
+        setIsLoading(false);
       }
     }
   };
@@ -205,13 +213,18 @@ function Signin({
         </ModalBody>
 
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={handleClose}>
+          <Button
+            variant="ghost"
+            mr={3}
+            onClick={handleClose}
+          >
             Close
           </Button>
           <Button
             colorScheme="blue"
             onClick={sendCreds}
             isDisabled={isSignUp ? !readyToSignUp : !readyToSignIn}
+            isLoading={isLoading}
           >
             {isSignUp ? "Sign Up" : "Sign In"}
           </Button>
