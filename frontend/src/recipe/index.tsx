@@ -108,12 +108,12 @@ function Recipe() {
             gap="2"
             rounded="lg"
           >
-            <GridItem p="2" bg={gridColor} area={"name"}>
+            <GridItem p="2" bg={gridColor} area={"name"} rounded='md'>
               <Text textAlign='left' fontSize='md'>
                 {recipe.description}
               </Text>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"ingredients"}>
+            <GridItem p="2" pb="6" bg={gridColor} area={"ingredients"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Ingredients
@@ -121,7 +121,7 @@ function Recipe() {
                 <RecipeIngredients recipe={recipe} />
               </VStack>
             </GridItem>
-            <GridItem p="2" bg={gridColor} area={"steps"}>
+            <GridItem p="2" bg={gridColor} area={"steps"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Steps
@@ -140,7 +140,7 @@ function Recipe() {
                 </OrderedList>
               </VStack>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"notes"}>
+            <GridItem p="2" pb="6" bg={gridColor} area={"notes"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Notes

@@ -173,7 +173,7 @@ function RecipeMaker() {
             gap="2"
             rounded="lg"
           >
-            <GridItem p="2" bg={gridColor} area={"name"}>
+            <GridItem p="2" bg={gridColor} area={"name"} rounded='md'>
               <VStack>
                 <InputGroup size="lg" width="100%">
                   <Input
@@ -198,7 +198,7 @@ function RecipeMaker() {
                 />
               </VStack>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"ingredients"}>
+            <GridItem p="2" pb="6" bg={gridColor} area={"ingredients"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Ingredients
@@ -219,7 +219,7 @@ function RecipeMaker() {
                 <RecipeMakerIngredients recipe={recipe} setRecipe={setRecipe} />
               </VStack>
             </GridItem>
-            <GridItem p="2" bg={gridColor} area={"steps"}>
+            <GridItem p="2" bg={gridColor} area={"steps"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Steps
@@ -285,7 +285,7 @@ function RecipeMaker() {
                 </OrderedList>
               </VStack>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"notes"}>
+            <GridItem p="2" pb="6" bg={gridColor} area={"notes"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Notes
