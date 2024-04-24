@@ -4,7 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { UserState } from "../store";
 import { Divider, Heading, useToast, Text, VStack, HStack, Spacer, Button, Box } from "@chakra-ui/react";
 import * as client from "./client";
-import Recipes from "./Recipes";
+import UserRecipes from "./UserRecipes";
 import { setCurrentUser } from "./reducer";
 
 
@@ -191,7 +191,7 @@ function Profile() {
         </Text>
       )}
       <Divider />
-      <Recipes />
+      <UserRecipes />
     </div>
   );
 }
