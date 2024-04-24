@@ -7,6 +7,10 @@ import {
   Input,
   InputGroup,
   InputRightElement,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -14,7 +18,6 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Select,
   useColorMode,
   useToast,
 } from "@chakra-ui/react";
@@ -22,6 +25,7 @@ import React, { useState } from "react";
 import * as client from "./client";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "./reducer";
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 function Signin({
   isOpen,
@@ -200,12 +204,33 @@ function Signin({
               <br />
               <FormControl isRequired>
                 <FormLabel>Account Type</FormLabel>
-                <Select
-                  onChange={(e) => setUserType(e.target.value as UserType)}
-                >
-                  <option value="FOODIE">Foodie</option>
-                  <option value="CHEF">Chef</option>
-                </Select>
+                <Menu>
+                  <MenuButton
+                    as={Button}
+                    width="100%"
+                    textAlign={'start'}
+                    rightIcon={<ChevronDownIcon boxSize={6} />}
+                    variant="outline"
+                  >
+                    {userType === "FOODIE" ? "Foodie" : "Chef"}
+                  </MenuButton>
+                  <MenuList width='100%'>
+                    <MenuItem
+                      width='100%'
+                      title={userTypeExplanation["FOODIE"]}
+                      onClick={() => setUserType("FOODIE")}
+                    >
+                      Foodie
+                    </MenuItem>
+                    <MenuItem
+                      width='100%'
+                      title={userTypeExplanation["CHEF"]}
+                      onClick={() => setUserType("CHEF")}
+                    >
+                      Chef
+                    </MenuItem>
+                  </MenuList>
+                </Menu>
                 <FormHelperText>{userTypeExplanation[userType]}</FormHelperText>
               </FormControl>
             </>
