@@ -50,9 +50,10 @@ type IngredientNutrient = {
 }
 
 type FDCFoodItem = {
-    _id: string;                        // the FDC ID
+    fdcId: string;                        // the FDC ID
     description: string;
     foodCategory: string;
+    brandName?: string;
     nutrients: IngredientNutrient[];
 }
 

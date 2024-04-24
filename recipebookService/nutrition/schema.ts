@@ -9,8 +9,10 @@ const nutrientSchema = new mongoose.Schema<IngredientNutrient>({
 );
 
 const nutritionSchema = new mongoose.Schema<FDCFoodItem>({
+    fdcId: { type: String, required: true, unique: true },
     description: { type: String, required: true },
     foodCategory: { type: String, required: true },
+    brandName: { type: String },
     nutrients: [ nutrientSchema ],
   },
   { collection: "fdc_foods" }
