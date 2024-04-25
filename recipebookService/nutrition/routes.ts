@@ -31,7 +31,7 @@ export default function NutritionRoutes(app: Application) {
 
       const rateLimitRemaining = FDCResult.headers['x-ratelimit-remaining'];
 
-      console.log(`${rateLimitRemaining} remaining calls.`)
+      console.log(`${rateLimitRemaining} remaining calls to FDC API`)
       // ensure not reach cap
       if (rateLimitRemaining && parseInt(rateLimitRemaining) < 300) {
         console.error("Rate limit reached, throttling calls to FDC API");
@@ -70,14 +70,13 @@ export default function NutritionRoutes(app: Application) {
 
   app.get('/api/nutrition/health', (req: Request, res: Response) => res.sendStatus(200));
   app.get('/api/nutrition/search', async (req: Request, res: Response) => {
-    const { query } = req.query;
-    if (!query) {
+    const { q } = req.query;
+    if (!q) {
       res.sendStatus(400);
       return;
     }
-    console.log(`Searching FDC for ${query}`);
     try {
-      const results = await searchFDC(query as string);
+      const results = await searchFDC(q as string);
       res.json(results);
     } catch (e) {
       console.error(`Error searching FDC: ${e}`);

@@ -50,6 +50,7 @@ type IngredientNutrient = {
 }
 
 type FDCFoodItem = {
+    _id?: string;                          // the database id
     fdcId: string;                        // the FDC ID
     description: string;
     foodCategory: string;

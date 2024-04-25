@@ -44,7 +44,7 @@ export const toFDCFoodItem = (foodItem: any): FDCFoodItem => {
     description: formatText(foodItem.description),
     foodCategory: foodItem.foodCategory ? formatText(foodItem.foodCategory) : formatText(foodItem.brandedFoodCategory),
     brandName: foodItem.brandName ? formatText(foodItem.brandName) : formatText(foodItem.brandOwner),
-    nutrients: foodItem.foodNutrients.map(toIngredientNutrient),
+    nutrients: foodItem.foodNutrients.map(toIngredientNutrient).filter((nutrient: any) => nutrient.amount > 0),
   }
 }
 
@@ -61,13 +61,13 @@ export const addFDCData = async (data: any): Promise<FDCFoodItem[]> => {
 }
 
 export const getFoodDataByKeyword = async (keyword: string, limit: number): Promise<[boolean, FDCFoodItem[]]> => {
-  const perfectMatchFoods = await model.find({ description: keyword }).select('-_id');
-  const imperfectMatchFoods = await model.find({ description: { $regex: keyword, $options: 'i' } }).limit(limit).select('-_id');
+  const perfectMatchFoods = await model.find({ description: keyword });
+  const imperfectMatchFoods = await model.find({ description: { $regex: keyword, $options: 'i' } }).limit(limit);
   return [(perfectMatchFoods.length >= limit), [...perfectMatchFoods, ...imperfectMatchFoods]];
 }
 
-export const getFoodDataById = async (fdcId: string): Promise<FDCFoodItem> =>
-  await model.findOne({ fdcId }).select('-_id');
+export const getFoodDataById = async (fdcId: string): Promise<FDCFoodItem | null> =>
+  await model.findOne({ fdcId });
 
 export const addFDCFoodItem = async (foodItem: FDCFoodItem) => {
   await model.create(foodItem);
