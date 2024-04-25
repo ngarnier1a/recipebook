@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, Center, Divider, Heading, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Center, Divider, Heading, Table, Tbody, Td, Text, Th, Thead, Tr } from "@chakra-ui/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import * as client from "./client";
 import { ExternalLinkIcon } from '@chakra-ui/icons';
@@ -64,12 +64,13 @@ function Nutrition() {
             View on USDA
         </Button>
       </Heading>
-      <Accordion width='100%' mt={5} allowToggle>
+      <Accordion width='100%' mt={5} allowToggle defaultIndex={0}>
         <AccordionItem>
           <AccordionButton>
+            <AccordionIcon ml={5} boxSize={8} />
             <Heading
               size='md'
-              ml={5}
+              ml={4}
               my={5}
             >
               Nutritional Information

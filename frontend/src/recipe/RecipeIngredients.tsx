@@ -11,6 +11,7 @@ import {
   Tr,
   Td,
   Link,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -61,11 +62,15 @@ function RecipeIngredients({
       my={1}
       >
         <AccordionButton
-          width='90%'
-          textAlign={{ base: "center" }}>
-            {ingredient.quantity.toString()} 
-            {ingredient.unit !== 'unit' ? ` ${ingredient.unit}${ingredient.quantity !== 1 ? 's ' : ' '}` : ' '}
-            {ingredient.name}
+          width='100%'
+          textAlign={{ base: "center" }}
+          justifyContent='space-between'
+          pr={2}
+        >
+          {ingredient.quantity.toString()} 
+          {ingredient.unit !== 'unit' ? ` ${ingredient.unit}${ingredient.quantity !== 1 ? 's ' : ' '}` : ' '}
+          {ingredient.name}
+          {(ingredient.stepNumber?.toString() || ingredient.fdcItem) ? <AccordionIcon /> : ''}
         </AccordionButton>
         <AccordionPanel pb={0} pt={(ingredient.stepNumber?.toString() || ingredient.fdcItem) ? 2 : 0}>
           { (ingredient.stepNumber?.toString() || ingredient.fdcItem) &&
