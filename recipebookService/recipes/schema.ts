@@ -18,7 +18,7 @@ const ingredientSchema = new mongoose.Schema<RecipeIngredient>({
     name: { type: String, required: true },
     quantity: { type: Number, default: 0},
     unit: { type: String, enum: units, required: true },
-    fdcID: { type: String },
+    fdcItem: { type: mongoose.Schema.Types.ObjectId, ref: "NutritionModel" },
     stepNumber: { type: Number },
 });
 

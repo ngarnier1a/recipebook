@@ -1,4 +1,4 @@
-import { ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Input,
   NumberInput,
@@ -19,8 +19,11 @@ import {
   MenuItem,
   MenuList,
   Text,
-  HStack
+  HStack,
+  useDisclosure,
 } from "@chakra-ui/react";
+import { useState } from "react";
+import RecipeMakerFDCItem from "./RecipeMakerFDCItem";
 
 function RecipeMakerIngredients({
   recipe,
@@ -29,6 +32,9 @@ function RecipeMakerIngredients({
   recipe: Recipe;
   setRecipe: (recipe: Recipe) => void;
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentIngredientIdx, setCurrentIngredientIdx] = useState<number>(0);
+
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
   }
@@ -68,7 +74,7 @@ function RecipeMakerIngredients({
     });
   }
 
-  const ingredientFields = (ingredient: RecipeIngredient) => (
+  const ingredientFields = (ingredient: RecipeIngredient, idx: number) => (
     <>
         <Input
         value={ingredient.name}
@@ -80,7 +86,7 @@ function RecipeMakerIngredients({
         />
         <NumberInput
           value={ingredient.quantity.toString()}
-          ml={1}
+          ml={0}
           min={0}
           width='100%'
           title='The quantity of the ingredient'
@@ -99,7 +105,8 @@ function RecipeMakerIngredients({
 
         <Menu>
           <MenuButton
-            ml={1}
+            pl={3}
+            ml={0}
             as={Button}
             variant='outline'
             width='100%'
@@ -121,7 +128,8 @@ function RecipeMakerIngredients({
         </Menu>
         <Menu>
           <MenuButton
-            ml={1}
+            pl={3}
+            ml={0}
             as={Button}
             variant='outline'
             width='100%'
@@ -130,7 +138,7 @@ function RecipeMakerIngredients({
             rightIcon={<ChevronDownIcon ml={7} boxSize={5}/>} 
           >
             <Text ml={1}>
-              {ingredient.stepNumber !== undefined ? (ingredient.stepNumber + 1).toString() : 'N/A'}
+              {ingredient.stepNumber !== undefined ? 'Step ' + (ingredient.stepNumber + 1).toString() : 'N/A'}
             </Text>
           </MenuButton>
           <MenuList>
@@ -155,23 +163,30 @@ function RecipeMakerIngredients({
                     setIngredient({ ...ingredient, stepNumber: idx})
                   }}
                 >
-                  {idx + 1}
+                  Step {idx + 1}
                 </MenuItem>
               ))}
             </>
           </MenuList>
         </Menu>
-        <Input
-        value={ingredient.fdcID || ""}
-        ml={1}
-        placeholder="18069"
-        title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
-        onChange={(e) => {
-            setIngredient({ ...ingredient, fdcID: e.target.value });
-        }}
-        />
+        <Button
+          ml={0}
+          width="100%"
+          variant={ingredient.fdcItem ? 'outline' : 'solid'}
+          textAlign='start'
+          title='A FDC food item for the ingredient, for nutrition lookup (OPTIONAL)'
+          onClick={() => {
+              console.log(`opening drawer for ingredient ${idx}`)
+              setCurrentIngredientIdx(idx);
+              onOpen();
+          }}
+          leftIcon={ingredient.fdcItem ? <></> : <Icon as={AddIcon} />}
+          opacity={ingredient.fdcItem ? 1 : 0.6}
+        >
+          {ingredient.fdcItem?.description ?? 'Food'}
+        </Button>
         <IconButton
-        ml={1}
+        ml={0}
         aria-label="Delete Ingredient"
         icon={<Icon as={DeleteIcon} />}
         onClick={() => deleteIngredient(ingredient)}
@@ -179,13 +194,13 @@ function RecipeMakerIngredients({
     </>
   )
 
-  const desktopIngredient = (ingredient: RecipeIngredient) => (
+  const desktopIngredient = (ingredient: RecipeIngredient, idx: number) => (
     <HStack width='100%' key={ingredient.ingredientID} display={{ base: "none", lg: "flex" }} my={1}>
-        {ingredientFields(ingredient)}
+        {ingredientFields(ingredient, idx)}
     </HStack>
   )
 
-  const mobileIngredient = (ingredient: RecipeIngredient) => (
+  const mobileIngredient = (ingredient: RecipeIngredient, idx: number) => (
     <AccordionItem key={ingredient.ingredientID} display={{ lg: "none" }} my={1}>
         <AccordionButton
         width='90%'
@@ -194,7 +209,7 @@ function RecipeMakerIngredients({
         </AccordionButton>
         <AccordionPanel>
             <VStack>
-                {ingredientFields(ingredient)}
+                {ingredientFields(ingredient, idx)}
             </VStack>
         </AccordionPanel>
     </AccordionItem>
@@ -202,10 +217,24 @@ function RecipeMakerIngredients({
 
 
   return (
-    <Accordion allowToggle width='100%'>
-        {recipe.ingredients.map((ingredient) => desktopIngredient(ingredient))}
-        {recipe.ingredients.map((ingredient) => mobileIngredient(ingredient))}
-    </Accordion>
+    <>
+      {(recipe.ingredients && recipe.ingredients.length > currentIngredientIdx) &&
+        <RecipeMakerFDCItem
+          ingredient={recipe.ingredients[currentIngredientIdx]}
+          setIngredientFDCItem={(fdcItem: FDCFoodItem) => {
+            const ingredient = (recipe.ingredients ?? [])[currentIngredientIdx];
+            setIngredient({ ...ingredient, fdcItem });
+            onClose();
+          }}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+      }
+      <Accordion allowToggle width='95%'>
+        {recipe.ingredients.map((ingredient, idx) => desktopIngredient(ingredient, idx))}
+        {recipe.ingredients.map((ingredient, idx) => mobileIngredient(ingredient, idx))}
+      </Accordion>
+    </>
   );
 }
 

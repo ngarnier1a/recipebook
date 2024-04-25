@@ -1,56 +1,99 @@
-import { ChevronDownIcon, SearchIcon } from "@chakra-ui/icons";
+import { SearchIcon } from "@chakra-ui/icons";
 import {
-  Button,
+  Heading,
   Input,
   InputGroup,
   InputLeftElement,
-  InputRightElement,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
+  Spinner,
   Text,
   VStack,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import * as client from "./client";
+import * as nutritionClient from "../nutrition/client";
+import FoodItems from "../nutrition/FoodItems";
 
 function Search() {
-  const { searchType } = useParams();
-  const [ localSearchType, setLocalSearchType ] = useState(searchType || 'RECIPE');
 
-  const friendlySearchType: Record<SearchType,string> = {
-    RECIPE: 'Recipes',
-    CHEF: 'Chefs',
-    INGREDIENT: 'Nutrition',
-  }
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [ foods, setFoods ] = useState<FDCFoodItem[]>([]);
+  const [ searchQuery, setSearchQuery ] = useState<string>("");
+  const [ isLoading, setIsLoading ] = useState<boolean>(true);
+  const [ error, setError ] = useState<string | null>(null);
 
-  const searchDropdown = (
-    <Menu>
-      <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-        {friendlySearchType[localSearchType as SearchType]}
-      </MenuButton>
-      <MenuList>
-        {Object.entries(friendlySearchType).map(([type, friendlyName]) => (
-          <MenuItem key={type} value={type} onClick={() => setLocalSearchType(type as SearchType)}>
-            {friendlyName}
-          </MenuItem>
-        ))}
-      </MenuList>
-    </Menu>
+  useEffect(() => {
+    setIsLoading(true);
+    setError("");
+    const fetchFoods = async (query: string) => {
+      setSearchQuery(query);
+      try {
+        let foods: FDCFoodItem[] = [];
+        if (parseInt(query)) {
+          const food = await nutritionClient.getFoodItem(query);
+          if (food) {
+            foods = [food];
+          }
+        } else {
+          foods = await client.searchFoods(query);
+        }
+        if (foods.length === 0) {
+          setError(`No results for ${query}`);
+        }
+        setFoods(foods);
+      } catch (error) {
+        console.log(error);
+        setError(`Error searching ${query}`);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const query = new URLSearchParams(location.search).get("q") ?? "";
+    if (!query) {
+      setSearchQuery("");
+      setError("");
+      setFoods([]);
+      setIsLoading(false);
+      return;
+    } else {
+      fetchFoods(query);
+    }
+  }, [location, navigate]);
+
+  const resultsArea = (
+    error ? <Text color='red.500'>{error}</Text> :
+    isLoading ? <Heading mt={5} size='md'>Loading...</Heading> :
+    !foods || foods.length === 0 ? <></> :
+    <FoodItems foods={foods} />
   )
 
   return (
-    <VStack justifyContent='center'>
-      <Text mt={16} mb={5} fontSize={"x-large"} fontWeight={600}>
-        Search RecipeBook
-      </Text>
-      {/* I want a big search bar for an entire website */}
-      <InputGroup width={"80%"} textAlign={"center"} size='lg'>
-        <InputLeftElement children={<SearchIcon />} />
-        <Input placeholder="Search Recipes, People, and Ingredients" />
-        <InputRightElement width={'7em'} children={searchDropdown} />
+    <VStack justifyContent='center' width='100%' mb={10}>
+      <Heading mt={10} mb={7} size='lg' fontWeight='bold'>
+        Search Foods or Ingredients
+      </Heading>
+      <InputGroup
+        width={"80%"}
+        textAlign={"center"}
+        size='lg'
+        mb={10}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            navigate(`/nutrition/search?q=${searchQuery}`);
+          }
+        }}
+      >
+        <InputLeftElement
+          onClick={() => navigate(`/nutrition/search?q=${searchQuery}`)}
+          _hover={{ cursor: 'pointer' }}
+          children={isLoading ? <Spinner size='md' /> : <SearchIcon/>}
+        />
+        <Input placeholder="Search foods by name or FDC ID" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
+      {resultsArea}
+      {(foods.length > 0 && !isLoading && !error) && <Text color='gray.500' mt={5}>{foods.length} result{foods.length !== 1 ? 's' : ''} for {new URLSearchParams(location.search).get("q") ?? ''}</Text>}
     </VStack>
   );
 }

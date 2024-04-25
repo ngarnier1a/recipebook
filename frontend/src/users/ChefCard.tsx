@@ -9,9 +9,12 @@ import { UserState } from "../store";
 function ChefCard({ chef }: {chef: User }) {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: UserState) => state.users);
-  const bgColor = useColorModeValue("gray.50", "gray.700");
-  const hoverColor = useColorModeValue("blue.50", "gray.600");
-  const textHoverColor = useColorModeValue("blue.500", "blue.300");
+
+  const bgColor = useColorModeValue('blue.100', 'blue.800');
+  const hoverColor = useColorModeValue('blue.200', 'blue.700');
+  const textHoverColor = useColorModeValue("blue.700", "blue.100");
+  const textColor = useColorModeValue("blue.600", "blue.200");
+  const followColor = useColorModeValue("red.500", "red.400");
 
   const chefBio = chef.bio ?? "No bio avaliable";
   const nameDisplay = chef.username.length > 17 ? chef.username.slice(0, 17) + "..." : chef.username;
@@ -26,6 +29,7 @@ function ChefCard({ chef }: {chef: User }) {
         m={2}
         onClick={() => navigate(`/user/${chef._id}/profile`)}
         bg={bgColor}
+        color={textColor}
         _hover={{ cursor: 'pointer', bg: hoverColor, color: textHoverColor }}
         title={chef.username}
     >
@@ -37,18 +41,30 @@ function ChefCard({ chef }: {chef: User }) {
             </Text>
             </Stack>
         </CardBody>
-        <CardFooter px={5} pb={3} pt={0}>
+        <CardFooter px={5} pb={3} pt={0} color={textColor}>
             <Flex align='center' justify="space-between" width="100%">
-                <Text color='red.600'>
+                <Text color={followColor}>
                     {Math.max(chef.numFollowers ?? 0, 0)}
                     <Icon ml={1} pt={1} as={ isFollowed ? FaHeart : FaRegHeart } />
                 </Text>
                 <Spacer />
-                <Button variant='ghost' size='sm' m={0} py={0} px={1} onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/user/${chef._id}/recipes`);
-                }}>
-                    {chef.authoredRecipes?.length ?? 0} Recipes
+                <Button
+                    variant='ghost'
+                    size='sm'
+                    m={0}
+                    py={0}
+                    px={1}
+                    color={textColor}
+                    _hover={{
+                        bg: bgColor
+                    }}
+                    title={`View ${chef.username}'s recipe${chef.authoredRecipes?.length === 1 ? '' : 's'}`}
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/user/${chef._id}/recipes`);
+                    }}
+                >
+                    {chef.authoredRecipes?.length ?? 0} Recipe{chef.authoredRecipes?.length === 1 ? '' : 's'}
                 </Button>
             </Flex>
         </CardFooter>
