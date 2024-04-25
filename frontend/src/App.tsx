@@ -29,7 +29,6 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="home" />} />
                 <Route path="/home" element={<Home />} />
-                <Route path="/search" element={<Search />} />
                 {/* <Route path="/search/:searchType/:searchQuery" element={<Search />} /> */}
                 <Route path="/user/profile" element={<Profile />} />
                 <Route path="/user/profile/edit" element={<ProfileEdit />} />
@@ -44,7 +43,8 @@ function App() {
                 <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />
                 <Route path="/recipe/:recipeId/clone" element={<RecipeMaker />} />
                 <Route path="/nutrition" element={<Nutrition />} />
-                <Route path="/nutrition/:ingredientId" element={<Nutrition />} />
+                <Route path="/nutrition/:fdcId" element={<Nutrition />} />
+                <Route path="/nutrition/search" element={<Search />} />
               </Routes>
             </HashRouter>
           </CurrentUser>

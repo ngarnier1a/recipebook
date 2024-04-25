@@ -1,6 +1,7 @@
 import React from 'react'
-import { AccordionButton, AccordionPanel, Table, Thead, Tr, Th, Tbody, Td, Accordion, AccordionItem, Text, Box, Button } from "@chakra-ui/react";
+import { AccordionButton, AccordionPanel, Table, Thead, Tr, Th, Tbody, Td, Accordion, AccordionItem, Text, Box, Button, HStack } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
+import { ExternalLinkIcon } from '@chakra-ui/icons';
 
 function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
 
@@ -22,10 +23,10 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
     }
 
     const items = foods.map(food => (
-        <AccordionItem key={food.fdcId} width='100%'>
-            <AccordionButton>
+        <AccordionItem key={food.fdcId} width='full'>
+            <AccordionButton px={6} py={5}>
                 <Box flex="1" textAlign="left">
-                    {`${food.description} `}
+                    <strong>{food.description}{' '}</strong>
                     <Text
                         as="span"
                         color="blue.500"
@@ -40,9 +41,25 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
                     {(food.brandName || food.foodCategory) && secondaryInfo(food)}
                 </Box>
             </AccordionButton>
+            <AccordionPanel>
+            <HStack>
+                <Button
+                    mb={3}
+                    ml={2}
+                    onClick={() => navigate(`/nutrition/${food.fdcId}`)}
+                >
+                    Details
+                </Button>
+                <Button
+                    mb={3}
+                    onClick={() => window.open(`https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`)}
+                    rightIcon={<ExternalLinkIcon />}
+                >
+                    View on USDA
+                </Button>
+            </HStack>
             {
                 (food.nutrients && food.nutrients.length > 0) ?
-                <AccordionPanel>
                     <Table>
                         <Thead>
                             <Tr>
@@ -59,17 +76,10 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
                             ))}
                         </Tbody>
                     </Table>
-                    <Button
-                        m={2}
-                        onClick={() => window.open(`https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`)}
-                    >
-                        View on USDA
-                    </Button>
-                </AccordionPanel> :
-                <AccordionPanel>
-                    <Text>No nutritional information available</Text>
-                </AccordionPanel>
+                 :
+                <Text>No nutritional information available</Text>
             }
+            </AccordionPanel>
         </AccordionItem>
     ));
 

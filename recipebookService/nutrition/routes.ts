@@ -5,7 +5,7 @@ import axios from "axios";
 
 const FDC_API_KEY = process.env.FDC_API_KEY
 const FDC_API_URL = "https://api.nal.usda.gov/fdc/v1"
-const SEARCH_LIMIT = 15;
+const SEARCH_LIMIT = 25;
 
 export default function NutritionRoutes(app: Application) {
 

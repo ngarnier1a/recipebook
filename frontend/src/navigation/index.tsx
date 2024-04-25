@@ -447,10 +447,6 @@ const NAV_ITEMS: Array<NavItem> = [
   },
   {
     label: "Nutrition",
-    href: "/nutrition",
-  },
-  {
-    label: "Search",
-    href: "/search",
-  },
+    href: "/nutrition/search",
+  }
 ];

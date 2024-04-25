@@ -34,6 +34,7 @@ function Search() {
         const foods = await client.searchFoods(query);
         setFoods(foods);
       } catch (error) {
+        console.log(error);
         setError(`Error searching ${query}`);
       } finally {
         setIsLoading(false);
@@ -58,7 +59,7 @@ function Search() {
 
   return (
     <VStack justifyContent='center' width='100%' mb={10}>
-      <Heading mt={10} mb={5} size='lg' fontWeight='bold'>
+      <Heading mt={10} mb={7} size='lg' fontWeight='bold'>
         Search Foods or Ingredients
       </Heading>
       <InputGroup
@@ -68,12 +69,12 @@ function Search() {
         mb={10}
         onKeyDown={(e) => {
           if (e.key === 'Enter') {
-            navigate(`/search?q=${searchQuery}`);
+            navigate(`/nutrition/search?q=${searchQuery}`);
           }
         }}
       >
         <InputLeftElement
-          onClick={() => navigate(`/search?q=${searchQuery}`)}
+          onClick={() => navigate(`/nutrition/search?q=${searchQuery}`)}
           _hover={{ cursor: 'pointer' }}
           children={isLoading ? <Spinner size='md' /> : <SearchIcon/>}
         />
