@@ -93,6 +93,7 @@ function Search() {
         <Input placeholder="Search foods by name or FDC ID" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
       {resultsArea}
+      {(foods.length > 0 && !isLoading && !error) && <Text color='gray.500' mt={5}>{foods.length} result{foods.length !== 1 ? 's' : ''} for {new URLSearchParams(location.search).get("q") ?? ''}</Text>}
     </VStack>
   );
 }
