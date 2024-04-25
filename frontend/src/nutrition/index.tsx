@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Center, Divider, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Center, Divider, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue, useToast } from "@chakra-ui/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import * as client from "./client";
 import { ExternalLinkIcon } from '@chakra-ui/icons';
@@ -12,6 +12,7 @@ function Nutrition() {
     const [recipes, setRecipes] = React.useState<Recipe[] | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
     const toast = useToast();
+    const tabLocation = useBreakpointValue({ base: "center", md: "start" });
 
     useEffect(() => {
       console.log(`Nutrition component mounted with fdcId: ${fdcId}`);
@@ -132,17 +133,19 @@ function Nutrition() {
             Used In
           </Heading>
         </AccordionButton>
+        <AccordionPanel>
         {
-          recipes && recipes.length > 0 ? recipes.map(recipe => (
-            <AccordionPanel>
+          recipes && recipes.length > 0 ?
+          <Flex justify={tabLocation} wrap="wrap">
+            {recipes.map(recipe => (
               <RecipeCard recipe={recipe} />
-            </AccordionPanel>
-          )) : (
-            <AccordionPanel>
-              <Text ml={5} mb={3}>This food item is not used in any recipes</Text>
-            </AccordionPanel>
+            ))}
+          </Flex>
+          : (
+            <Text ml={5} mb={3}>This food item is not used in any recipes</Text>
           )
         }
+        </AccordionPanel>
       </AccordionItem>
     )
 
