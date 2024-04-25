@@ -80,7 +80,7 @@ function RecipeMakerIngredients({
         />
         <NumberInput
           value={ingredient.quantity.toString()}
-          ml={1}
+          ml={0}
           min={0}
           width='100%'
           title='The quantity of the ingredient'
@@ -99,7 +99,7 @@ function RecipeMakerIngredients({
 
         <Menu>
           <MenuButton
-            ml={1}
+            ml={0}
             as={Button}
             variant='outline'
             width='100%'
@@ -121,7 +121,7 @@ function RecipeMakerIngredients({
         </Menu>
         <Menu>
           <MenuButton
-            ml={1}
+            ml={0}
             as={Button}
             variant='outline'
             width='100%'
@@ -163,7 +163,7 @@ function RecipeMakerIngredients({
         </Menu>
         <Input
         value={ingredient.fdcID || ""}
-        ml={1}
+        ml={0}
         placeholder="18069"
         title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
         onChange={(e) => {
@@ -171,7 +171,7 @@ function RecipeMakerIngredients({
         }}
         />
         <IconButton
-        ml={1}
+        ml={0}
         aria-label="Delete Ingredient"
         icon={<Icon as={DeleteIcon} />}
         onClick={() => deleteIngredient(ingredient)}
@@ -202,7 +202,7 @@ function RecipeMakerIngredients({
 
 
   return (
-    <Accordion allowToggle width='100%'>
+    <Accordion allowToggle width='95%'>
         {recipe.ingredients.map((ingredient) => desktopIngredient(ingredient))}
         {recipe.ingredients.map((ingredient) => mobileIngredient(ingredient))}
     </Accordion>

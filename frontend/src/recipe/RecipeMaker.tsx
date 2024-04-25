@@ -5,6 +5,7 @@ import {
   Button,
   Center,
   Container,
+  Divider,
   Grid,
   GridItem,
   HStack,
@@ -58,7 +59,7 @@ function RecipeMaker() {
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
   const [recipe, setRecipe] = React.useState<Recipe>({
     name: "Recipe Name",
-    description: "Recipe Description",
+    description: "Recipe description",
     ingredients: [PLACEHOLDER_INGREDIENT],
     steps: [PLACEHOLDER_STEP],
     notes: [PLACEHOLDER_NOTE],
@@ -187,6 +188,7 @@ function RecipeMaker() {
                 </InputGroup>
                 description
                 <Textarea
+                  overflow='hidden'
                   resize="vertical"
                   value={recipe.description}
                   size="sm"
@@ -216,10 +218,11 @@ function RecipeMaker() {
                     icon={<AddIcon />}
                   />
                 </Heading>
+                <Divider />
                 <RecipeMakerIngredients recipe={recipe} setRecipe={setRecipe} />
               </VStack>
             </GridItem>
-            <GridItem p="2" bg={gridColor} area={"steps"} rounded='md'>
+            <GridItem p="2" pb="6" bg={gridColor} area={"steps"} rounded='md'>
               <VStack>
                 <Heading size="md">
                   Steps
@@ -237,6 +240,7 @@ function RecipeMaker() {
                     icon={<AddIcon />}
                   />
                 </Heading>
+                <Divider />
                 <OrderedList width="90%">
                   {recipe.steps?.map((step, idx) => (
                     <ListItem key={idx} mt={4}>
@@ -271,6 +275,7 @@ function RecipeMaker() {
                         value={step.stepDescription}
                         placeholder="Cut vegetables, measure qunatities, etc."
                         resize="vertical"
+                        overflow='hidden'
                         onChange={(e) => {
                           const newSteps = [...(recipe.steps ?? [])];
                           setRecipe({
@@ -303,11 +308,13 @@ function RecipeMaker() {
                     icon={<AddIcon />}
                   />
                 </Heading>
+                <Divider />
                 <OrderedList width="90%">
                   {recipe.notes?.map((note, index) => (
                     <ListItem key={index} mt={4}>
-                      <HStack>
+                      <HStack align='flex-start'>
                         <Textarea
+                          overflow='hidden'
                           value={note.noteText}
                           placeholder="Make sure to use fresh ingredients"
                           minH={"40px"}
@@ -327,6 +334,7 @@ function RecipeMaker() {
                                 .filter(n => n.noteID !== note.noteID),
                             });
                           }}
+                          
                           aria-label="Remove Step"
                           icon={<DeleteIcon />}
                         />
