@@ -55,7 +55,7 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
                     onClick={() => window.open(`https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`)}
                     rightIcon={<ExternalLinkIcon />}
                 >
-                    View on USDA
+                    USDA
                 </Button>
             </HStack>
             {

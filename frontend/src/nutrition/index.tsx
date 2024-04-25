@@ -61,7 +61,7 @@ function Nutrition() {
             onClick={() => window.open(`https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`)}
             rightIcon={<ExternalLinkIcon />}
         >
-            View on USDA
+            USDA
         </Button>
       </Heading>
       <Accordion width='100%' mt={5} allowToggle defaultIndex={0}>
