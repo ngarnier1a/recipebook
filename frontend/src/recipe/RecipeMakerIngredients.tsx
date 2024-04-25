@@ -68,6 +68,14 @@ function RecipeMakerIngredients({
     });
   }
 
+  const defaultFdcItem: FDCFoodItem = {
+    _id: "6629ae16a0a1482182b72590",
+    fdcId: "",
+    description: "",
+    foodCategory: "",
+    nutrients: [],
+  };
+
   const ingredientFields = (ingredient: RecipeIngredient) => (
     <>
         <Input
@@ -130,7 +138,7 @@ function RecipeMakerIngredients({
             rightIcon={<ChevronDownIcon ml={7} boxSize={5}/>} 
           >
             <Text ml={1}>
-              {ingredient.stepNumber !== undefined ? (ingredient.stepNumber + 1).toString() : 'N/A'}
+              {ingredient.stepNumber !== undefined ? 'Step ' + (ingredient.stepNumber + 1).toString() : 'N/A'}
             </Text>
           </MenuButton>
           <MenuList>
@@ -155,19 +163,22 @@ function RecipeMakerIngredients({
                     setIngredient({ ...ingredient, stepNumber: idx})
                   }}
                 >
-                  {idx + 1}
+                  Step {idx + 1}
                 </MenuItem>
               ))}
             </>
           </MenuList>
         </Menu>
         <Input
-        value={ingredient.fdcID || ""}
+        value={ingredient.fdcItem?.fdcId ?? ""}
         ml={0}
         placeholder="18069"
         title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
         onChange={(e) => {
-            setIngredient({ ...ingredient, fdcID: e.target.value });
+            setIngredient({ ...ingredient, fdcItem: {
+              ...defaultFdcItem,
+              fdcId: e.target.value,
+            }});
         }}
         />
         <IconButton

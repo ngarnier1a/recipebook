@@ -42,10 +42,10 @@ function RecipeIngredients({
       <Td px={0}>{ingredient.quantity.toString()}</Td>
       <Td px={0}>{ingredient.unit}</Td>
       {<Td px={0}>{ingredient.stepNumber !== undefined ? ingredient.stepNumber + 1 : ''}</Td>}
-      {ingredient.fdcID &&
+      {ingredient.fdcItem?.fdcId &&
         <Td pl={0}>
-          <Link onClick={() => navigate(`/nutrition/${ingredient.fdcID}`)}>
-              {ingredient.fdcID}
+          <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
+              {ingredient.fdcItem.fdcId}
           </Link>
         </Td>
       }
@@ -69,9 +69,9 @@ function RecipeIngredients({
               Step: {ingredient.stepNumber}
             </Text>
           )}
-          {ingredient.fdcID && (
-            <Link onClick={() => navigate(`/nutrition/${ingredient.fdcID}`)}>
-              FDC ID: {ingredient.fdcID}
+          {ingredient.fdcItem?.fdcId && (
+            <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
+              FDC ID: {ingredient.fdcItem.fdcId}
             </Link>
           )}
         </AccordionPanel>

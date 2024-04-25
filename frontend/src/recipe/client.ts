@@ -6,7 +6,17 @@ const api = axios.create({
 });
 
 export const create = async (recipe: Recipe): Promise<{recipe: Recipe, user: User}> => {
-    const response = await api.post(`${SERVICE_URL}/recipe`, recipe);
+    const recipeToPublish = recipe.ingredients ? {
+        ...recipe,
+        ingredients: recipe.ingredients.map(i => i.fdcItem ? { ...i, fdcItem: i.fdcItem._id } : i)
+      } :
+      recipe;
+
+    console.log(recipe.ingredients);
+    console.log(recipeToPublish.ingredients);
+    
+
+    const response = await api.post(`${SERVICE_URL}/recipe`, recipeToPublish);
     return response.data;
 }
 
@@ -16,7 +26,15 @@ export const get = async (rid: RecipeID): Promise<Recipe> => {
 }
 
 export const update = async (rid: RecipeID, recipe: Recipe): Promise<User> => {
-    const response = await api.put(`${SERVICE_URL}/recipe/${rid}`, recipe);
+    const recipeToPublish = recipe.ingredients ? {
+        ...recipe,
+        ingredients: recipe.ingredients.map(i => i.fdcItem ? { ...i, fdcItem: i.fdcItem._id } : i)
+      } :
+      recipe;
+    
+      console.log(recipe.ingredients);
+      console.log(recipeToPublish.ingredients);
+    const response = await api.put(`${SERVICE_URL}/recipe/${rid}`, recipeToPublish);
     return response.data;
 }
 

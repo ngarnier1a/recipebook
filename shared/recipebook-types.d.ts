@@ -38,7 +38,7 @@ type RecipeIngredient = {
     name: string;
     quantity: Number;
     unit: RecipeUnit;
-    fdcID?: string;                     // optional: not passed if not an FDC ingredient
+    fdcItem?: FDCFoodItem;               // optional: not passed if not an FDC ingredient
     stepNumber?: number;                // optional: not passed if not associated with a step
 }
 
