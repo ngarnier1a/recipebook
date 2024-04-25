@@ -134,7 +134,9 @@ function Nutrition() {
         </AccordionButton>
         {
           recipes && recipes.length > 0 ? recipes.map(recipe => (
-            <RecipeCard recipe={recipe} />
+            <AccordionPanel>
+              <RecipeCard recipe={recipe} />
+            </AccordionPanel>
           )) : (
             <AccordionPanel>
               <Text ml={5} mb={3}>This food item is not used in any recipes</Text>

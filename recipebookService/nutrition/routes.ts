@@ -1,5 +1,5 @@
-import { updateSessionUser } from "../users/routes.js";
 import * as dao from "./dao.js";
+import * as recipeDao from "../recipes/dao.js";
 import { Application, Request, Response } from "express";
 import axios from "axios";
 
@@ -68,8 +68,7 @@ export default function NutritionRoutes(app: Application) {
     }
   }
 
-  app.get('/api/nutrition/health', (req: Request, res: Response) => res.sendStatus(200));
-  app.get('/api/nutrition/search', async (req: Request, res: Response) => {
+  const searchFDCItemsRequest = async (req: Request, res: Response) => {
     const { q } = req.query;
     if (!q) {
       res.sendStatus(400);
@@ -82,8 +81,9 @@ export default function NutritionRoutes(app: Application) {
       console.error(`Error searching FDC: ${e}`);
       res.sendStatus(500);
     }
-  });
-  app.get('/api/nutrition/:fdcId', async (req: Request, res: Response) => {
+  }
+
+  const getFDCItemRequest = async (req: Request, res: Response) => {
     const { fdcId } = req.params;
     try {
       const food = await dao.getFoodDataById(fdcId);
@@ -98,5 +98,20 @@ export default function NutritionRoutes(app: Application) {
       console.error(`Error getting food data: ${e}`);
       res.sendStatus(500);
     }
-  });
+  }
+
+  const getRecipesWithFDCId = async (req: Request, res: Response) => {
+    const { fdcId } = req.params;
+    try {
+      const recipes = await recipeDao.getRecipesWithFDCId(fdcId);
+      res.json(recipes);
+    } catch (e) {
+      console.error(`Error getting recipes: ${e}`);
+      res.sendStatus(500);
+    }
+  }
+
+  app.get('/api/nutrition/search', searchFDCItemsRequest);
+  app.get('/api/nutrition/:fdcId', getFDCItemRequest);
+  app.get('/api/nutrition/:fdcId/recipes', getRecipesWithFDCId);
 }
