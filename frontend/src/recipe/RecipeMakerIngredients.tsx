@@ -1,4 +1,4 @@
-import { ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
+import { AddIcon, ChevronDownIcon, DeleteIcon } from "@chakra-ui/icons";
 import {
   Input,
   NumberInput,
@@ -19,8 +19,16 @@ import {
   MenuItem,
   MenuList,
   Text,
-  HStack
+  HStack,
+  Drawer,
+  DrawerBody,
+  DrawerContent,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerOverlay,
+  useDisclosure
 } from "@chakra-ui/react";
+import { useState } from "react";
 
 function RecipeMakerIngredients({
   recipe,
@@ -29,6 +37,9 @@ function RecipeMakerIngredients({
   recipe: Recipe;
   setRecipe: (recipe: Recipe) => void;
 }) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [currentIngredientIdx, setCurrentIngredientIdx] = useState<number>(0);
+
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
   }
@@ -76,7 +87,25 @@ function RecipeMakerIngredients({
     nutrients: [],
   };
 
-  const ingredientFields = (ingredient: RecipeIngredient) => (
+  const ftcDrawer = (
+    <Drawer placement='right' onClose={onClose} isOpen={isOpen}>
+      <DrawerOverlay />
+      <DrawerContent>
+        <DrawerHeader borderBottomWidth='1px'>Add FDC Food</DrawerHeader>
+        <DrawerBody>
+          <p>Stuff for ingredient idx {currentIngredientIdx}</p>
+          <p>Some contents...</p>
+          <p>Some contents...</p>
+        </DrawerBody>
+        <DrawerFooter>
+          <Button onClick={onClose}>Cancel</Button>
+          <Button onClick={onClose}>Save</Button>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  )
+
+  const ingredientFields = (ingredient: RecipeIngredient, idx: number) => (
     <>
         <Input
         value={ingredient.name}
@@ -169,18 +198,21 @@ function RecipeMakerIngredients({
             </>
           </MenuList>
         </Menu>
-        <Input
-        value={ingredient.fdcItem?.fdcId ?? ""}
-        ml={0}
-        placeholder="18069"
-        title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
-        onChange={(e) => {
-            setIngredient({ ...ingredient, fdcItem: {
-              ...defaultFdcItem,
-              fdcId: e.target.value,
-            }});
-        }}
-        />
+        <Button
+          ml={0}
+          width="100%"
+          variant='outline'
+          title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
+          textAlign={'center'}
+          onClick={() => {
+              console.log(`opening drawer for ingredient ${idx}`)
+              setCurrentIngredientIdx(idx);
+              onOpen();
+          }}
+          leftIcon={ingredient.fdcItem ? <></> : <Icon as={AddIcon} />}
+        >
+          {ingredient.fdcItem?.fdcId ?? 'FDC'}
+        </Button>
         <IconButton
         ml={0}
         aria-label="Delete Ingredient"
@@ -190,13 +222,13 @@ function RecipeMakerIngredients({
     </>
   )
 
-  const desktopIngredient = (ingredient: RecipeIngredient) => (
+  const desktopIngredient = (ingredient: RecipeIngredient, idx: number) => (
     <HStack width='100%' key={ingredient.ingredientID} display={{ base: "none", lg: "flex" }} my={1}>
-        {ingredientFields(ingredient)}
+        {ingredientFields(ingredient, idx)}
     </HStack>
   )
 
-  const mobileIngredient = (ingredient: RecipeIngredient) => (
+  const mobileIngredient = (ingredient: RecipeIngredient, idx: number) => (
     <AccordionItem key={ingredient.ingredientID} display={{ lg: "none" }} my={1}>
         <AccordionButton
         width='90%'
@@ -205,7 +237,7 @@ function RecipeMakerIngredients({
         </AccordionButton>
         <AccordionPanel>
             <VStack>
-                {ingredientFields(ingredient)}
+                {ingredientFields(ingredient, idx)}
             </VStack>
         </AccordionPanel>
     </AccordionItem>
@@ -213,10 +245,13 @@ function RecipeMakerIngredients({
 
 
   return (
-    <Accordion allowToggle width='95%'>
-        {recipe.ingredients.map((ingredient) => desktopIngredient(ingredient))}
-        {recipe.ingredients.map((ingredient) => mobileIngredient(ingredient))}
-    </Accordion>
+    <>
+      {ftcDrawer}
+      <Accordion allowToggle width='95%'>
+        {recipe.ingredients.map((ingredient, idx) => desktopIngredient(ingredient, idx))}
+        {recipe.ingredients.map((ingredient, idx) => mobileIngredient(ingredient, idx))}
+      </Accordion>
+    </>
   );
 }
 
