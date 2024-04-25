@@ -1,7 +1,10 @@
 import React from 'react'
-import { AccordionButton, AccordionPanel, Table, Thead, Tr, Th, Tbody, Td, Accordion, AccordionItem, Text, Box } from "@chakra-ui/react";
+import { AccordionButton, AccordionPanel, Table, Thead, Tr, Th, Tbody, Td, Accordion, AccordionItem, Text, Box, Button } from "@chakra-ui/react";
+import { useNavigate } from 'react-router-dom';
 
 function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
+
+    const navigate = useNavigate();
 
     const secondaryInfo = (food: FDCFoodItem) => {
         let info = '';
@@ -29,7 +32,7 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
                         _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
                         onClick={(e) => {
                             e.stopPropagation();
-                            window.open(`https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`)
+                            navigate(`/nutrition/${food.fdcId}`);
                         }}
                     >
                         {`${food.fdcId}`}
@@ -56,6 +59,12 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
                             ))}
                         </Tbody>
                     </Table>
+                    <Button
+                        m={2}
+                        onClick={() => window.open(`https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`)}
+                    >
+                        View on USDA
+                    </Button>
                 </AccordionPanel> :
                 <AccordionPanel>
                     <Text>No nutritional information available</Text>

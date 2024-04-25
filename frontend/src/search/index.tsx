@@ -77,7 +77,7 @@ function Search() {
           _hover={{ cursor: 'pointer' }}
           children={isLoading ? <Spinner size='md' /> : <SearchIcon/>}
         />
-        <Input placeholder="Search foods from the FDC" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
+        <Input placeholder="Search foods by name or FDC ID" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} />
       </InputGroup>
       {resultsArea}
     </VStack>
