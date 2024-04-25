@@ -1,5 +1,4 @@
 import {
-  Text,
   Accordion,
   AccordionItem,
   AccordionButton,
@@ -12,6 +11,7 @@ import {
   Tr,
   Td,
   Link,
+  useBreakpointValue,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,7 @@ function RecipeIngredients({
   recipe: Recipe;
 }) {
   const navigate = useNavigate();
+
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
   }
@@ -39,13 +40,15 @@ function RecipeIngredients({
   const desktopIngredient = (ingredient: RecipeIngredient) => (
     <Tr key={ingredient.ingredientID}>
       <Td pr={0}>{ingredient.name}</Td>
-      <Td px={0}>{ingredient.quantity.toString()}</Td>
-      <Td px={0}>{ingredient.unit}</Td>
+      <Td px={0}>
+        {ingredient.quantity.toString()} 
+        {ingredient.unit !== 'unit' ? ` ${ingredient.unit}${ingredient.quantity !== 1 ? 's' : ''}` : ''} 
+      </Td>
       {<Td px={0}>{ingredient.stepNumber !== undefined ? ingredient.stepNumber + 1 : ''}</Td>}
       {ingredient.fdcItem?.fdcId &&
         <Td pl={0}>
           <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
-              {ingredient.fdcItem.fdcId}
+              {ingredient.fdcItem.description}
           </Link>
         </Td>
       }
@@ -61,19 +64,38 @@ function RecipeIngredients({
         <AccordionButton
           width='90%'
           textAlign={{ base: "center" }}>
-            {ingredient.quantity.toString()} {ingredient.unit} {ingredient.name}
+            {ingredient.quantity.toString()} 
+            {ingredient.unit !== 'unit' ? ` ${ingredient.unit}${ingredient.quantity !== 1 ? 's ' : ' '}` : ' '}
+            {ingredient.name}
         </AccordionButton>
-        <AccordionPanel>
-          {ingredient.stepNumber && (
-            <Text>
-              Step: {ingredient.stepNumber}
-            </Text>
-          )}
-          {ingredient.fdcItem?.fdcId && (
-            <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
-              FDC ID: {ingredient.fdcItem.fdcId}
-            </Link>
-          )}
+        <AccordionPanel pb={0} pt={(ingredient.stepNumber?.toString() || ingredient.fdcItem) ? 2 : 0}>
+          { (ingredient.stepNumber?.toString() || ingredient.fdcItem) &&
+            <Table width='100%'>
+              <Thead>
+                <Tr>
+                  <Th px={2} pt={0} textAlign='center'>Step</Th>
+                  <Th px={2} pt={0} textAlign='center'>FDC Food</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                <Tr pt={0}>
+                  <Td textAlign='center' pt={0}>
+                    {ingredient.stepNumber?.toString() ? (
+                      (ingredient.stepNumber + 1).toString()
+                    ) : ''}
+                  </Td>
+                  <Td textAlign='center' pt={0}>
+                    {ingredient.fdcItem?.fdcId && (
+                      <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
+                        {ingredient.fdcItem.description}
+                      </Link>
+                    )}
+                  </Td>
+                </Tr>
+              </Tbody>
+            </Table>
+
+          }
         </AccordionPanel>
     </AccordionItem>
   )
@@ -86,10 +108,9 @@ function RecipeIngredients({
           <Thead>
             <Tr>
               <Th pr={0}>Name</Th>
-              <Th px={0}>QTY</Th>
-              <Th px={0}>Unit</Th>
+              <Th px={0}>Amount</Th>
               <Th px={0}>Step</Th>
-              <Th pl={0}>FDC ID</Th>
+              <Th pl={0} pr={0}>FDC Food</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -97,7 +118,7 @@ function RecipeIngredients({
           </Tbody>
         </Table>
       </TableContainer>
-      <Accordion allowToggle width='100%' display={{ md: "none" }}>
+      <Accordion allowMultiple width='100%' display={{ md: "none" }}>
         {sortedIngredients.map((ingredient) => mobileIngredient(ingredient))}
       </Accordion>
     </>

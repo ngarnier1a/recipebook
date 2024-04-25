@@ -105,6 +105,7 @@ function RecipeMakerIngredients({
 
         <Menu>
           <MenuButton
+            pl={3}
             ml={0}
             as={Button}
             variant='outline'
@@ -127,6 +128,7 @@ function RecipeMakerIngredients({
         </Menu>
         <Menu>
           <MenuButton
+            pl={3}
             ml={0}
             as={Button}
             variant='outline'
