@@ -20,15 +20,10 @@ import {
   MenuList,
   Text,
   HStack,
-  Drawer,
-  DrawerBody,
-  DrawerContent,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerOverlay,
-  useDisclosure
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
+import RecipeMakerFDCItem from "./RecipeMakerFDCItem";
 
 function RecipeMakerIngredients({
   recipe,
@@ -78,32 +73,6 @@ function RecipeMakerIngredients({
         .filter(i => i.ingredientID !== ingredient.ingredientID),
     });
   }
-
-  const defaultFdcItem: FDCFoodItem = {
-    _id: "6629ae16a0a1482182b72590",
-    fdcId: "",
-    description: "",
-    foodCategory: "",
-    nutrients: [],
-  };
-
-  const ftcDrawer = (
-    <Drawer placement='right' onClose={onClose} isOpen={isOpen}>
-      <DrawerOverlay />
-      <DrawerContent>
-        <DrawerHeader borderBottomWidth='1px'>Add FDC Food</DrawerHeader>
-        <DrawerBody>
-          <p>Stuff for ingredient idx {currentIngredientIdx}</p>
-          <p>Some contents...</p>
-          <p>Some contents...</p>
-        </DrawerBody>
-        <DrawerFooter>
-          <Button onClick={onClose}>Cancel</Button>
-          <Button onClick={onClose}>Save</Button>
-        </DrawerFooter>
-      </DrawerContent>
-    </Drawer>
-  )
 
   const ingredientFields = (ingredient: RecipeIngredient, idx: number) => (
     <>
@@ -201,17 +170,18 @@ function RecipeMakerIngredients({
         <Button
           ml={0}
           width="100%"
-          variant='outline'
-          title='A FDC ID for the ingredient, for nutrition lookup (OPTIONAL)'
-          textAlign={'center'}
+          variant={ingredient.fdcItem ? 'outline' : 'solid'}
+          textAlign='start'
+          title='A FDC food item for the ingredient, for nutrition lookup (OPTIONAL)'
           onClick={() => {
               console.log(`opening drawer for ingredient ${idx}`)
               setCurrentIngredientIdx(idx);
               onOpen();
           }}
           leftIcon={ingredient.fdcItem ? <></> : <Icon as={AddIcon} />}
+          opacity={ingredient.fdcItem ? 1 : 0.6}
         >
-          {ingredient.fdcItem?.fdcId ?? 'FDC'}
+          {ingredient.fdcItem?.description ?? 'Food'}
         </Button>
         <IconButton
         ml={0}
@@ -246,7 +216,18 @@ function RecipeMakerIngredients({
 
   return (
     <>
-      {ftcDrawer}
+      {(recipe.ingredients && recipe.ingredients.length > currentIngredientIdx) &&
+        <RecipeMakerFDCItem
+          ingredient={recipe.ingredients[currentIngredientIdx]}
+          setIngredientFDCItem={(fdcItem: FDCFoodItem) => {
+            const ingredient = (recipe.ingredients ?? [])[currentIngredientIdx];
+            setIngredient({ ...ingredient, fdcItem });
+            onClose();
+          }}
+          isOpen={isOpen}
+          onClose={onClose}
+        />
+      }
       <Accordion allowToggle width='95%'>
         {recipe.ingredients.map((ingredient, idx) => desktopIngredient(ingredient, idx))}
         {recipe.ingredients.map((ingredient, idx) => mobileIngredient(ingredient, idx))}
