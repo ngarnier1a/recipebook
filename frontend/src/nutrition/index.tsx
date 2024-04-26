@@ -211,7 +211,7 @@ function Nutrition() {
           recipes && recipes.length > 0 ?
           <Flex justify={tabLocation} wrap="wrap">
             {recipes.map(recipe => (
-              <RecipeCard recipe={recipe} />
+              <RecipeCard key={recipe._id} recipe={recipe} />
             ))}
           </Flex>
           : (
