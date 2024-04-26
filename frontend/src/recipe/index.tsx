@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import * as recipeClient from "./client";
 import {
@@ -28,8 +28,8 @@ import { setCurrentUser } from "../users/reducer";
 
 function Recipe() {
   const { recipeId } = useParams();
-  const [recipe, setRecipe] = React.useState<Recipe | null>(null);
-  const [isLiking, setIsLiking] = React.useState<boolean>(false);
+  const [recipe, setRecipe] = useState<Recipe | null>(null);
+  const [isLiking, setIsLiking] = useState<boolean>(false);
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
   const likeColor = useColorModeValue("red.400", "red.500");

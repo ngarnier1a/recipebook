@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserState } from "../store";
 import {
@@ -52,12 +52,12 @@ function RecipeMaker() {
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
   const deleteColor = useColorModeValue("red.400", "red.500");
-  const [isPublishing, setIsPublishing] = React.useState<boolean>(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
-  const [recipe, setRecipe] = React.useState<Recipe>({
+  const [recipe, setRecipe] = useState<Recipe>({
     name: "Recipe Name",
     description: "Recipe description",
     ingredients: [PLACEHOLDER_INGREDIENT],

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
@@ -33,15 +33,13 @@ function Recipes() {
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });
   const tabMargin = useBreakpointValue({ base: 0, md: 5 });
 
-  const [popularRecipes, setPopularRecipes] = React.useState<Recipe[] | null>(
-    null,
-  );
-  const [popularFollowedRecipes, setPopularFollowedRecipes] = React.useState<
+  const [popularRecipes, setPopularRecipes] = useState<Recipe[] | null>(null);
+  const [popularFollowedRecipes, setPopularFollowedRecipes] = useState<
     Recipe[] | null
   >(null);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [searchParams, setSearchParams] = React.useState<{
+  const [searchParams, setSearchParams] = useState<{
     type: string;
     dir: string;
   }>({ type: "top", dir: "dsc" });

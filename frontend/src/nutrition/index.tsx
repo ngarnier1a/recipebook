@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
   Accordion,
   AccordionButton,
@@ -37,11 +37,11 @@ function Nutrition() {
   const navigate = useNavigate();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const { fdcId } = useParams();
-  const [food, setFood] = React.useState<FDCFoodItem | null>(null);
-  const [recipes, setRecipes] = React.useState<Recipe[] | null>(null);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
-  const [isFavorited, setIsFavorited] = React.useState<boolean>(false);
-  const [isFavoriting, setIsFavoriting] = React.useState<boolean>(false);
+  const [food, setFood] = useState<FDCFoodItem | null>(null);
+  const [recipes, setRecipes] = useState<Recipe[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isFavorited, setIsFavorited] = useState<boolean>(false);
+  const [isFavoriting, setIsFavoriting] = useState<boolean>(false);
   const toast = useToast();
   const dispatch = useDispatch();
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });

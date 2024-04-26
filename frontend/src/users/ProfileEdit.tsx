@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { UserState } from "../store";
@@ -24,14 +24,14 @@ import { setCurrentUser } from "./reducer";
 
 function ProfileEdit() {
   const { currentUser } = useSelector((state: UserState) => state.users);
-  const [userProfile, setUserProfile] = React.useState<User | null>(null);
-  const [isSaving, setIsSaving] = React.useState<boolean>(false);
-  const [showPassword, setShowPassword] = React.useState<boolean>(false);
+  const [userProfile, setUserProfile] = useState<User | null>(null);
+  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showPasswordConfirm, setShowPasswordConfirm] =
-    React.useState<boolean>(false);
-  const [passwordConfirm, setPasswordConfirm] = React.useState<
-    string | undefined
-  >(undefined);
+    useState<boolean>(false);
+  const [passwordConfirm, setPasswordConfirm] = useState<string | undefined>(
+    undefined,
+  );
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();

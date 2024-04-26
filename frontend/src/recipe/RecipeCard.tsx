@@ -11,7 +11,6 @@ import {
   Spacer,
   Button,
 } from "@chakra-ui/react";
-import React from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";

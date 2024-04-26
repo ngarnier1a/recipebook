@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { UserState } from "../store";
@@ -16,7 +16,7 @@ import { nanoid } from "@reduxjs/toolkit";
 function UserRecipes({ showLiked = true }: { showLiked?: boolean }) {
   const { userId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
-  const [userData, setUserData] = React.useState<User | null>(null);
+  const [userData, setUserData] = useState<User | null>(null);
   const justifyVal = useBreakpointValue({ base: "center", md: "start" });
 
   useEffect(() => {

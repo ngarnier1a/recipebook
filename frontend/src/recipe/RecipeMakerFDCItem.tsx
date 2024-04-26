@@ -32,7 +32,7 @@ import {
   Thead,
   Tr,
 } from "@chakra-ui/react";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as searchClient from "../search/client";
 import * as nutritionClient from "../nutrition/client";
 import { useSelector } from "react-redux";

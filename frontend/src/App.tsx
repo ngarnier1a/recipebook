@@ -1,5 +1,4 @@
 import "./App.css";
-import React from "react";
 import { HashRouter } from "react-router-dom";
 import { Routes, Route, Navigate } from "react-router";
 import Home from "./home";
@@ -29,7 +28,6 @@ function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="home" />} />
                 <Route path="/home" element={<Home />} />
-                {/* <Route path="/search/:searchType/:searchQuery" element={<Search />} /> */}
                 <Route path="/user/profile" element={<Profile />} />
                 <Route path="/user/profile/edit" element={<ProfileEdit />} />
                 <Route path="/user/:userId/profile/" element={<Profile />} />
@@ -41,7 +39,6 @@ function App() {
                 <Route path="/recipe/:recipeId" element={<Recipe />} />
                 <Route path="/browse/chefs" element={<Chefs />} />
                 <Route path="/browse/recipes" element={<Recipes />} />
-                {/* <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} /> */}
                 <Route path="/recipe/create" element={<RecipeMaker />} />
                 <Route
                   path="/recipe/:recipeId/edit"

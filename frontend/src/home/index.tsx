@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { UserState } from "../store";
 import * as userClient from "../users/client";
@@ -19,9 +19,9 @@ import RecipeCard from "../recipe/RecipeCard";
 function Home() {
   const { currentUser } = useSelector((state: UserState) => state.users);
 
-  const [newRecipes, setNewRecipes] = React.useState<Recipe[]>([]);
-  const [popularRecipes, setPopularRecipes] = React.useState<Recipe[]>([]);
-  const [chefs, setChefs] = React.useState<User[]>([]);
+  const [newRecipes, setNewRecipes] = useState<Recipe[]>([]);
+  const [popularRecipes, setPopularRecipes] = useState<Recipe[]>([]);
+  const [chefs, setChefs] = useState<User[]>([]);
   const textLocation = useBreakpointValue({
     base: "center" as "center",
     lg: "start" as "start",
@@ -32,7 +32,7 @@ function Home() {
     md: 6,
     xl: 8,
   }) as number;
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   useEffect(() => {
     setIsLoading(true);

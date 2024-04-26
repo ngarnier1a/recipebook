@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserState } from "../store";
@@ -22,12 +22,11 @@ import { setCurrentUser } from "./reducer";
 function Profile() {
   const { userId } = useParams();
   const { currentUser } = useSelector((state: UserState) => state.users);
-  const [userProfile, setUserProfile] = React.useState<User | null>(null);
-  const [isCurrentUser, setIsCurrentUser] = React.useState<boolean>(false);
-  const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
-  const [isPressingFollow, setIsPressingFollow] =
-    React.useState<boolean>(false);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [userProfile, setUserProfile] = useState<User | null>(null);
+  const [isCurrentUser, setIsCurrentUser] = useState<boolean>(false);
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [isPressingFollow, setIsPressingFollow] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
