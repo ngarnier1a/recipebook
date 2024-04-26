@@ -138,3 +138,16 @@ export const getRecipesWithFDCId = async (fdcId: string) => {
   ]);
   return recipes;
 };
+
+export const getNewRecipes = async () => {
+  const recipes = await model
+    .find()
+    .sort({ _id: -1 })
+    .populate({
+        path: "author",
+        select: "_id username",
+    })
+    .select("_id name likes description")
+    .exec();
+  return recipes;
+}

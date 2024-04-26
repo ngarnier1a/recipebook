@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
 import * as userClient from "./client";
+import * as recipeClient from "../recipe/client";
 import {
-    Button,
+  Button,
   Center,
   Flex,
   HStack,
@@ -58,7 +59,7 @@ function Recipes() {
             const followed = await userClient.popularFollowedRecipes(searchParams.dir);
             setPopularFollowedRecipes(followed);
         } else if (searchParams.type === 'top') {
-            const popular = await userClient.popularRecipes(searchParams.dir);
+            const popular = await recipeClient.popularRecipes(searchParams.dir);
             setPopularRecipes(popular);
         }
       } catch (error) {

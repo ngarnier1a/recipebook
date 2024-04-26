@@ -45,11 +45,6 @@ export const popularChefs = async (sortBy: string, sortDir: string): Promise<Use
     return response.data;
 }
 
-export const popularRecipes = async (sortDir: string): Promise<Recipe[]> => {
-    const response = await api.post(`${SERVICE_URL}/recipes`, null, { params: { sortDir }});
-    return response.data;
-}
-
 export const popularFollowedRecipes = async (sortDir: string): Promise<Recipe[]> => {
     const response = await api.post(`${SERVICE_URL}/recipes/followed`, null, { params: { sortDir }});
     return response.data;
