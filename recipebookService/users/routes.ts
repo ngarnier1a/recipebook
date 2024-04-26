@@ -66,8 +66,10 @@ export default function UserRoutes(app: Application) {
       };
 
       const currentUser = await dao.createUser(userBody);
-      req.session.user = currentUser.toObject();
-      res.send(currentUser);
+      const userForSession = currentUser.toObject();
+      delete userForSession.password;
+      req.session.user = userForSession;
+      res.send(userForSession);
     } catch (e) {
       console.error(`Error creating user: ${e}`);
       res.sendStatus(400);
