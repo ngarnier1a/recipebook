@@ -60,6 +60,9 @@ function RecipeMakerFDCItem({
     if (ingredient.fdcItem && ingredient.fdcItem.fdcId) {
       setSearchQuery(ingredient.fdcItem.fdcId.toString());
       setFDCItems([ingredient.fdcItem]);
+    } else if (!ingredient.fdcItem && ingredient.name !== 'Ingredient') {
+      setSearchQuery(ingredient.name);
+      setFDCItems([]);
     } else {
       setSearchQuery("");
       setFDCItems([]);
