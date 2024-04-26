@@ -139,9 +139,14 @@ export default function RecipeRoutes(app: Application) {
   };
 
   const popularRecipes = async (req: Request, res: Response) => {
-    const { sortDir } = req.query;
+    const { sortBy, sortDir } = req.query;
     try {
-      const recipes = await dao.getPopularRecipes(sortDir as string);
+      let recipes: Recipe[] = [];
+      if (sortBy === "popular") {
+        recipes = await dao.getPopularRecipes(sortDir as string);
+      } else if (sortBy === "new") {
+        recipes = await dao.getNewRecipes();
+      }
       res.send(recipes);
     } catch (e) {
       console.error(`Error getting popular recipes: ${e}`);
