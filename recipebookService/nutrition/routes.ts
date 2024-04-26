@@ -31,7 +31,6 @@ export default function NutritionRoutes(app: Application) {
 
       const rateLimitRemaining = FDCResult.headers['x-ratelimit-remaining'];
 
-      console.log(`${rateLimitRemaining} remaining calls to FDC API`)
       // ensure not reach cap
       if (rateLimitRemaining && parseInt(rateLimitRemaining) < 300) {
         console.error("Rate limit reached, throttling calls to FDC API");

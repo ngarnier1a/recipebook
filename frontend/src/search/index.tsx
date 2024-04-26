@@ -43,7 +43,7 @@ function Search() {
         }
         setFoods(foods);
       } catch (error) {
-        console.log(error);
+        console.error(error);
         setError(`Error searching ${query}`);
       } finally {
         setIsLoading(false);

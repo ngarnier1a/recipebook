@@ -25,7 +25,6 @@ function Nutrition() {
     const tabLocation = useBreakpointValue({ base: "center", md: "start" });
 
     useEffect(() => {
-      console.log(`Nutrition component mounted with fdcId: ${fdcId}`);
       setIsLoading(true);
       if (!fdcId) {
         navigate('/nutrition/search');
@@ -38,7 +37,6 @@ function Nutrition() {
             client.getFoodItem(fdcId),
             client.getRecipesWithFDCId(fdcId),
           ]);
-          console.log(food);
           setFood(food);
           setRecipes(recipes);
         } catch (error) {
@@ -63,10 +61,6 @@ function Nutrition() {
         return;
       }
       const newFavoriteState = currentUser.favoriteFoods.some(favorite => favorite._id === food._id);
-
-      console.log(food);
-      console.log(currentUser.favoriteFoods);
-      console.log(`newState: ${newFavoriteState}, isFavorited: ${isFavorited}`);
 
       if (newFavoriteState !== isFavorited) {
         setIsFavorited(newFavoriteState);

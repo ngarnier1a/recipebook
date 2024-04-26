@@ -51,7 +51,7 @@ function Recipe() {
   const likeRecipe = async (setLikedStatus: boolean) => {
     setIsLiking(true);
     if (!recipeId || !currentUser || !recipe) {
-      console.log(`Error liking recipe: recipeId: ${recipeId}, currentUser: ${currentUser}, recipe: ${recipe}`)
+      console.error(`Error liking recipe: recipeId: ${recipeId}, currentUser: ${currentUser}, recipe: ${recipe}`)
       setIsLiking(false);
       return;
     }

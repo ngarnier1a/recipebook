@@ -151,7 +151,6 @@ function RecipeMakerIngredients({
                 title='No specific step for this ingredient'
                 onClick={() => {
                   const { stepNumber, ...rest } = ingredient;
-                  console.log('removing step number: ' + JSON.stringify(rest));
                   setIngredient(rest);
                 }}
               >
@@ -162,7 +161,6 @@ function RecipeMakerIngredients({
                   key={step.stepID}
                   title={`This ingredient is used on step ${idx + 1}`}
                   onClick={() => {
-                    console.log('setting step number: ' + idx);
                     setIngredient({ ...ingredient, stepNumber: idx})
                   }}
                 >
@@ -179,7 +177,6 @@ function RecipeMakerIngredients({
           textAlign='start'
           title='A FDC food item for the ingredient, for nutrition lookup (OPTIONAL)'
           onClick={() => {
-              console.log(`opening drawer for ingredient ${idx}`)
               setCurrentIngredientIdx(idx);
               onOpen();
           }}

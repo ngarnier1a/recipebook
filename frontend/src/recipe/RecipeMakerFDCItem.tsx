@@ -50,7 +50,6 @@ function RecipeMakerFDCItem({
             if (items.length === 0) {
                 setSearchError(`No results for ${searchQuery}`);
             }
-            console.log(items);
             setFDCItems(items);
         } catch (error) {
             setSearchError(`Error searching ${searchQuery}`);

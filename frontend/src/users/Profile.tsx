@@ -63,7 +63,7 @@ function Profile() {
   const handleFollow = async (setFollowingStatus: boolean) => {
     setIsPressingFollow(true);
     if (!userProfile || !currentUser) {
-      console.log(`Error following user: userProfile: ${userProfile}, currentUser: ${currentUser}`)
+      console.error(`Error following user: userProfile: ${JSON.stringify(userProfile)}, currentUser: ${JSON.stringify(currentUser)}`);
       setIsPressingFollow(false);
       return;
     }
