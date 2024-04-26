@@ -177,9 +177,23 @@ function Profile() {
           {mobileHeader}
           <Divider />
       </VStack>
+      {currentUser && isCurrentUser && (<>
+        <Text fontSize='xl' m={5} ml={8} mb={3} fontWeight='bold'>Email</Text>
+        <Text fontSize='large' ml={10} mr={10} mb={10}>
+          {userProfile.email ? userProfile.email : "No email set"}
+        </Text>
+        <Text fontSize='xl' m={5} ml={8} mb={3} fontWeight='bold'>First Name</Text>
+        <Text fontSize='large' ml={10} mr={10} mb={10}>
+          {userProfile.firstName ? userProfile.firstName : "No first name set"}
+        </Text>
+        <Text fontSize='xl' m={5} ml={8} mb={3} fontWeight='bold'>Last Name</Text>
+        <Text fontSize='large' ml={10} mr={10} mb={10}>
+          {userProfile.lastName ? userProfile.lastName : "No last name set"}
+        </Text>
+        </>)}
       <Text fontSize='xl' m={5} ml={8} mb={3} fontWeight='bold'>Biography</Text>
       <Text fontSize='large' ml={10} mr={10} mb={10}>
-        {userProfile.bio ? userProfile.bio : "No bio available"}
+        {userProfile.bio ? userProfile.bio : `No bio ${isCurrentUser ? 'set' : 'available'}`}
       </Text>
       {userProfile.type === 'CHEF' && (
         <Text fontSize='medium' ml={10} mr={10} mb={5}>
