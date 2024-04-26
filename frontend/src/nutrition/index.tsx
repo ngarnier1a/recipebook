@@ -102,7 +102,10 @@ function Nutrition() {
     }
     setIsFavoriting(true);
     try {
-      const updatedUser = await userClient.favoriteFood(food._id, !isFavorited);
+      const updatedUser = await userClient.favoriteFood(
+        food.fdcId,
+        !isFavorited,
+      );
       setIsFavorited(!isFavorited);
       dispatch(setCurrentUser(updatedUser));
       toast({

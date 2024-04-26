@@ -188,13 +188,13 @@ export default function UserRoutes(app: Application) {
       return;
     }
 
-    const { foodId } = req.params;
+    const { fdcId } = req.params;
     const toFavorite = req.body.toFavorite;
 
     try {
       const user = await dao.updateFavoriteFood(
         req.session.user._id,
-        foodId,
+        fdcId,
         toFavorite,
       );
       req.session.user = user;
@@ -212,6 +212,6 @@ export default function UserRoutes(app: Application) {
   app.get("/api/auth/profile", profile);
   app.get("/api/auth/profile/:userId", otherProfile);
   app.put("/api/auth/follow/:userId", followUser);
-  app.put("/api/auth/favorite/:foodId", favoriteFood);
+  app.put("/api/auth/favorite/:fdcId", favoriteFood);
   app.post("/api/chefs", getChefs);
 }

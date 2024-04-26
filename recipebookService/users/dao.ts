@@ -1,4 +1,5 @@
 import model from "./model.js";
+import * as nutritionDao from "../nutrition/dao.js";
 
 export const createUser = async (user: User) => {
   delete user._id;
@@ -215,12 +216,19 @@ export const findChefs = async (sortBy: string, dir: string) => {
 
 export const updateFavoriteFood = async (
   userId: UserID,
-  foodId: string,
+  fdcId: string,
   toFavorite: boolean,
 ): Promise<User> => {
+
+  const food = await nutritionDao.getFoodDataById(fdcId);
+
+  if (!food) {
+    throw new Error("Food not found");
+  }
+
   const updateOperation = toFavorite
-    ? { $addToSet: { favoriteFoods: foodId } }
-    : { $pull: { favoriteFoods: foodId } };
+    ? { $addToSet: { favoriteFoods: food._id } }
+    : { $pull: { favoriteFoods: food._id } };
 
   const updatedUser = await model
     .findByIdAndUpdate(userId, updateOperation, { new: true })
