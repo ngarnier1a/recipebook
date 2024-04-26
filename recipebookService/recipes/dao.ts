@@ -77,13 +77,13 @@ export const getPopularRecipes = async (sortDir: string) => {
 
 export const getPopularFollowedRecipes = async (
   user: User,
-  sortDir: string
+  sortDir: string,
 ) => {
   const recipes = await model
     .find({
       author: {
         $in: (user.followedChefs ?? []).map(
-          (chef) => new mongoose.Types.ObjectId(chef._id)
+          (chef) => new mongoose.Types.ObjectId(chef._id),
         ),
       },
     })
@@ -129,8 +129,8 @@ export const getRecipesWithFDCId = async (fdcId: string) => {
         name: 1,
         description: 1,
         author: {
-          _id: '$author',
-          username: '$authorDetails.username'
+          _id: "$author",
+          username: "$authorDetails.username",
         },
         likes: 1,
       },
@@ -144,10 +144,10 @@ export const getNewRecipes = async () => {
     .find()
     .sort({ _id: -1 })
     .populate({
-        path: "author",
-        select: "_id username",
+      path: "author",
+      select: "_id username",
     })
     .select("_id name likes description")
     .exec();
   return recipes;
-}
+};

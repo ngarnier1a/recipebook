@@ -1,1 +1,1 @@
-export * from '@shared/recipebook-types';
+export * from "@shared/recipebook-types";

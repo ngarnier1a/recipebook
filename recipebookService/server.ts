@@ -20,7 +20,7 @@ app.use(
   cors({
     credentials: true,
     origin: process.env.FRONTEND_URL,
-  })
+  }),
 );
 
 const sessionOptions: SessionOptions = {
@@ -42,7 +42,7 @@ app.use(express.json());
 if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
     console.log("Request received", req.method, req.url, req.body);
-    setTimeout(next, Math.floor( ( Math.random() * 1000 ) + 100 ) );
+    setTimeout(next, Math.floor(Math.random() * 1000 + 100));
   });
 }
 
@@ -54,4 +54,6 @@ NutritionRoutes(app);
 UserRoutes(app);
 RecipeRoutes(app);
 
-app.listen(port, () => console.log(`recipebookService running on port ${port}`));
+app.listen(port, () =>
+  console.log(`recipebookService running on port ${port}`),
+);
