@@ -26,7 +26,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const likeColor = useColorModeValue("red.500", "red.300");
 
   const nameDisplay =
-    recipe.name.length > 17 ? recipe.name.slice(0, 17) + "..." : recipe.name;
+    recipe.name.length > 15 ? recipe.name.slice(0, 15) + "..." : recipe.name;
   const descriptionDisplay =
     recipe.description.length > 130
       ? recipe.description.slice(0, 130) + "..."

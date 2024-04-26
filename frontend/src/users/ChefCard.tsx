@@ -28,8 +28,8 @@ function ChefCard({ chef }: { chef: User }) {
 
   const chefBio = chef.bio ?? "No bio avaliable";
   const nameDisplay =
-    chef.username.length > 17
-      ? chef.username.slice(0, 17) + "..."
+    chef.username.length > 15
+      ? chef.username.slice(0, 15) + "..."
       : chef.username;
   const descriptionDisplay =
     chefBio.length > 130 ? chefBio.slice(0, 130) + "..." : chefBio;
