@@ -32,7 +32,7 @@ function ChefCard({ chef }: { chef: User }) {
       ? chef.username.slice(0, 17) + "..."
       : chef.username;
   const descriptionDisplay =
-    chefBio.length > 160 ? chefBio.slice(0, 160) + "..." : chefBio;
+    chefBio.length > 130 ? chefBio.slice(0, 130) + "..." : chefBio;
 
   const isFollowed =
     (currentUser?.followedChefs?.findIndex((c) => c._id === chef._id) ?? -1) >=

@@ -28,8 +28,8 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const nameDisplay =
     recipe.name.length > 17 ? recipe.name.slice(0, 17) + "..." : recipe.name;
   const descriptionDisplay =
-    recipe.description.length > 160
-      ? recipe.description.slice(0, 160) + "..."
+    recipe.description.length > 130
+      ? recipe.description.slice(0, 130) + "..."
       : recipe.description;
 
   const isLiked =
