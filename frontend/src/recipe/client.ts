@@ -47,3 +47,13 @@ export const setLikedStatus = async (rid: RecipeID, like: boolean): Promise<User
     const response = await api.put(`${SERVICE_URL}/recipe/${rid}/like`, { like });
     return response.data;
 }
+
+export const popularRecipes = async (sortDir: string): Promise<Recipe[]> => {
+    const response = await api.post(`${SERVICE_URL}/recipes`, null, { params: { sortBy: 'popular', sortDir }});
+    return response.data;
+}
+
+export const newRecipes = async (sortDir: string): Promise<Recipe[]> => {
+    const response = await api.post(`${SERVICE_URL}/recipes`, null, { params: { sortBy: 'new', sortDir }});
+    return response.data;
+}
