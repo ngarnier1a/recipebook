@@ -147,12 +147,12 @@ function RecipeMakerFDCItem({
             mb={3}
             onClick={() =>
               window.open(
-                `https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`,
+                `${window.location.origin}/#/nutrition/${food.fdcId}`,
               )
             }
             rightIcon={<ExternalLinkIcon />}
           >
-            USDA
+            Details
           </Button>
         </HStack>
         {food.nutrients && food.nutrients.length > 0 ? (
