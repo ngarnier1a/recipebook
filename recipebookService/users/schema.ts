@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
-const userSchema = new mongoose.Schema<User>({
+const userSchema = new mongoose.Schema<User>(
+  {
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true, select: false },
     bio: String,
@@ -9,17 +10,25 @@ const userSchema = new mongoose.Schema<User>({
     type: {
       type: String,
       enum: ["CHEF", "FOODIE"],
-      default: "FOODIE"
+      default: "FOODIE",
     },
     siteTheme: {
       type: String,
       enum: ["LIGHT", "DARK"],
       default: "LIGHT",
     },
-    likedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" }],
+    likedRecipes: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" },
+    ],
     followedChefs: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserModel" }],
-    authoredRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" }],
+    authoredRecipes: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" },
+    ],
+    favoriteFoods: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "NutritionModel" },
+    ],
     numFollowers: { type: Number, default: 0, min: 0 },
   },
-  { collection: "users" });
+  { collection: "users" },
+);
 export default userSchema;

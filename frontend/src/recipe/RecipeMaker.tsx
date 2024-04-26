@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { UserState } from "../store";
 import {
@@ -44,7 +44,7 @@ const PLACEHOLDER_STEP: RecipeStep = {
 const PLACEHOLDER_NOTE: RecipeNote = {
   noteID: nanoid(),
   noteText: "Make sure to be careful with the knife!",
-}
+};
 
 function RecipeMaker() {
   const location = useLocation();
@@ -52,12 +52,12 @@ function RecipeMaker() {
   const { currentUser } = useSelector((state: UserState) => state.users);
   const gridColor = useColorModeValue("gray.100", "gray.700");
   const deleteColor = useColorModeValue("red.400", "red.500");
-  const [isPublishing, setIsPublishing] = React.useState<boolean>(false);
+  const [isPublishing, setIsPublishing] = useState<boolean>(false);
   const toast = useToast();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const gridWidth = useBreakpointValue({ base: "100%", md: "90%" });
-  const [recipe, setRecipe] = React.useState<Recipe>({
+  const [recipe, setRecipe] = useState<Recipe>({
     name: "Recipe Name",
     description: "Recipe description",
     ingredients: [PLACEHOLDER_INGREDIENT],
@@ -65,7 +65,10 @@ function RecipeMaker() {
     notes: [PLACEHOLDER_NOTE],
   });
 
-  const isEditing = (recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes('edit'))
+  const isEditing =
+    recipeId &&
+    recipe.author?._id === currentUser?._id &&
+    location.pathname.includes("edit");
 
   useEffect(() => {
     const fetchRecipe = async () => {
@@ -73,7 +76,7 @@ function RecipeMaker() {
         return;
       }
       const recipe = await recipeClient.get(recipeId);
-      if (location.pathname.includes('clone')) {
+      if (location.pathname.includes("clone")) {
         recipe.name = `Copy of ${recipe.name}`;
       }
       setRecipe(recipe);
@@ -148,7 +151,7 @@ function RecipeMaker() {
         isClosable: true,
       });
     }
-  }
+  };
 
   const notChefPage = (
     <Center>
@@ -162,7 +165,7 @@ function RecipeMaker() {
     <Center>
       <VStack width="100%">
         <Heading as="h1" py={5} mx={5}>
-          {isEditing ? 'Edit' : 'Create'} Recipe
+          {isEditing ? "Edit" : "Create"} Recipe
         </Heading>
         <Container maxW={gridWidth} px={2}>
           <Grid
@@ -174,7 +177,7 @@ function RecipeMaker() {
             gap="2"
             rounded="lg"
           >
-            <GridItem p="2" bg={gridColor} area={"name"} rounded='md'>
+            <GridItem p="2" bg={gridColor} area={"name"} rounded="md">
               <VStack>
                 <InputGroup size="lg" width="100%">
                   <Input
@@ -188,7 +191,7 @@ function RecipeMaker() {
                 </InputGroup>
                 description
                 <Textarea
-                  overflow='hidden'
+                  overflow="hidden"
                   resize="vertical"
                   value={recipe.description}
                   size="sm"
@@ -200,18 +203,27 @@ function RecipeMaker() {
                 />
               </VStack>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"ingredients"} rounded='md'>
+            <GridItem
+              p="2"
+              pb="6"
+              bg={gridColor}
+              area={"ingredients"}
+              rounded="md"
+            >
               <VStack>
                 <Heading size="md">
                   Ingredients
                   <IconButton
                     variant="ghost"
                     onClick={() => {
-                      const newIngredients = [...(recipe.ingredients ?? [])];;
-                      newIngredients.push({...PLACEHOLDER_INGREDIENT, ingredientID: nanoid()});
+                      const newIngredients = [...(recipe.ingredients ?? [])];
+                      newIngredients.push({
+                        ...PLACEHOLDER_INGREDIENT,
+                        ingredientID: nanoid(),
+                      });
                       setRecipe({
                         ...recipe,
-                        ingredients: newIngredients
+                        ingredients: newIngredients,
                       });
                     }}
                     aria-label="Add Ingredient"
@@ -222,7 +234,7 @@ function RecipeMaker() {
                 <RecipeMakerIngredients recipe={recipe} setRecipe={setRecipe} />
               </VStack>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"steps"} rounded='md'>
+            <GridItem p="2" pb="6" bg={gridColor} area={"steps"} rounded="md">
               <VStack>
                 <Heading size="md">
                   Steps
@@ -230,7 +242,7 @@ function RecipeMaker() {
                     variant="ghost"
                     onClick={() => {
                       const newSteps = [...(recipe.steps ?? [])];
-                      newSteps.push({...PLACEHOLDER_STEP, stepID: nanoid()});
+                      newSteps.push({ ...PLACEHOLDER_STEP, stepID: nanoid() });
                       setRecipe({
                         ...recipe,
                         steps: newSteps,
@@ -252,8 +264,11 @@ function RecipeMaker() {
                             const newSteps = [...(recipe.steps ?? [])];
                             setRecipe({
                               ...recipe,
-                              steps: newSteps
-                                .map(s => s.stepID === step.stepID ? {...s, stepTitle: e.target.value} : s)
+                              steps: newSteps.map((s) =>
+                                s.stepID === step.stepID
+                                  ? { ...s, stepTitle: e.target.value }
+                                  : s,
+                              ),
                             });
                           }}
                         />
@@ -262,8 +277,9 @@ function RecipeMaker() {
                             const newSteps = [...(recipe.steps ?? [])];
                             setRecipe({
                               ...recipe,
-                              steps: newSteps
-                                .filter(s => s.stepID !== step.stepID)
+                              steps: newSteps.filter(
+                                (s) => s.stepID !== step.stepID,
+                              ),
                             });
                           }}
                           aria-label="Remove Step"
@@ -275,13 +291,16 @@ function RecipeMaker() {
                         value={step.stepDescription}
                         placeholder="Cut vegetables, measure qunatities, etc."
                         resize="vertical"
-                        overflow='hidden'
+                        overflow="hidden"
                         onChange={(e) => {
                           const newSteps = [...(recipe.steps ?? [])];
                           setRecipe({
                             ...recipe,
-                            steps: newSteps
-                              .map(s => s.stepID === step.stepID ? {...s, stepDescription: e.target.value} : s)
+                            steps: newSteps.map((s) =>
+                              s.stepID === step.stepID
+                                ? { ...s, stepDescription: e.target.value }
+                                : s,
+                            ),
                           });
                         }}
                       />
@@ -290,7 +309,7 @@ function RecipeMaker() {
                 </OrderedList>
               </VStack>
             </GridItem>
-            <GridItem p="2" pb="6" bg={gridColor} area={"notes"} rounded='md'>
+            <GridItem p="2" pb="6" bg={gridColor} area={"notes"} rounded="md">
               <VStack>
                 <Heading size="md">
                   Notes
@@ -298,7 +317,7 @@ function RecipeMaker() {
                     variant="ghost"
                     onClick={() => {
                       const newNotes = [...(recipe.notes ?? [])];
-                      newNotes.push({...PLACEHOLDER_NOTE, noteID: nanoid()});
+                      newNotes.push({ ...PLACEHOLDER_NOTE, noteID: nanoid() });
                       setRecipe({
                         ...recipe,
                         notes: newNotes,
@@ -312,17 +331,20 @@ function RecipeMaker() {
                 <OrderedList width="90%">
                   {recipe.notes?.map((note, index) => (
                     <ListItem key={index} mt={4}>
-                      <HStack align='flex-start'>
+                      <HStack align="flex-start">
                         <Textarea
-                          overflow='hidden'
+                          overflow="hidden"
                           value={note.noteText}
                           placeholder="Make sure to use fresh ingredients"
                           minH={"40px"}
                           onChange={(e) => {
                             setRecipe({
                               ...recipe,
-                              notes: [...(recipe.notes ?? [])]
-                                .map(n => n.noteID === note.noteID ? {...n, noteText: e.target.value} : n)
+                              notes: [...(recipe.notes ?? [])].map((n) =>
+                                n.noteID === note.noteID
+                                  ? { ...n, noteText: e.target.value }
+                                  : n,
+                              ),
                             });
                           }}
                         />
@@ -330,11 +352,11 @@ function RecipeMaker() {
                           onClick={() => {
                             setRecipe({
                               ...recipe,
-                              notes: [...(recipe.notes ?? [])]
-                                .filter(n => n.noteID !== note.noteID),
+                              notes: [...(recipe.notes ?? [])].filter(
+                                (n) => n.noteID !== note.noteID,
+                              ),
                             });
                           }}
-                          
                           aria-label="Remove Step"
                           icon={<DeleteIcon />}
                         />
@@ -345,14 +367,21 @@ function RecipeMaker() {
               </VStack>
             </GridItem>
             <GridItem p="2" area={"buttons"} textAlign="end">
-              <Button onClick={() => navigate(-1)} mr={2} size='lg'>
+              <Button onClick={() => navigate(-1)} mr={2} size="lg">
                 Cancel
               </Button>
-              {(recipeId && recipe.author?._id === currentUser?._id && location.pathname.includes('edit')) && 
-                <Button onClick={deleteRecipe} bg={deleteColor} size="lg" mr={2}>
-                  Delete
-                </Button>
-              }
+              {recipeId &&
+                recipe.author?._id === currentUser?._id &&
+                location.pathname.includes("edit") && (
+                  <Button
+                    onClick={deleteRecipe}
+                    bg={deleteColor}
+                    size="lg"
+                    mr={2}
+                  >
+                    Delete
+                  </Button>
+                )}
               <Button
                 isLoading={isPublishing}
                 bg="blue.500"
@@ -369,11 +398,7 @@ function RecipeMaker() {
     </Center>
   );
 
-  return <>
-      {
-        currentUser?.type === "CHEF" ? chefPage : notChefPage
-      }
-    </>;
+  return <>{currentUser?.type === "CHEF" ? chefPage : notChefPage}</>;
 }
 
 export default RecipeMaker;

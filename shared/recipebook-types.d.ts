@@ -13,7 +13,8 @@ type User = {
     likedRecipes?: Recipe[];            // optional: not passed if user has not liked any recipes or if not requesting user profile
     followedChefs?: User[];             // optional: not passed if user has not followed any chefs or if not requesting user profile
     authoredRecipes?: Recipe[];         // optional: not passed if user has not authored any recipes, is not a chef, or if not requesting user profile
-    numFollowers?: number;             // optional: not passed if not a chef
+    numFollowers?: number;              // optional: not passed if not a chef
+    favoriteFoods?: FDCFoodItem[];      // optional: not passed if user has not favorited any foods
 }
 
 type Recipe = {
@@ -39,7 +40,7 @@ type RecipeIngredient = {
     quantity: Number;
     unit: RecipeUnit;
     fdcItem?: FDCFoodItem;               // optional: not passed if not an FDC ingredient
-    stepNumber?: number;                // optional: not passed if not associated with a step
+    stepNumber?: number;                 // optional: not passed if not associated with a step
 }
 
 type IngredientNutrient = {

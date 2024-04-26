@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { UserState } from "../store";
@@ -33,12 +33,16 @@ function Recipes() {
   const tabLocation = useBreakpointValue({ base: "center", md: "start" });
   const tabMargin = useBreakpointValue({ base: 0, md: 5 });
 
-  const [popularRecipes, setPopularRecipes] = React.useState<Recipe[] | null>(null);
-  const [popularFollowedRecipes, setPopularFollowedRecipes] = React.useState<Recipe[] | null>(null);
-  const [isLoading, setIsLoading] = React.useState<boolean>(true);
+  const [popularRecipes, setPopularRecipes] = useState<Recipe[] | null>(null);
+  const [popularFollowedRecipes, setPopularFollowedRecipes] = useState<
+    Recipe[] | null
+  >(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const [searchParams, setSearchParams]
-    = React.useState<{ type: string; dir: string; }>({ type: 'top', dir: 'dsc' });
+  const [searchParams, setSearchParams] = useState<{
+    type: string;
+    dir: string;
+  }>({ type: "top", dir: "dsc" });
 
   useEffect(() => {
     setIsLoading(true);
@@ -49,18 +53,25 @@ function Recipes() {
         type: locationSearchParams.get("type") ?? "top",
         dir: locationSearchParams.get("dir") ?? "dsc",
       };
-      if (!locationSearchParams.get("dir") || !locationSearchParams.get("type")) {
-        navigate(`/browse/recipes?type=${searchParams.type}&dir=${searchParams.dir}`)
+      if (
+        !locationSearchParams.get("dir") ||
+        !locationSearchParams.get("type")
+      ) {
+        navigate(
+          `/browse/recipes?type=${searchParams.type}&dir=${searchParams.dir}`,
+        );
         return;
       }
       setSearchParams(searchParams);
       try {
-        if (currentUser && searchParams.type === 'followed') {
-            const followed = await userClient.popularFollowedRecipes(searchParams.dir);
-            setPopularFollowedRecipes(followed);
-        } else if (searchParams.type === 'top') {
-            const popular = await recipeClient.popularRecipes(searchParams.dir);
-            setPopularRecipes(popular);
+        if (currentUser && searchParams.type === "followed") {
+          const followed = await userClient.popularFollowedRecipes(
+            searchParams.dir,
+          );
+          setPopularFollowedRecipes(followed);
+        } else if (searchParams.type === "top") {
+          const popular = await recipeClient.popularRecipes(searchParams.dir);
+          setPopularRecipes(popular);
         }
       } catch (error) {
         console.error("Error fetching popular recipes", error);
@@ -73,51 +84,61 @@ function Recipes() {
     fetchPopularRecipes();
   }, [location, currentUser, navigate]);
 
-  const searchNav = (params: { type: string; dir: string; }) => {
+  const searchNav = (params: { type: string; dir: string }) => {
     navigate(`/browse/recipes?type=${params.type}&dir=${params.dir}`);
-  }
+  };
 
-  const headerText =
-    searchParams.type === "top" ? "Top Recipes" : "For You";
+  const headerText = searchParams.type === "top" ? "Top Recipes" : "For You";
 
   const noPopularRecipesText = "Popular Recipes appear here";
 
-  const noFollowedChefRecipesText = "Popular recipes from followed Chefs appear here";
+  const noFollowedChefRecipesText =
+    "Popular recipes from followed Chefs appear here";
 
   const changeSort = (
     <HStack mt={5} gap={0} justifyContent={tabLocation}>
-
-        <Menu>
-          <MenuButton
-            as={Button}
-            mt={0}
-            pt={0}
-            mr={0}
-            ml={tabMargin}
-            width='200px'
-            isDisabled={isLoading}
-            textAlign={'start'}
-            rightIcon={<ChevronDownIcon boxSize={6} />}
-            variant='outline'
-          >
-            Total Likes
-          </MenuButton>
-          <MenuList>
-            <MenuItem>Total Likes</MenuItem>
-          </MenuList>
-        </Menu>
-        <IconButton
-            aria-label="Change sort direction"
-            mt={0}
-            pt={0}
-            ml={0}
-            variant='ghost'
-            isLoading={isLoading}
-            onClick={() => searchNav({...searchParams, dir: searchParams.dir === 'dsc' ? 'asc' : 'dsc'})}
-            icon={searchParams.dir === 'dsc' ? <ChevronDownIcon boxSize={6} /> : <ChevronUpIcon boxSize={6} />}
-        />
+      <Menu>
+        <MenuButton
+          as={Button}
+          mt={0}
+          pt={0}
+          mr={0}
+          ml={tabMargin}
+          width="200px"
+          isDisabled={isLoading}
+          textAlign={"start"}
+          rightIcon={<ChevronDownIcon boxSize={6} />}
+          variant="outline"
+        >
+          Total Likes
+        </MenuButton>
+        <MenuList>
+          <MenuItem>Total Likes</MenuItem>
+        </MenuList>
+      </Menu>
+      <IconButton
+        aria-label="Change sort direction"
+        mt={0}
+        pt={0}
+        ml={0}
+        variant="ghost"
+        isLoading={isLoading}
+        onClick={() =>
+          searchNav({
+            ...searchParams,
+            dir: searchParams.dir === "dsc" ? "asc" : "dsc",
+          })
+        }
+        icon={
+          searchParams.dir === "dsc" ? (
+            <ChevronDownIcon boxSize={6} />
+          ) : (
+            <ChevronUpIcon boxSize={6} />
+          )
+        }
+      />
     </HStack>
-  )
+  );
 
   const popularRecipesElement = (
     <>
@@ -126,45 +147,62 @@ function Recipes() {
       </Center>
       <Tabs
         variant="enclosed"
-        size='md'
+        size="md"
         pt={0}
         mt={0}
-        index={searchParams.type === 'top' ? 0 : 1}
+        index={searchParams.type === "top" ? 0 : 1}
       >
         <TabList justifyContent={tabLocation}>
-          <Tab ml={tabMargin} onClick={() => searchNav({...searchParams, type: 'top'})}>
+          <Tab
+            ml={tabMargin}
+            onClick={() => searchNav({ ...searchParams, type: "top" })}
+          >
             Top Recipes
           </Tab>
-          {currentUser && <Tab onClick={() => searchNav({...searchParams, type: 'followed'})}>Recipes For You</Tab>}
+          {currentUser && (
+            <Tab
+              onClick={() => searchNav({ ...searchParams, type: "followed" })}
+            >
+              Recipes For You
+            </Tab>
+          )}
         </TabList>
         <TabPanels>
           <TabPanel>
             {changeSort}
             {(popularRecipes?.length ?? 0) > 0 ? (
-              <Flex justifyContent={tabLocation} wrap="wrap" mt={5} ml={5} mb={10}>
+              <Flex
+                justifyContent={tabLocation}
+                wrap="wrap"
+                mt={5}
+                ml={5}
+                mb={10}
+              >
                 {popularRecipes?.map((recipe) => (
                   <RecipeCard recipe={recipe} key={recipe._id ?? "unknown"} />
                 ))}
               </Flex>
             ) : (
-              <Center mt={5}>
-                {noPopularRecipesText}
-              </Center>
+              <Center mt={5}>{noPopularRecipesText}</Center>
             )}
           </TabPanel>
           {currentUser && (
             <TabPanel>
-                {changeSort}
+              {changeSort}
               {popularFollowedRecipes && popularFollowedRecipes.length > 0 ? (
-                <Flex justifyContent={tabLocation} wrap="wrap" mt={5} ml={5} mb={10}>
+                <Flex
+                  justifyContent={tabLocation}
+                  wrap="wrap"
+                  mt={5}
+                  ml={5}
+                  mb={10}
+                >
                   {popularFollowedRecipes.map((recipe) => (
                     <RecipeCard recipe={recipe} key={recipe._id ?? "unknown"} />
                   ))}
                 </Flex>
               ) : (
-                <Center mt={5}>
-                  {noFollowedChefRecipesText}
-                </Center>
+                <Center mt={5}>{noFollowedChefRecipesText}</Center>
               )}
             </TabPanel>
           )}

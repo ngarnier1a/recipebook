@@ -4,13 +4,13 @@ import * as bcrypt from "bcrypt";
 
 const SALT_ROUNDS = 12;
 
-export const updateSessionUser = async (req: Request): Promise<User|null> => {
+export const updateSessionUser = async (req: Request): Promise<User | null> => {
   if (!req.session.user || !req.session.user._id) {
     return null;
   }
   try {
     const user = await dao.findUserByIdRich(req.session.user._id);
-    req.session.user = (user ? user?.toObject() as User : null);
+    req.session.user = user ? (user?.toObject() as User) : null;
     if (user) {
       return user.toObject() as User;
     }
@@ -19,10 +19,9 @@ export const updateSessionUser = async (req: Request): Promise<User|null> => {
     console.error(`Error updating session user: ${e}`);
     return null;
   }
-}
+};
 
 export default function UserRoutes(app: Application) {
-
   const updateUser = async (req: Request, res: Response) => {
     const { userId } = req.params;
     if (!req.session.user || req.session.user._id !== userId) {
@@ -64,8 +63,8 @@ export default function UserRoutes(app: Application) {
         password: await bcrypt.hash(req.body.password, SALT_ROUNDS),
         type: req.body.type,
         siteTheme: req.body.siteTheme || "LIGHT",
-      }
-  
+      };
+
       const currentUser = await dao.createUser(userBody);
       req.session.user = currentUser.toObject();
       res.send(currentUser);
@@ -107,7 +106,6 @@ export default function UserRoutes(app: Application) {
       console.error(`Error signing in: ${e}`);
       res.sendStatus(400);
     }
-
   };
 
   const signout = (req: Request, res: Response) => {
@@ -137,7 +135,7 @@ export default function UserRoutes(app: Application) {
       console.error(`Error getting user profile: ${e}`);
       res.sendStatus(404);
     }
-  }
+  };
 
   const followUser = async (req: Request, res: Response) => {
     if (!req.session.user || !req.session.user._id) {
@@ -148,7 +146,10 @@ export default function UserRoutes(app: Application) {
     const { userId } = req.params;
     const toFollow = req.body.follow;
 
-    const isFollowing = (req.session.user.followedChefs?.findIndex(chef => chef._id === userId) ?? -1) >= 0;
+    const isFollowing =
+      (req.session.user.followedChefs?.findIndex(
+        (chef) => chef._id === userId,
+      ) ?? -1) >= 0;
 
     if (isFollowing === toFollow) {
       res.sendStatus(400);
@@ -156,18 +157,22 @@ export default function UserRoutes(app: Application) {
     }
 
     try {
-      const user = await dao.updateFollowUser(req.session.user._id, userId, toFollow);
+      const user = await dao.updateFollowUser(
+        req.session.user._id,
+        userId,
+        toFollow,
+      );
       req.session.user = user;
       res.send(user);
     } catch (e) {
       console.error(`Error following user: ${e}`);
       res.sendStatus(400);
     }
-  }
+  };
 
   const getChefs = async (req: Request, res: Response) => {
-    const { sortBy = 'followers', sortDir = 'dsc' } = req.query;
-    
+    const { sortBy = "followers", sortDir = "dsc" } = req.query;
+
     try {
       const chefs = await dao.findChefs(sortBy as string, sortDir as string);
       res.send(chefs);
@@ -175,7 +180,30 @@ export default function UserRoutes(app: Application) {
       console.error(`Error getting chefs: ${e}`);
       res.sendStatus(404);
     }
-  }
+  };
+
+  const favoriteFood = async (req: Request, res: Response) => {
+    if (!req.session.user || !req.session.user._id) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const { foodId } = req.params;
+    const toFavorite = req.body.toFavorite;
+
+    try {
+      const user = await dao.updateFavoriteFood(
+        req.session.user._id,
+        foodId,
+        toFavorite,
+      );
+      req.session.user = user;
+      res.send(user);
+    } catch (e) {
+      console.error(`Error favoriting food: ${e}`);
+      res.sendStatus(400);
+    }
+  };
 
   app.put("/api/auth/:userId", updateUser);
   app.post("/api/auth/signup", signup);
@@ -184,5 +212,6 @@ export default function UserRoutes(app: Application) {
   app.get("/api/auth/profile", profile);
   app.get("/api/auth/profile/:userId", otherProfile);
   app.put("/api/auth/follow/:userId", followUser);
+  app.put("/api/auth/favorite/:foodId", favoriteFood);
   app.post("/api/chefs", getChefs);
 }

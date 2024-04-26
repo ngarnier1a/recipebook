@@ -21,7 +21,7 @@ import {
   useColorMode,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import { useState } from "react";
 import * as client from "./client";
 import { useDispatch } from "react-redux";
 import { setCurrentUser } from "./reducer";
@@ -86,7 +86,7 @@ function Signin({
           username,
           password,
           userType,
-          colorMode.toUpperCase() as SiteTheme
+          colorMode.toUpperCase() as SiteTheme,
         );
         dispatch(setCurrentUser(user));
         toast({
@@ -208,22 +208,22 @@ function Signin({
                   <MenuButton
                     as={Button}
                     width="100%"
-                    textAlign={'start'}
+                    textAlign={"start"}
                     rightIcon={<ChevronDownIcon boxSize={6} />}
                     variant="outline"
                   >
                     {userType === "FOODIE" ? "Foodie" : "Chef"}
                   </MenuButton>
-                  <MenuList width='100%'>
+                  <MenuList width="100%">
                     <MenuItem
-                      width='100%'
+                      width="100%"
                       title={userTypeExplanation["FOODIE"]}
                       onClick={() => setUserType("FOODIE")}
                     >
                       Foodie
                     </MenuItem>
                     <MenuItem
-                      width='100%'
+                      width="100%"
                       title={userTypeExplanation["CHEF"]}
                       onClick={() => setUserType("CHEF")}
                     >
@@ -238,11 +238,7 @@ function Signin({
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            variant="ghost"
-            mr={3}
-            onClick={handleClose}
-          >
+          <Button variant="ghost" mr={3} onClick={handleClose}>
             Close
           </Button>
           <Button
