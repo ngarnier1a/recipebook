@@ -62,7 +62,7 @@ function RecipeMakerIngredients({
     setRecipe({
       ...recipe,
       ingredients: recipe.ingredients.map((i) =>
-        i.ingredientID === ingredient.ingredientID ? ingredient : i,
+        i._id === ingredient._id ? ingredient : i,
       ),
     });
   };
@@ -74,7 +74,7 @@ function RecipeMakerIngredients({
     setRecipe({
       ...recipe,
       ingredients: recipe.ingredients.filter(
-        (i) => i.ingredientID !== ingredient.ingredientID,
+        (i) => i._id !== ingredient._id,
       ),
     });
   };
@@ -163,7 +163,7 @@ function RecipeMakerIngredients({
             </MenuItem>
             {recipe.steps?.map((step, idx) => (
               <MenuItem
-                key={step.stepID}
+                key={step._id}
                 title={`This ingredient is used on step ${idx + 1}`}
                 onClick={() => {
                   setIngredient({ ...ingredient, stepNumber: idx });
@@ -208,7 +208,7 @@ function RecipeMakerIngredients({
   const desktopIngredient = (ingredient: RecipeIngredient, idx: number) => (
     <HStack
       width="100%"
-      key={ingredient.ingredientID}
+      key={ingredient._id}
       display={{ base: "none", lg: "flex" }}
       my={1}
     >
@@ -218,7 +218,7 @@ function RecipeMakerIngredients({
 
   const mobileIngredient = (ingredient: RecipeIngredient, idx: number) => (
     <AccordionItem
-      key={ingredient.ingredientID}
+      key={ingredient._id}
       display={{ lg: "none" }}
       my={1}
     >

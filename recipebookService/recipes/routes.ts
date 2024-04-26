@@ -10,11 +10,28 @@ export default function RecipeRoutes(app: Application) {
       return;
     }
 
-    req.body.author = req.session.user._id;
+    const requestRecipe = { ...req.body };
+    requestRecipe.author = req.session.user._id;
+
+    requestRecipe.ingredients = requestRecipe.ingredients.map((i: RecipeIngredient) => {
+      const { _id, ...rest } = i;
+      return rest;
+    });
+
+    requestRecipe.notes = requestRecipe.notes.map((n: RecipeNote) => {
+      const { _id, ...rest } = n;
+      return rest;
+    });
+
+    requestRecipe.steps = requestRecipe.steps.map((s: RecipeStep) => {
+      const { _id, ...rest } = s;
+      return rest;
+    });
+
     try {
       const recipe = await dao.createRecipe(
         req.session.user._id ?? "Bad ID",
-        req.body,
+        requestRecipe,
       );
       const user = await updateSessionUser(req);
       res.send({ recipe: recipe.toObject(), user: user });
@@ -61,8 +78,25 @@ export default function RecipeRoutes(app: Application) {
         res.sendStatus(401);
         return;
       }
+      
+      const requestRecipe = { ...req.body };
 
-      const status = await dao.updateRecipe(recipeId, req.body);
+      requestRecipe.ingredients = requestRecipe.ingredients.map((i: RecipeIngredient) => {
+        const { _id, ...rest } = i;
+        return rest;
+      });
+
+      requestRecipe.notes = requestRecipe.notes.map((n: RecipeNote) => {
+        const { _id, ...rest } = n;
+        return rest;
+      });
+
+      requestRecipe.steps = requestRecipe.steps.map((s: RecipeStep) => {
+        const { _id, ...rest } = s;
+        return rest;
+      });
+
+      const status = await dao.updateRecipe(recipeId, requestRecipe);
       if (status.matchedCount === 0) {
         res.sendStatus(500);
         return;
