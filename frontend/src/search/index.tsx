@@ -84,7 +84,7 @@ function Search() {
     } else {
       fetchFoods(query);
     }
-  }, [location, navigate]);
+  }, [location, currentUser, navigate]);
 
   const resultsArea = error ? (
     <Text color="red.500">{error}</Text>
