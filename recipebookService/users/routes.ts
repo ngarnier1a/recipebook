@@ -83,6 +83,7 @@ export default function UserRoutes(app: Application) {
       return;
     }
     try {
+      console.log(`Signing in: ${username}`)
       const existingUser = await dao.findUserByUsernameSecure(username);
       if (existingUser) {
         if (!existingUser.password) {
@@ -100,6 +101,8 @@ export default function UserRoutes(app: Application) {
             res.sendStatus(500);
           }
           res.send(req.session.user);
+        } else {
+          res.sendStatus(401);
         }
       } else {
         res.sendStatus(401);
