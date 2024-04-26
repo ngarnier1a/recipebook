@@ -95,7 +95,7 @@ function Recipe() {
             {recipe.author?._id === currentUser?._id ? 'Your' : `${recipe.author?.username}'s`}
           </Link>
         </Heading>
-        <Heading size='xl' pb={1} mx={5}>
+        <Heading size='xl' pb={1} mx={5} textAlign='center'>
           {recipe.name}
         </Heading>
         <Container maxW={gridWidth} px={2}>

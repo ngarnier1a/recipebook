@@ -3,6 +3,8 @@ import { Drawer, DrawerOverlay, DrawerContent, DrawerHeader, HStack, IconButton,
 import React, { useEffect, useRef, useState } from 'react';
 import * as searchClient from '../search/client';
 import * as nutritionClient from '../nutrition/client';
+import { useSelector } from 'react-redux';
+import { UserState } from '../store';
 
 
 function RecipeMakerFDCItem({
@@ -21,6 +23,7 @@ function RecipeMakerFDCItem({
     const [fdcItems, setFDCItems] = useState<FDCFoodItem[]>([]);
     const [searchError, setSearchError] = useState<string | null>(null);
     const searchBarRef = useRef<HTMLInputElement>(null);
+    const { currentUser } = useSelector((state: UserState) => state.users);
 
     useEffect(() => {
         if (ingredient.fdcItem && ingredient.fdcItem.fdcId) {
@@ -47,6 +50,7 @@ function RecipeMakerFDCItem({
             if (items.length === 0) {
                 setSearchError(`No results for ${searchQuery}`);
             }
+            console.log(items);
             setFDCItems(items);
         } catch (error) {
             setSearchError(`Error searching ${searchQuery}`);
@@ -65,7 +69,7 @@ function RecipeMakerFDCItem({
                 rounded='lg'
                 p={2}
             >
-                <strong>{food.description}{' '}</strong>
+                <strong>{(currentUser && currentUser.favoriteFoods?.some(f => f.fdcId === food.fdcId)) ? '⭐ ' : ''}{food.description}{' '}</strong>
                 <Text
                     as="span"
                     color="blue.500"

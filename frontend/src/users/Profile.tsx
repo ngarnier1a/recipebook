@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { UserState } from "../store";
-import { Divider, Heading, useToast, Text, VStack, HStack, Spacer, Button, Box } from "@chakra-ui/react";
+import { Divider, Heading, useToast, Text, VStack, HStack, Spacer, Button, Box, Spinner, Center } from "@chakra-ui/react";
 import * as client from "./client";
 import UserRecipes from "./UserRecipes";
 import { setCurrentUser } from "./reducer";
@@ -16,11 +16,13 @@ function Profile() {
   const [isCurrentUser, setIsCurrentUser] = React.useState<boolean>(false);
   const [isFollowing, setIsFollowing] = React.useState<boolean>(false);
   const [isPressingFollow, setIsPressingFollow] = React.useState<boolean>(false);
+  const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setIsLoading(true);
     if (userId) {
       const fetchUserProfile = async () => {
         try {
@@ -55,6 +57,7 @@ function Profile() {
       setIsCurrentUser(true);
       setUserProfile(currentUser);
     }
+    setIsLoading(false);
   }, [userId, currentUser, navigate, toast]);
 
   const handleFollow = async (setFollowingStatus: boolean) => {
@@ -169,6 +172,18 @@ function Profile() {
         </HStack>
     </VStack>
   )
+
+  if (isLoading && !userProfile) {
+    return <Center mt={20}>
+      <Spinner size="xl" />
+    </Center>
+  } 
+
+  if (!isLoading && !userId && !currentUser) {
+    return <Center mt={20}>
+      <Text fontSize='xl' m={5} ml={8} mb={3} fontWeight='bold'>Please sign in to view your profile</Text>
+    </Center>
+  }
 
   return (userProfile &&
     <div>

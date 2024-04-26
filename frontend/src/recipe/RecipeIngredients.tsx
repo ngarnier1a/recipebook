@@ -14,6 +14,8 @@ import {
   AccordionIcon,
 } from "@chakra-ui/react";
 import { useNavigate } from "react-router-dom";
+import { UserState } from "../store";
+import { useSelector } from "react-redux";
 
 function RecipeIngredients({
   recipe,
@@ -21,6 +23,7 @@ function RecipeIngredients({
   recipe: Recipe;
 }) {
   const navigate = useNavigate();
+  const currentUser = useSelector((state: UserState) => state.users.currentUser);
 
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
@@ -48,7 +51,7 @@ function RecipeIngredients({
       {ingredient.fdcItem?.fdcId &&
         <Td pl={0}>
           <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
-              {ingredient.fdcItem.description}
+            {(currentUser && currentUser.favoriteFoods?.some(f => f.fdcId === ingredient.fdcItem?.fdcId)) ? '⭐ ' : ''}{ingredient.fdcItem.description}
           </Link>
         </Td>
       }
@@ -91,7 +94,7 @@ function RecipeIngredients({
                   <Td textAlign='center' pt={0}>
                     {ingredient.fdcItem?.fdcId && (
                       <Link onClick={() => navigate(`/nutrition/${ingredient.fdcItem?.fdcId}`)}>
-                        {ingredient.fdcItem.description}
+                        {(currentUser && currentUser.favoriteFoods?.some(f => f.fdcId === ingredient.fdcItem?.fdcId)) ? '⭐ ' : ''}{ingredient.fdcItem.description}
                       </Link>
                     )}
                   </Td>

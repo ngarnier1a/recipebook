@@ -2,9 +2,11 @@ import React from 'react'
 import { AccordionButton, AccordionPanel, Table, Thead, Tr, Th, Tbody, Td, Accordion, AccordionItem, Text, Box, Button, HStack } from "@chakra-ui/react";
 import { useNavigate } from 'react-router-dom';
 import { ExternalLinkIcon } from '@chakra-ui/icons';
+import { useSelector } from 'react-redux';
+import { UserState } from '../store';
 
 function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
-
+    const { currentUser } = useSelector((state: UserState) => state.users);
     const navigate = useNavigate();
 
     const secondaryInfo = (food: FDCFoodItem) => {
@@ -26,7 +28,10 @@ function FoodItems({ foods }: { foods: FDCFoodItem[] }) {
         <AccordionItem key={food.fdcId} width='full'>
             <AccordionButton px={6} py={5}>
                 <Box flex="1" textAlign="left">
-                    <strong>{food.description}{' '}</strong>
+                    <strong>
+                        {(currentUser && currentUser.favoriteFoods?.some(f => f.fdcId === food.fdcId)) ? '⭐ ' : ''}
+                        {food.description}{' '}
+                    </strong>
                     <Text
                         as="span"
                         color="blue.500"

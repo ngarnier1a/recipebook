@@ -24,6 +24,8 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import RecipeMakerFDCItem from "./RecipeMakerFDCItem";
+import { useSelector } from "react-redux";
+import { UserState } from "../store";
 
 function RecipeMakerIngredients({
   recipe,
@@ -34,6 +36,7 @@ function RecipeMakerIngredients({
 }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [currentIngredientIdx, setCurrentIngredientIdx] = useState<number>(0);
+  const { currentUser } = useSelector((state: UserState) => state.users);
 
   if (!recipe.ingredients) {
     throw new Error("Recipe must have ingredients to render");
@@ -183,7 +186,7 @@ function RecipeMakerIngredients({
           leftIcon={ingredient.fdcItem ? <></> : <Icon as={AddIcon} />}
           opacity={ingredient.fdcItem ? 1 : 0.6}
         >
-          {ingredient.fdcItem?.description ?? 'Food'}
+          {(currentUser && currentUser.favoriteFoods?.some(f => f.fdcId === ingredient.fdcItem?.fdcId)) ? '⭐ ' : ''}{ingredient.fdcItem?.description ?? 'Food'}
         </Button>
         <IconButton
         ml={0}
