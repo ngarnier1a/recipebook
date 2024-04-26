@@ -27,16 +27,18 @@ function ProfileEdit() {
   const [userProfile, setUserProfile] = React.useState<User | null>(null);
   const [isSaving, setIsSaving] = React.useState<boolean>(false);
   const [showPassword, setShowPassword] = React.useState<boolean>(false);
-  const [showPasswordConfirm, setShowPasswordConfirm] = React.useState<boolean>(false);
-  const [passwordConfirm, setPasswordConfirm] = React.useState<string | undefined>(undefined);
+  const [showPasswordConfirm, setShowPasswordConfirm] =
+    React.useState<boolean>(false);
+  const [passwordConfirm, setPasswordConfirm] = React.useState<
+    string | undefined
+  >(undefined);
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
 
-
   useEffect(() => {
     if (currentUser) {
-        setUserProfile(currentUser);
+      setUserProfile(currentUser);
     }
   }, [currentUser, navigate]);
 
@@ -82,7 +84,11 @@ function ProfileEdit() {
       m={0}
       onClick={handleSave}
       colorScheme="blue"
-      title={userProfile.password !== passwordConfirm ? 'Passwords do not match' : 'Save changes to your profile'}
+      title={
+        userProfile.password !== passwordConfirm
+          ? "Passwords do not match"
+          : "Save changes to your profile"
+      }
       isDisabled={userProfile.password !== passwordConfirm}
     >
       Save
@@ -95,20 +101,15 @@ function ProfileEdit() {
       mr={2}
       onClick={() => navigate(-1)}
       colorScheme="red"
-      title='Discard changes and return to profile'
+      title="Discard changes and return to profile"
     >
       Cancel
     </Button>
   );
 
   const desktopHeader = (
-    <HStack
-        w="full"
-        mt={5}
-        mb={4}
-        display={{ base: "none", md: "flex" }}
-    >
-        <Heading
+    <HStack w="full" mt={5} mb={4} display={{ base: "none", md: "flex" }}>
+      <Heading
         position="absolute"
         left="50%"
         transform="translateX(-50%)"
@@ -116,153 +117,162 @@ function ProfileEdit() {
         size="xl"
         mt={5}
         mb={3}
-        >
+      >
         Edit Profile
-        </Heading>
-        <Spacer />
-        <Box h="40px" mr={5}>
+      </Heading>
+      <Spacer />
+      <Box h="40px" mr={5}>
         {cancelButton}
         {saveButton}
-        </Box>
+      </Box>
     </HStack>
-  )
+  );
 
   const mobileHeader = (
     <VStack display={{ base: "flex", md: "none" }}>
-        <Heading
-            size="xl"
-            mt={5}
-            mb={0}
-            >
-            Edit Profile
-        </Heading>
-        <HStack>
-            {cancelButton}
-            {saveButton}
-        </HStack>
+      <Heading size="xl" mt={5} mb={0}>
+        Edit Profile
+      </Heading>
+      <HStack>
+        {cancelButton}
+        {saveButton}
+      </HStack>
     </VStack>
-  )
+  );
 
   return (
     userProfile && (
       <div>
         <VStack w="full">
-            {desktopHeader}
-            {mobileHeader}
-            <Divider />
-            <Box m={5} w='80%'>
-                <Text fontSize='lg' fontWeight='bold'>Public Information</Text>
-                <FormControl>
-                    <FormLabel>Username</FormLabel>
-                    <Input
-                        value={userProfile.username}
-                        placeholder='Chef "Gordon Ramsay"'
-                        title='Your public username, visible to other users'
-                        onChange={(e) =>
-                            setUserProfile({ ...userProfile, username: e.target.value })
-                        }
-                    />
-                </FormControl>
-                <FormControl mt={5}>
-                    <FormLabel>Biography</FormLabel>
-                    <Textarea
-                        value={userProfile.bio ?? ''}
-                        placeholder='The best chef in the world'
-                        title='A short description of yourself and your food journey'
-                        onChange={(e) =>
-                            setUserProfile({ ...userProfile, bio: e.target.value })
-                        }
-                    />
-                </FormControl>
-                </Box>
-                <Divider my={5} />
-                <Box mx={5} w='80%'>
-                <Text fontSize='lg' fontWeight='bold'>Private Information</Text>
-                <FormControl mt={5}>
-                <FormLabel>Password</FormLabel>
-                    <InputGroup>
-                    <Input
-                        type={showPassword ? "text" : "password"}
-                        value={userProfile.password ?? ''}
-                        title='Your private password, used to log in to your account'
-                        onChange={(e) => {
-                            if (e.target.value !== '') {
-                                setUserProfile({ ...userProfile, password: e.target.value })
-                            } else {
-                                const { password, ...rest } = userProfile;
-                                setUserProfile(rest);
-                            }
-                        }}
-                        placeholder="************"
-                        isInvalid={passwordConfirm !== userProfile.password}
-                    />
-                    <InputRightElement width="4.5rem">
-                        <Button
-                        h="1.75rem"
-                        size="sm"
-                        onClick={() => setShowPassword(!showPassword)}
-                        >
-                            {showPassword ? "Hide" : "Show"}
-                        </Button>
-                    </InputRightElement>
-                    </InputGroup>
+          {desktopHeader}
+          {mobileHeader}
+          <Divider />
+          <Box m={5} w="80%">
+            <Text fontSize="lg" fontWeight="bold">
+              Public Information
+            </Text>
+            <FormControl>
+              <FormLabel>Username</FormLabel>
+              <Input
+                value={userProfile.username}
+                placeholder='Chef "Gordon Ramsay"'
+                title="Your public username, visible to other users"
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, username: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl mt={5}>
+              <FormLabel>Biography</FormLabel>
+              <Textarea
+                value={userProfile.bio ?? ""}
+                placeholder="The best chef in the world"
+                title="A short description of yourself and your food journey"
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, bio: e.target.value })
+                }
+              />
+            </FormControl>
+          </Box>
+          <Divider my={5} />
+          <Box mx={5} w="80%">
+            <Text fontSize="lg" fontWeight="bold">
+              Private Information
+            </Text>
+            <FormControl mt={5}>
+              <FormLabel>Password</FormLabel>
+              <InputGroup>
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={userProfile.password ?? ""}
+                  title="Your private password, used to log in to your account"
+                  onChange={(e) => {
+                    if (e.target.value !== "") {
+                      setUserProfile({
+                        ...userProfile,
+                        password: e.target.value,
+                      });
+                    } else {
+                      const { password, ...rest } = userProfile;
+                      setUserProfile(rest);
+                    }
+                  }}
+                  placeholder="************"
+                  isInvalid={passwordConfirm !== userProfile.password}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowPassword(!showPassword)}
+                  >
+                    {showPassword ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
 
-                    <InputGroup mt={1}>
-                    <Input
-                        type={showPasswordConfirm ? "text" : "password"}
-                        value={passwordConfirm ?? ''}
-                        onChange={(e) => setPasswordConfirm((e.target.value !== '' ? e.target.value : undefined))}
-                        placeholder="************"
-                        title='Confirm your new password by typing it again'
-                        isInvalid={passwordConfirm !== userProfile.password}
-                    />
-                    <InputRightElement width="4.5rem">
-                        <Button
-                        h="1.75rem"
-                        size="sm"
-                        onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
-                        >
-                            {showPasswordConfirm ? "Hide" : "Show"}
-                        </Button>
-                    </InputRightElement>
-                    </InputGroup>
-                    <FormLabel mt={1} htmlFor='confirm password'>Confirm Password</FormLabel>
-                </FormControl>
-                <FormControl mt={5}>
-                    <FormLabel>Email</FormLabel>
-                    <Input
-                        value={userProfile.email ?? ''}
-                        title='Your private email address, used for account recovery and notifications'
-                        placeholder='gramsay@gmail.com'
-                        onChange={(e) =>
-                            setUserProfile({ ...userProfile, email: e.target.value })
-                        }
-                    />
-                </FormControl>
-                <FormControl mt={5}>
-                    <FormLabel>First Name</FormLabel>
-                    <Input
-                        value={userProfile.firstName ?? ''}
-                        placeholder='Gordon'
-                        title='Your private first name, used for personalization'
-                        onChange={(e) =>
-                            setUserProfile({ ...userProfile, firstName: e.target.value })
-                        }
-                    />
-                </FormControl>
-                <FormControl mt={5}>
-                    <FormLabel>Last Name</FormLabel>
-                    <Input
-                        value={userProfile.lastName ?? ''}
-                        placeholder='Ramsay'
-                        title='Your private last name, used for personalization'
-                        onChange={(e) =>
-                            setUserProfile({ ...userProfile, lastName: e.target.value })
-                        }
-                    />
-                </FormControl>
-            </Box>
-            <Divider />
+              <InputGroup mt={1}>
+                <Input
+                  type={showPasswordConfirm ? "text" : "password"}
+                  value={passwordConfirm ?? ""}
+                  onChange={(e) =>
+                    setPasswordConfirm(
+                      e.target.value !== "" ? e.target.value : undefined,
+                    )
+                  }
+                  placeholder="************"
+                  title="Confirm your new password by typing it again"
+                  isInvalid={passwordConfirm !== userProfile.password}
+                />
+                <InputRightElement width="4.5rem">
+                  <Button
+                    h="1.75rem"
+                    size="sm"
+                    onClick={() => setShowPasswordConfirm(!showPasswordConfirm)}
+                  >
+                    {showPasswordConfirm ? "Hide" : "Show"}
+                  </Button>
+                </InputRightElement>
+              </InputGroup>
+              <FormLabel mt={1} htmlFor="confirm password">
+                Confirm Password
+              </FormLabel>
+            </FormControl>
+            <FormControl mt={5}>
+              <FormLabel>Email</FormLabel>
+              <Input
+                value={userProfile.email ?? ""}
+                title="Your private email address, used for account recovery and notifications"
+                placeholder="gramsay@gmail.com"
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, email: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl mt={5}>
+              <FormLabel>First Name</FormLabel>
+              <Input
+                value={userProfile.firstName ?? ""}
+                placeholder="Gordon"
+                title="Your private first name, used for personalization"
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, firstName: e.target.value })
+                }
+              />
+            </FormControl>
+            <FormControl mt={5}>
+              <FormLabel>Last Name</FormLabel>
+              <Input
+                value={userProfile.lastName ?? ""}
+                placeholder="Ramsay"
+                title="Your private last name, used for personalization"
+                onChange={(e) =>
+                  setUserProfile({ ...userProfile, lastName: e.target.value })
+                }
+              />
+            </FormControl>
+          </Box>
+          <Divider />
         </VStack>
       </div>
     )

@@ -49,7 +49,7 @@ export default function Navbar() {
   const toast = useToast();
   const { currentUser } = useSelector((state: UserState) => state.users);
   const { colorMode, toggleColorMode } = useColorMode();
-  const [ colorModeLoading, setColorModeLoading ] = useState<boolean>(false);
+  const [colorModeLoading, setColorModeLoading] = useState<boolean>(false);
 
   const handleSignout = async () => {
     try {
@@ -99,10 +99,9 @@ export default function Navbar() {
 
   // pick first name if avaliable for greeting
   const greeting = currentUser
-    ? (currentUser.firstName
-        ? `Hi, ${currentUser.firstName}`
-        : `Hi, ${currentUser.username}`
-      )
+    ? currentUser.firstName
+      ? `Hi, ${currentUser.firstName}`
+      : `Hi, ${currentUser.username}`
     : "";
 
   const endContent = currentUser ? (
@@ -237,7 +236,11 @@ const DesktopNav = () => {
   return (
     <Stack direction={"row"} spacing={1}>
       {NAV_ITEMS.filter((navItem) => {
-        return !navItem.userType || navItem.userType === currentUser?.type || (navItem.userType === "ANY" && currentUser);
+        return (
+          !navItem.userType ||
+          navItem.userType === currentUser?.type ||
+          (navItem.userType === "ANY" && currentUser)
+        );
       }).map((navItem, idx) => (
         <Box key={idx}>
           <Popover trigger={"hover"} placement={"bottom-start"}>
@@ -273,7 +276,9 @@ const DesktopNav = () => {
                   {navItem.children
                     .filter((child) => {
                       return (
-                        !child.userType || child.userType === currentUser?.type || (child.userType === "ANY" && currentUser)
+                        !child.userType ||
+                        child.userType === currentUser?.type ||
+                        (child.userType === "ANY" && currentUser)
                       );
                     })
                     .map((child) => (
@@ -299,7 +304,10 @@ const DesktopSubNav = ({ label, href, subLabel }: NavItem) => {
       display={"block"}
       p={2}
       rounded={"md"}
-      _hover={{ bg: useColorModeValue("blue.50", "gray.900"), cursor: "pointer" }}
+      _hover={{
+        bg: useColorModeValue("blue.50", "gray.900"),
+        cursor: "pointer",
+      }}
     >
       <Stack direction={"row"} align={"center"}>
         <Box>
@@ -338,7 +346,10 @@ const MobileNav = () => {
       display={{ md: "none" }}
     >
       {NAV_ITEMS.filter(
-        (navItem) => !navItem.userType || navItem.userType === currentUser?.type || (navItem.userType === "ANY" && currentUser)
+        (navItem) =>
+          !navItem.userType ||
+          navItem.userType === currentUser?.type ||
+          (navItem.userType === "ANY" && currentUser),
       ).map((navItem) => (
         <MobileNavItem key={navItem.label} {...navItem} />
       ))}
@@ -392,18 +403,23 @@ const MobileNavItem = ({ label, children, href }: NavItem) => {
           _hover={{ cursor: "pointer" }}
         >
           {children &&
-            children.filter(
-              (child) => !child.userType || child.userType === currentUser?.type || (child.userType === "ANY" && currentUser)
-            ).map((child) => (
-              <Box
-                as="a"
-                key={child.label}
-                py={2}
-                onClick={() => navigate(child.href || "")}
-              >
-                {child.label}
-              </Box>
-            ))}
+            children
+              .filter(
+                (child) =>
+                  !child.userType ||
+                  child.userType === currentUser?.type ||
+                  (child.userType === "ANY" && currentUser),
+              )
+              .map((child) => (
+                <Box
+                  as="a"
+                  key={child.label}
+                  py={2}
+                  onClick={() => navigate(child.href || "")}
+                >
+                  {child.label}
+                </Box>
+              ))}
         </Stack>
       </Collapse>
     </Stack>
@@ -431,7 +447,7 @@ const NAV_ITEMS: Array<NavItem> = [
         label: "Your Recipes",
         subLabel: "Recipes you've created or liked",
         href: "/user/recipes",
-        userType: "ANY"
+        userType: "ANY",
       },
       {
         label: "Create Recipe",
@@ -448,5 +464,5 @@ const NAV_ITEMS: Array<NavItem> = [
   {
     label: "Nutrition",
     href: "/nutrition/search",
-  }
+  },
 ];

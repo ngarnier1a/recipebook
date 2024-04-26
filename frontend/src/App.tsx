@@ -34,14 +34,23 @@ function App() {
                 <Route path="/user/profile/edit" element={<ProfileEdit />} />
                 <Route path="/user/:userId/profile/" element={<Profile />} />
                 <Route path="/user/recipes" element={<UserRecipes />} />
-                <Route path="/user/:userId/recipes" element={<UserRecipes showLiked={false} />} />
+                <Route
+                  path="/user/:userId/recipes"
+                  element={<UserRecipes showLiked={false} />}
+                />
                 <Route path="/recipe/:recipeId" element={<Recipe />} />
                 <Route path="/browse/chefs" element={<Chefs />} />
                 <Route path="/browse/recipes" element={<Recipes />} />
                 {/* <Route path="/recipe/:recipeId/cook" element={<RecipeViewer />} /> */}
                 <Route path="/recipe/create" element={<RecipeMaker />} />
-                <Route path="/recipe/:recipeId/edit" element={<RecipeMaker />} />
-                <Route path="/recipe/:recipeId/clone" element={<RecipeMaker />} />
+                <Route
+                  path="/recipe/:recipeId/edit"
+                  element={<RecipeMaker />}
+                />
+                <Route
+                  path="/recipe/:recipeId/clone"
+                  element={<RecipeMaker />}
+                />
                 <Route path="/nutrition" element={<Nutrition />} />
                 <Route path="/nutrition/:fdcId" element={<Nutrition />} />
                 <Route path="/nutrition/search" element={<Search />} />

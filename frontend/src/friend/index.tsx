@@ -2,8 +2,6 @@ import React from "react";
 import AddFriend from "./addFriend";
 import FriendList from "./friendList";
 
-
-
 function Friends() {
   return (
     <div>
