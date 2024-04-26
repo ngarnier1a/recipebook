@@ -35,7 +35,7 @@ export const findUserByIdRich = async (userId: UserID) =>
     })
     .populate({
       path: "followedChefs",
-      select: "_id username authoredRecipes numFollowers",
+      select: "_id username bio authoredRecipes numFollowers",
       populate: {
         path: "authoredRecipes",
         select: "_id name likes",
