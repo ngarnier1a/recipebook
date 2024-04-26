@@ -237,7 +237,7 @@ function RecipeMakerIngredients({
         recipe.ingredients.length > currentIngredientIdx && (
           <RecipeMakerFDCItem
             ingredient={recipe.ingredients[currentIngredientIdx]}
-            setIngredientFDCItem={(fdcItem: FDCFoodItem) => {
+            setIngredientFDCItem={(fdcItem?: FDCFoodItem) => {
               const ingredient = (recipe.ingredients ?? [])[
                 currentIngredientIdx
               ];

@@ -1,6 +1,7 @@
 import {
   AddIcon,
   CloseIcon,
+  DeleteIcon,
   ExternalLinkIcon,
   SearchIcon,
 } from "@chakra-ui/icons";
@@ -45,7 +46,7 @@ function RecipeMakerFDCItem({
   onClose,
 }: {
   ingredient: RecipeIngredient;
-  setIngredientFDCItem: (fdcItem: FDCFoodItem) => void;
+  setIngredientFDCItem: (fdcItem?: FDCFoodItem) => void;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -117,13 +118,17 @@ function RecipeMakerFDCItem({
           <Button
             mb={3}
             ml={2}
-            leftIcon={<AddIcon />}
+            leftIcon={food.fdcId === ingredient.fdcItem?.fdcId ? <DeleteIcon /> : <AddIcon />}
             onClick={() => {
-              setIngredientFDCItem(food);
+              if (food.fdcId === ingredient.fdcItem?.fdcId) {
+                setIngredientFDCItem();
+              } else {
+                setIngredientFDCItem(food);
+              }
               onClose();
             }}
           >
-            Add
+            {food.fdcId === ingredient.fdcItem?.fdcId ? "Remove" : "Add"}
           </Button>
           <Button
             mb={3}
