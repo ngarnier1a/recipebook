@@ -25,12 +25,12 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const textColor = useColorModeValue("orange.500", "orange.300");
   const likeColor = useColorModeValue("red.500", "red.300");
 
-  const nameDisplay =
-    recipe.name.length > 17 ? recipe.name.slice(0, 17) + "..." : recipe.name;
+  const name = recipe.name ?? "Unknown recipe";
+  const description = recipe.description ?? "No description available";
+
+  const nameDisplay = name.length > 15 ? name.slice(0, 15) + "..." : name;
   const descriptionDisplay =
-    recipe.description.length > 160
-      ? recipe.description.slice(0, 160) + "..."
-      : recipe.description;
+    description.length > 130 ? description.slice(0, 130) + "..." : description;
 
   const isLiked =
     (currentUser?.likedRecipes?.findIndex((r) => r._id === recipe._id) ?? -1) >=
@@ -46,7 +46,7 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
       bg={bgColor}
       color={textColor}
       _hover={{ cursor: "pointer", bg: hoverColor, color: textHoverColor }}
-      title={recipe.name}
+      title={name}
     >
       <CardBody px={5} pt={5} pb={0}>
         <Stack spacing="3">

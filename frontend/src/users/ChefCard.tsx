@@ -26,13 +26,13 @@ function ChefCard({ chef }: { chef: User }) {
   const textColor = useColorModeValue("blue.600", "blue.200");
   const followColor = useColorModeValue("red.500", "red.400");
 
+  const chefUsername = chef.username ?? "Unknown chef";
+
   const chefBio = chef.bio ?? "No bio avaliable";
   const nameDisplay =
-    chef.username.length > 17
-      ? chef.username.slice(0, 17) + "..."
-      : chef.username;
+    chefUsername.length > 15 ? chefUsername.slice(0, 15) + "..." : chefUsername;
   const descriptionDisplay =
-    chefBio.length > 160 ? chefBio.slice(0, 160) + "..." : chefBio;
+    chefBio.length > 130 ? chefBio.slice(0, 130) + "..." : chefBio;
 
   const isFollowed =
     (currentUser?.followedChefs?.findIndex((c) => c._id === chef._id) ?? -1) >=
@@ -47,7 +47,7 @@ function ChefCard({ chef }: { chef: User }) {
       bg={bgColor}
       color={textColor}
       _hover={{ cursor: "pointer", bg: hoverColor, color: textHoverColor }}
-      title={chef.username}
+      title={chefUsername}
     >
       <CardBody px={5} pt={5} pb={0}>
         <Stack spacing="3">
@@ -72,7 +72,7 @@ function ChefCard({ chef }: { chef: User }) {
             _hover={{
               bg: bgColor,
             }}
-            title={`View ${chef.username}'s recipe${chef.authoredRecipes?.length === 1 ? "" : "s"}`}
+            title={`View ${chefUsername}'s recipe${chef.authoredRecipes?.length === 1 ? "" : "s"}`}
             onClick={(e) => {
               e.stopPropagation();
               navigate(`/user/${chef._id}/recipes`);

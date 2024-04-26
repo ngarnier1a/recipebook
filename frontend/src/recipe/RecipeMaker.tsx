@@ -29,20 +29,20 @@ import { nanoid } from "@reduxjs/toolkit";
 import { setCurrentUser } from "../users/reducer";
 
 const PLACEHOLDER_INGREDIENT: RecipeIngredient = {
-  ingredientID: nanoid(),
+  _id: nanoid(),
   name: "Ingredient",
   quantity: 1,
   unit: "unit",
 };
 
 const PLACEHOLDER_STEP: RecipeStep = {
-  stepID: nanoid(),
+  _id: nanoid(),
   stepTitle: "Prepare the ingredients",
   stepDescription: "Get all the ingredients ready to go",
 };
 
 const PLACEHOLDER_NOTE: RecipeNote = {
-  noteID: nanoid(),
+  _id: nanoid(),
   noteText: "Make sure to be careful with the knife!",
 };
 
@@ -219,7 +219,7 @@ function RecipeMaker() {
                       const newIngredients = [...(recipe.ingredients ?? [])];
                       newIngredients.push({
                         ...PLACEHOLDER_INGREDIENT,
-                        ingredientID: nanoid(),
+                        _id: nanoid(),
                       });
                       setRecipe({
                         ...recipe,
@@ -242,7 +242,7 @@ function RecipeMaker() {
                     variant="ghost"
                     onClick={() => {
                       const newSteps = [...(recipe.steps ?? [])];
-                      newSteps.push({ ...PLACEHOLDER_STEP, stepID: nanoid() });
+                      newSteps.push({ ...PLACEHOLDER_STEP, _id: nanoid() });
                       setRecipe({
                         ...recipe,
                         steps: newSteps,
@@ -265,7 +265,7 @@ function RecipeMaker() {
                             setRecipe({
                               ...recipe,
                               steps: newSteps.map((s) =>
-                                s.stepID === step.stepID
+                                s._id === step._id
                                   ? { ...s, stepTitle: e.target.value }
                                   : s,
                               ),
@@ -277,9 +277,7 @@ function RecipeMaker() {
                             const newSteps = [...(recipe.steps ?? [])];
                             setRecipe({
                               ...recipe,
-                              steps: newSteps.filter(
-                                (s) => s.stepID !== step.stepID,
-                              ),
+                              steps: newSteps.filter((s) => s._id !== step._id),
                             });
                           }}
                           aria-label="Remove Step"
@@ -297,7 +295,7 @@ function RecipeMaker() {
                           setRecipe({
                             ...recipe,
                             steps: newSteps.map((s) =>
-                              s.stepID === step.stepID
+                              s._id === step._id
                                 ? { ...s, stepDescription: e.target.value }
                                 : s,
                             ),
@@ -317,7 +315,7 @@ function RecipeMaker() {
                     variant="ghost"
                     onClick={() => {
                       const newNotes = [...(recipe.notes ?? [])];
-                      newNotes.push({ ...PLACEHOLDER_NOTE, noteID: nanoid() });
+                      newNotes.push({ ...PLACEHOLDER_NOTE, _id: nanoid() });
                       setRecipe({
                         ...recipe,
                         notes: newNotes,
@@ -341,7 +339,7 @@ function RecipeMaker() {
                             setRecipe({
                               ...recipe,
                               notes: [...(recipe.notes ?? [])].map((n) =>
-                                n.noteID === note.noteID
+                                n._id === note._id
                                   ? { ...n, noteText: e.target.value }
                                   : n,
                               ),
@@ -353,7 +351,7 @@ function RecipeMaker() {
                             setRecipe({
                               ...recipe,
                               notes: [...(recipe.notes ?? [])].filter(
-                                (n) => n.noteID !== note.noteID,
+                                (n) => n._id !== note._id,
                               ),
                             });
                           }}

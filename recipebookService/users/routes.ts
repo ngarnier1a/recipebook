@@ -66,8 +66,10 @@ export default function UserRoutes(app: Application) {
       };
 
       const currentUser = await dao.createUser(userBody);
-      req.session.user = currentUser.toObject();
-      res.send(currentUser);
+      const userForSession = currentUser.toObject();
+      delete userForSession.password;
+      req.session.user = userForSession;
+      res.send(userForSession);
     } catch (e) {
       console.error(`Error creating user: ${e}`);
       res.sendStatus(400);
@@ -98,6 +100,8 @@ export default function UserRoutes(app: Application) {
             res.sendStatus(500);
           }
           res.send(req.session.user);
+        } else {
+          res.sendStatus(401);
         }
       } else {
         res.sendStatus(401);
@@ -192,13 +196,9 @@ export default function UserRoutes(app: Application) {
     const toFavorite = req.body.toFavorite;
 
     try {
-      const user = await dao.updateFavoriteFood(
-        req.session.user._id,
-        fdcId,
-        toFavorite,
-      );
-      req.session.user = user;
-      res.send(user);
+      await dao.updateFavoriteFood(req.session.user._id, fdcId, toFavorite);
+      const updatedUser = await updateSessionUser(req);
+      res.send(updatedUser);
     } catch (e) {
       console.error(`Error favoriting food: ${e}`);
       res.sendStatus(400);

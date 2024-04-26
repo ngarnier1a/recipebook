@@ -18,6 +18,8 @@ import {
   Textarea,
   InputGroup,
   InputRightElement,
+  Center,
+  Spinner,
 } from "@chakra-ui/react";
 import * as client from "./client";
 import { setCurrentUser } from "./reducer";
@@ -32,14 +34,17 @@ function ProfileEdit() {
   const [passwordConfirm, setPasswordConfirm] = useState<string | undefined>(
     undefined,
   );
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const navigate = useNavigate();
   const toast = useToast();
   const dispatch = useDispatch();
 
   useEffect(() => {
+    setIsLoading(true);
     if (currentUser) {
       setUserProfile(currentUser);
     }
+    setIsLoading(false);
   }, [currentUser, navigate]);
 
   const handleSave = async () => {
@@ -74,10 +79,6 @@ function ProfileEdit() {
     setIsSaving(false);
   };
 
-  if (!userProfile) {
-    return <></>;
-  }
-
   const saveButton = (
     <Button
       isLoading={isSaving}
@@ -85,11 +86,11 @@ function ProfileEdit() {
       onClick={handleSave}
       colorScheme="blue"
       title={
-        userProfile.password !== passwordConfirm
+        userProfile?.password !== passwordConfirm
           ? "Passwords do not match"
           : "Save changes to your profile"
       }
-      isDisabled={userProfile.password !== passwordConfirm}
+      isDisabled={userProfile?.password !== passwordConfirm}
     >
       Save
     </Button>
@@ -139,6 +140,24 @@ function ProfileEdit() {
       </HStack>
     </VStack>
   );
+
+  if (isLoading && !userProfile) {
+    return (
+      <Center mt={20}>
+        <Spinner size="xl" />
+      </Center>
+    );
+  }
+
+  if (!isLoading && !currentUser) {
+    return (
+      <Center mt={20}>
+        <Text fontSize="xl" m={5} ml={8} mb={3} fontWeight="bold">
+          Please sign in to edit your profile
+        </Text>
+      </Center>
+    );
+  }
 
   return (
     userProfile && (

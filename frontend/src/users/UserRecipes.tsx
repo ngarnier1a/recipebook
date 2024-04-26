@@ -91,8 +91,8 @@ function UserRecipes({ showLiked = true }: { showLiked?: boolean }) {
               <Center>
                 <Heading p={5}>
                   {userData?._id === (currentUser?._id ?? "N/A")
-                    ? "Your"
-                    : `${userData?.username ?? "Unknown"}'s `}{" "}
+                    ? "Your "
+                    : `${userData?.username ?? "Unknown"}'s`}{" "}
                   Recipes
                 </Heading>
               </Center>
@@ -100,8 +100,8 @@ function UserRecipes({ showLiked = true }: { showLiked?: boolean }) {
               <Divider mb={10} />
               <Center>
                 {userData?._id === (currentUser?._id ?? "N/A")
-                  ? "Your"
-                  : `${userData?.username ?? "Unknown"}'s `}
+                  ? "Your "
+                  : `${userData?.username ?? "Unknown"}'s`}{" "}
                 published recipes appear here
               </Center>
               <Divider mt={10} />
@@ -112,8 +112,8 @@ function UserRecipes({ showLiked = true }: { showLiked?: boolean }) {
             <Center p={5}>
               <Heading>
                 {userData?._id === (currentUser?._id ?? "N/A")
-                  ? "Your"
-                  : `${userData?.username ?? "Unknown"}'s `}{" "}
+                  ? "Your "
+                  : `${userData?.username ?? "Unknown"}'s`}{" "}
                 Liked Recipes
               </Heading>
             </Center>

@@ -1,6 +1,7 @@
 import {
   AddIcon,
   CloseIcon,
+  DeleteIcon,
   ExternalLinkIcon,
   SearchIcon,
 } from "@chakra-ui/icons";
@@ -45,7 +46,7 @@ function RecipeMakerFDCItem({
   onClose,
 }: {
   ingredient: RecipeIngredient;
-  setIngredientFDCItem: (fdcItem: FDCFoodItem) => void;
+  setIngredientFDCItem: (fdcItem?: FDCFoodItem) => void;
   isOpen: boolean;
   onClose: () => void;
 }) {
@@ -60,11 +61,30 @@ function RecipeMakerFDCItem({
     if (ingredient.fdcItem && ingredient.fdcItem.fdcId) {
       setSearchQuery(ingredient.fdcItem.fdcId.toString());
       setFDCItems([ingredient.fdcItem]);
+    } else if (!ingredient.fdcItem && ingredient.name !== "Ingredient") {
+      setSearchQuery(ingredient.name);
+      setFDCItems([]);
     } else {
       setSearchQuery("");
       setFDCItems([]);
     }
   }, [ingredient]);
+
+  const sortFavoritedFoodFirst = (foods: FDCFoodItem[]) => {
+    if (!currentUser || !currentUser.favoriteFoods) {
+      return foods;
+    }
+    const favoritedFoods = foods.sort((a, b) => {
+      const aFavorited = currentUser.favoriteFoods?.some(
+        (f) => f.fdcId === a.fdcId,
+      );
+      const bFavorited = currentUser.favoriteFoods?.some(
+        (f) => f.fdcId === b.fdcId,
+      );
+      return aFavorited && !bFavorited ? -1 : !aFavorited && bFavorited ? 1 : 0;
+    });
+    return favoritedFoods;
+  };
 
   const searchFDCItems = async () => {
     setIsLoading(true);
@@ -77,6 +97,7 @@ function RecipeMakerFDCItem({
         }
       } else {
         items = await searchClient.searchFoods(searchQuery);
+        items = sortFavoritedFoodFirst(items);
       }
       if (items.length === 0) {
         setSearchError(`No results for ${searchQuery}`);
@@ -114,24 +135,32 @@ function RecipeMakerFDCItem({
           <Button
             mb={3}
             ml={2}
-            leftIcon={<AddIcon />}
+            leftIcon={
+              food.fdcId === ingredient.fdcItem?.fdcId ? (
+                <DeleteIcon />
+              ) : (
+                <AddIcon />
+              )
+            }
             onClick={() => {
-              setIngredientFDCItem(food);
+              if (food.fdcId === ingredient.fdcItem?.fdcId) {
+                setIngredientFDCItem();
+              } else {
+                setIngredientFDCItem(food);
+              }
               onClose();
             }}
           >
-            Add
+            {food.fdcId === ingredient.fdcItem?.fdcId ? "Remove" : "Add"}
           </Button>
           <Button
             mb={3}
             onClick={() =>
-              window.open(
-                `https://fdc.nal.usda.gov/fdc-app.html#/food-details/${food.fdcId}`,
-              )
+              window.open(`${window.location.origin}/#/nutrition/${food.fdcId}`)
             }
             rightIcon={<ExternalLinkIcon />}
           >
-            USDA
+            Details
           </Button>
         </HStack>
         {food.nutrients && food.nutrients.length > 0 ? (
