@@ -49,3 +49,8 @@ export const popularFollowedRecipes = async (sortDir: string): Promise<Recipe[]>
     const response = await api.post(`${SERVICE_URL}/recipes/followed`, null, { params: { sortDir }});
     return response.data;
 }
+
+export const favoriteFood = async (fdcId: string, toFavorite: boolean): Promise<User> => {
+    const response = await api.put(`${SECURITY_API}/favorite/${fdcId}`, { toFavorite });
+    return response.data;
+}

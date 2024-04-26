@@ -1,17 +1,27 @@
 import React, { useEffect } from 'react'
-import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Center, Divider, Flex, Heading, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue, useToast } from "@chakra-ui/react";
+import { Accordion, AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, Button, Center, Divider, Flex, HStack, Heading, IconButton, Table, Tbody, Td, Text, Th, Thead, Tr, useBreakpointValue, useToast } from "@chakra-ui/react";
 import { useNavigate, useParams } from 'react-router-dom';
 import * as client from "./client";
+import * as userClient from "../users/client";
 import { ExternalLinkIcon } from '@chakra-ui/icons';
 import RecipeCard from '../recipe/RecipeCard';
+import { GoStarFill } from "react-icons/go";
+import { GoStar } from "react-icons/go";
+import { useDispatch, useSelector } from 'react-redux';
+import { UserState } from '../store';
+import { setCurrentUser } from '../users/reducer';
 
 function Nutrition() {
     const navigate = useNavigate();
+    const { currentUser } = useSelector((state: UserState) => state.users);
     const { fdcId } = useParams();
     const [food, setFood] = React.useState<FDCFoodItem | null>(null);
     const [recipes, setRecipes] = React.useState<Recipe[] | null>(null);
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
+    const [isFavorited, setIsFavorited] = React.useState<boolean>(false);
+    const [isFavoriting, setIsFavoriting] = React.useState<boolean>(false);
     const toast = useToast();
+    const dispatch = useDispatch();
     const tabLocation = useBreakpointValue({ base: "center", md: "start" });
 
     useEffect(() => {
@@ -48,8 +58,53 @@ function Nutrition() {
       setIsLoading(false);
     }, [fdcId, toast, navigate]);
 
+    useEffect(() => {
+      if (!currentUser || !currentUser.favoriteFoods || !food) {
+        return;
+      }
+      const newFavoriteState = currentUser.favoriteFoods.some(favorite => favorite._id === food._id);
+
+      console.log(food);
+      console.log(currentUser.favoriteFoods);
+      console.log(`newState: ${newFavoriteState}, isFavorited: ${isFavorited}`);
+
+      if (newFavoriteState !== isFavorited) {
+        setIsFavorited(newFavoriteState);
+        setIsFavoriting(false);
+      }
+    }, [currentUser, food, isFavorited]);
+
     if (isLoading || !food) {
       return <></>;
+    }
+
+    const handleFavorite = async () => {
+      if (!currentUser || !food || !food._id || isFavoriting) {
+        return;
+      }
+      setIsFavoriting(true);
+      try {
+        const updatedUser = await userClient.favoriteFood(food._id, !isFavorited);
+        setIsFavorited(!isFavorited);
+        dispatch(setCurrentUser(updatedUser));
+        toast({
+          title: `Food ${isFavorited ? 'unf' : 'f'}avorited`,
+          status: "success",
+          duration: 3000,
+          isClosable: false,
+        });
+      } catch (error) {
+        console.error("Error favoriting food item", error);
+        toast({
+          title: "Error favoriting food item",
+          description: "Please try again",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsFavoriting(false);
+      }
     }
 
     const headerInfo = (<>
@@ -57,16 +112,34 @@ function Nutrition() {
         <Heading size='xl' mt={5}>Nutrition</Heading>
       </Center>
       <Divider my={5} />
-      <Heading size='xl' ml={10} mt={5}>
-        {`${food.description} `}
+      <Heading pos='relative' size='xl' ml={10} mt={5}>
+        <HStack verticalAlign='top'>
+        {currentUser && 
+          <IconButton
+            pos="absolute"
+            top="5px"
+            aria-label='favorite food'
+            variant='ghost'
+            _hover={{}}
+            _active={{}}
+            opacity={isFavoriting ? 0.5 : 1}
+            title={`${isFavorited ? 'Unf' : 'F'}avorite this food item`}
+            onClick={handleFavorite}
+            icon={ isFavorited ?
+              <GoStarFill size={35} fill='rgb(255, 193, 0)' /> :
+              <GoStar size={35} fill='rgb(255, 193, 0)' />
+            }
+          />
+        }
+        <Text ps={currentUser ? '45px' : '0px'}>{`${food.description} `}</Text>
+        </HStack>
         <Text
+          pt={5}
+          fontSize='large'
           color='blue.500'
-          fontSize='small'
-          as='span'
           title='The USDA Food Data Central ID for this food item'
-          _hover={{ cursor: 'pointer', textDecoration: 'underline' }}
         >
-          {food.fdcId}
+          FDC ID - {food.fdcId}
         </Text>
         {food.foodCategory && <Text mt={3} fontSize='large' color="gray.500">In '{food.foodCategory}'</Text>}
         {food.brandName && <Text mt={3} fontSize='large' color="gray.500">By {food.brandName}</Text>}

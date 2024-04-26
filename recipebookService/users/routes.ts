@@ -177,6 +177,25 @@ export default function UserRoutes(app: Application) {
     }
   }
 
+  const favoriteFood = async (req: Request, res: Response) => {
+    if (!req.session.user || !req.session.user._id) {
+      res.sendStatus(401);
+      return;
+    }
+
+    const { foodId } = req.params;
+    const toFavorite = req.body.toFavorite;
+
+    try {
+      const user = await dao.updateFavoriteFood(req.session.user._id, foodId, toFavorite);
+      req.session.user = user;
+      res.send(user);
+    } catch (e) {
+      console.error(`Error favoriting food: ${e}`);
+      res.sendStatus(400);
+    }
+  }
+
   app.put("/api/auth/:userId", updateUser);
   app.post("/api/auth/signup", signup);
   app.post("/api/auth/signin", signin);
@@ -184,5 +203,6 @@ export default function UserRoutes(app: Application) {
   app.get("/api/auth/profile", profile);
   app.get("/api/auth/profile/:userId", otherProfile);
   app.put("/api/auth/follow/:userId", followUser);
+  app.put("/api/auth/favorite/:foodId", favoriteFood);
   app.post("/api/chefs", getChefs);
 }

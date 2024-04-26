@@ -35,6 +35,9 @@ export const findUserByIdRich = async (userId: UserID) =>
         path: "authoredRecipes",
         select: "_id name likes",
       },
+    }).populate({
+      path: "favoriteFoods",
+      select: "_id fdcId",
     });
 
 export const findPublicUserByIdRich = async (userId: UserID) => {
@@ -173,4 +176,25 @@ export const findChefs = async (sortBy: string, dir: string) => {
     console.error(`Error getting chefs: ${e}`);
     throw e;
   }
+}
+
+export const updateFavoriteFood = async (userId: UserID, foodId: string, toFavorite: boolean): Promise<User> => {
+  const updateOperation = toFavorite
+    ? { $addToSet: { favoriteFoods: foodId } }
+    : { $pull: { favoriteFoods: foodId } };
+
+  const updatedUser = await model.findByIdAndUpdate(
+    userId, 
+    updateOperation, 
+    { new: true }
+  ).populate({
+    path: "favoriteFoods",
+    select: "_id fdcId",
+  });
+
+  if (!updatedUser) {
+    throw new Error("User not found");
+  }
+
+  return updatedUser.toObject();
 }

@@ -19,6 +19,7 @@ const userSchema = new mongoose.Schema<User>({
     likedRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" }],
     followedChefs: [{ type: mongoose.Schema.Types.ObjectId, ref: "UserModel" }],
     authoredRecipes: [{ type: mongoose.Schema.Types.ObjectId, ref: "RecipeModel" }],
+    favoriteFoods: [{ type: mongoose.Schema.Types.ObjectId, ref: "NutritionModel" }],
     numFollowers: { type: Number, default: 0, min: 0 },
   },
   { collection: "users" });
