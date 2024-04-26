@@ -1,6 +1,5 @@
 import model from "./model.js";
 import callTrackModel from "./callTrack.js";
-import mongoose from "mongoose";
 
 export const addCallKeyword = async (keyword: string): Promise<void> => {
   await callTrackModel.create({ keyword: keyword });

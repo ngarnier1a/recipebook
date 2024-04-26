@@ -7,7 +7,6 @@ import mongoose from "mongoose";
 import UserRoutes from "./users/routes.js";
 import RecipeRoutes from "./recipes/routes.js";
 import NutritionRoutes from "./nutrition/routes.js";
-import { Express } from "express-serve-static-core";
 
 assert(process.env.DB_CONNECTION_STRING, "DB_CONNECTION_STRING is not set");
 assert(process.env.SESSION_SECRET, "SESSION_SECRET is not set");
@@ -41,8 +40,9 @@ app.use(express.json());
 // add latency to test real world conditions in development
 if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
-    console.log("Request received", req.method, req.url, req.body);
-    setTimeout(next, Math.floor(Math.random() * 1000 + 100));
+    const delay: number = Math.floor(Math.random() * 1000 + 100);
+    console.log(`Request received (+${delay}ms)`, req.method, req.url, req.body);
+    setTimeout(next, delay);
   });
 }
 
