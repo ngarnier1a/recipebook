@@ -218,7 +218,7 @@ export const updateFavoriteFood = async (
   userId: UserID,
   fdcId: string,
   toFavorite: boolean,
-): Promise<User> => {
+): Promise<void> => {
   const food = await nutritionDao.getFoodDataById(fdcId);
 
   if (!food) {
@@ -229,16 +229,5 @@ export const updateFavoriteFood = async (
     ? { $addToSet: { favoriteFoods: food._id } }
     : { $pull: { favoriteFoods: food._id } };
 
-  const updatedUser = await model
-    .findByIdAndUpdate(userId, updateOperation, { new: true })
-    .populate({
-      path: "favoriteFoods",
-      select: "_id fdcId",
-    });
-
-  if (!updatedUser) {
-    throw new Error("User not found");
-  }
-
-  return updatedUser.toObject();
+  await model.findByIdAndUpdate(userId, updateOperation);
 };

@@ -197,13 +197,13 @@ export default function UserRoutes(app: Application) {
     const toFavorite = req.body.toFavorite;
 
     try {
-      const user = await dao.updateFavoriteFood(
+      await dao.updateFavoriteFood(
         req.session.user._id,
         fdcId,
         toFavorite,
       );
-      req.session.user = user;
-      res.send(user);
+      const updatedUser = await updateSessionUser(req);
+      res.send(updatedUser);
     } catch (e) {
       console.error(`Error favoriting food: ${e}`);
       res.sendStatus(400);
