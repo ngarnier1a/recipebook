@@ -73,9 +73,7 @@ function RecipeMakerIngredients({
     }
     setRecipe({
       ...recipe,
-      ingredients: recipe.ingredients.filter(
-        (i) => i._id !== ingredient._id,
-      ),
+      ingredients: recipe.ingredients.filter((i) => i._id !== ingredient._id),
     });
   };
 
@@ -217,11 +215,7 @@ function RecipeMakerIngredients({
   );
 
   const mobileIngredient = (ingredient: RecipeIngredient, idx: number) => (
-    <AccordionItem
-      key={ingredient._id}
-      display={{ lg: "none" }}
-      my={1}
-    >
+    <AccordionItem key={ingredient._id} display={{ lg: "none" }} my={1}>
       <AccordionButton width="90%" textAlign={{ base: "center" }}>
         {ingredient.name}
       </AccordionButton>

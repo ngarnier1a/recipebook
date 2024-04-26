@@ -13,10 +13,12 @@ export default function RecipeRoutes(app: Application) {
     const requestRecipe = { ...req.body };
     requestRecipe.author = req.session.user._id;
 
-    requestRecipe.ingredients = requestRecipe.ingredients.map((i: RecipeIngredient) => {
-      const { _id, ...rest } = i;
-      return rest;
-    });
+    requestRecipe.ingredients = requestRecipe.ingredients.map(
+      (i: RecipeIngredient) => {
+        const { _id, ...rest } = i;
+        return rest;
+      },
+    );
 
     requestRecipe.notes = requestRecipe.notes.map((n: RecipeNote) => {
       const { _id, ...rest } = n;
@@ -78,13 +80,15 @@ export default function RecipeRoutes(app: Application) {
         res.sendStatus(401);
         return;
       }
-      
+
       const requestRecipe = { ...req.body };
 
-      requestRecipe.ingredients = requestRecipe.ingredients.map((i: RecipeIngredient) => {
-        const { _id, ...rest } = i;
-        return rest;
-      });
+      requestRecipe.ingredients = requestRecipe.ingredients.map(
+        (i: RecipeIngredient) => {
+          const { _id, ...rest } = i;
+          return rest;
+        },
+      );
 
       requestRecipe.notes = requestRecipe.notes.map((n: RecipeNote) => {
         const { _id, ...rest } = n;

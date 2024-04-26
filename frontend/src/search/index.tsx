@@ -34,12 +34,20 @@ function Search() {
         return foods;
       }
       const favoritedFoods = foods.sort((a, b) => {
-        const aFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === a.fdcId);
-        const bFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === b.fdcId);
-        return aFavorited && !bFavorited ? -1 : !aFavorited && bFavorited ? 1 : 0;
+        const aFavorited = currentUser.favoriteFoods?.some(
+          (f) => f.fdcId === a.fdcId,
+        );
+        const bFavorited = currentUser.favoriteFoods?.some(
+          (f) => f.fdcId === b.fdcId,
+        );
+        return aFavorited && !bFavorited
+          ? -1
+          : !aFavorited && bFavorited
+            ? 1
+            : 0;
       });
       return favoritedFoods;
-    }
+    };
 
     const fetchFoods = async (query: string) => {
       setSearchQuery(query);

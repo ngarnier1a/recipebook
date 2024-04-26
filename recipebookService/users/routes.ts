@@ -83,7 +83,6 @@ export default function UserRoutes(app: Application) {
       return;
     }
     try {
-      console.log(`Signing in: ${username}`)
       const existingUser = await dao.findUserByUsernameSecure(username);
       if (existingUser) {
         if (!existingUser.password) {
@@ -197,11 +196,7 @@ export default function UserRoutes(app: Application) {
     const toFavorite = req.body.toFavorite;
 
     try {
-      await dao.updateFavoriteFood(
-        req.session.user._id,
-        fdcId,
-        toFavorite,
-      );
+      await dao.updateFavoriteFood(req.session.user._id, fdcId, toFavorite);
       const updatedUser = await updateSessionUser(req);
       res.send(updatedUser);
     } catch (e) {

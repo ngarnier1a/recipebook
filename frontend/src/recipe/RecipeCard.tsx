@@ -28,12 +28,9 @@ function RecipeCard({ recipe }: { recipe: Recipe }) {
   const name = recipe.name ?? "Unknown recipe";
   const description = recipe.description ?? "No description available";
 
-  const nameDisplay =
-    name.length > 15 ? name.slice(0, 15) + "..." : name;
+  const nameDisplay = name.length > 15 ? name.slice(0, 15) + "..." : name;
   const descriptionDisplay =
-    description.length > 130
-      ? description.slice(0, 130) + "..."
-      : description;
+    description.length > 130 ? description.slice(0, 130) + "..." : description;
 
   const isLiked =
     (currentUser?.likedRecipes?.findIndex((r) => r._id === recipe._id) ?? -1) >=

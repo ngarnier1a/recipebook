@@ -252,7 +252,7 @@ function Profile() {
           <Text fontSize="medium" ml={10} mr={10} mb={5}>
             {`${Math.max(0, userProfile.numFollowers ?? 0)}
             follower${(userProfile.numFollowers ?? 0) === 1 ? "" : "s"}
-            | ${userProfile.authoredRecipes?.length ?? 0} recipe${(userProfile.authoredRecipes?.length ?? 0) !== 1 ? "s" : ''} published`}
+            | ${userProfile.authoredRecipes?.length ?? 0} recipe${(userProfile.authoredRecipes?.length ?? 0) !== 1 ? "s" : ""} published`}
           </Text>
         )}
         <Divider />

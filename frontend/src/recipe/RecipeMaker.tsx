@@ -277,9 +277,7 @@ function RecipeMaker() {
                             const newSteps = [...(recipe.steps ?? [])];
                             setRecipe({
                               ...recipe,
-                              steps: newSteps.filter(
-                                (s) => s._id !== step._id,
-                              ),
+                              steps: newSteps.filter((s) => s._id !== step._id),
                             });
                           }}
                           aria-label="Remove Step"

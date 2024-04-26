@@ -30,7 +30,7 @@ function RecipeIngredients({ recipe }: { recipe: Recipe }) {
   const sortedIngredients = recipe.ingredients.sort((a, b) => {
     if (a.stepNumber === b.stepNumber) {
       if (a.name === b.name) {
-        return (a._id ?? 'a').localeCompare(b._id ?? 'b');
+        return (a._id ?? "a").localeCompare(b._id ?? "b");
       } else {
         return a.name.localeCompare(b.name);
       }
@@ -39,7 +39,12 @@ function RecipeIngredients({ recipe }: { recipe: Recipe }) {
   });
 
   const desktopIngredient = (ingredient: RecipeIngredient) => (
-    <Tr key={ingredient._id ?? `${ingredient.name}${ingredient.quantity}${ingredient.unit}`}>
+    <Tr
+      key={
+        ingredient._id ??
+        `${ingredient.name}${ingredient.quantity}${ingredient.unit}`
+      }
+    >
       <Td pr={0}>{ingredient.name}</Td>
       <Td px={0}>
         {ingredient.quantity.toString()}
@@ -72,7 +77,10 @@ function RecipeIngredients({ recipe }: { recipe: Recipe }) {
 
   const mobileIngredient = (ingredient: RecipeIngredient) => (
     <AccordionItem
-      key={ingredient._id ?? `${ingredient.name}${ingredient.quantity}${ingredient.unit}`}
+      key={
+        ingredient._id ??
+        `${ingredient.name}${ingredient.quantity}${ingredient.unit}`
+      }
       display={{ md: "none" }}
       my={1}
     >

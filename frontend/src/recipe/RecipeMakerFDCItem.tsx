@@ -61,7 +61,7 @@ function RecipeMakerFDCItem({
     if (ingredient.fdcItem && ingredient.fdcItem.fdcId) {
       setSearchQuery(ingredient.fdcItem.fdcId.toString());
       setFDCItems([ingredient.fdcItem]);
-    } else if (!ingredient.fdcItem && ingredient.name !== 'Ingredient') {
+    } else if (!ingredient.fdcItem && ingredient.name !== "Ingredient") {
       setSearchQuery(ingredient.name);
       setFDCItems([]);
     } else {
@@ -75,12 +75,16 @@ function RecipeMakerFDCItem({
       return foods;
     }
     const favoritedFoods = foods.sort((a, b) => {
-        const aFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === a.fdcId);
-        const bFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === b.fdcId);
-        return aFavorited && !bFavorited ? -1 : !aFavorited && bFavorited ? 1 : 0;
+      const aFavorited = currentUser.favoriteFoods?.some(
+        (f) => f.fdcId === a.fdcId,
+      );
+      const bFavorited = currentUser.favoriteFoods?.some(
+        (f) => f.fdcId === b.fdcId,
+      );
+      return aFavorited && !bFavorited ? -1 : !aFavorited && bFavorited ? 1 : 0;
     });
     return favoritedFoods;
-  }
+  };
 
   const searchFDCItems = async () => {
     setIsLoading(true);
@@ -131,7 +135,13 @@ function RecipeMakerFDCItem({
           <Button
             mb={3}
             ml={2}
-            leftIcon={food.fdcId === ingredient.fdcItem?.fdcId ? <DeleteIcon /> : <AddIcon />}
+            leftIcon={
+              food.fdcId === ingredient.fdcItem?.fdcId ? (
+                <DeleteIcon />
+              ) : (
+                <AddIcon />
+              )
+            }
             onClick={() => {
               if (food.fdcId === ingredient.fdcItem?.fdcId) {
                 setIngredientFDCItem();
@@ -146,9 +156,7 @@ function RecipeMakerFDCItem({
           <Button
             mb={3}
             onClick={() =>
-              window.open(
-                `${window.location.origin}/#/nutrition/${food.fdcId}`,
-              )
+              window.open(`${window.location.origin}/#/nutrition/${food.fdcId}`)
             }
             rightIcon={<ExternalLinkIcon />}
           >
