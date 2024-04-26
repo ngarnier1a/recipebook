@@ -219,7 +219,6 @@ export const updateFavoriteFood = async (
   fdcId: string,
   toFavorite: boolean,
 ): Promise<User> => {
-
   const food = await nutritionDao.getFoodDataById(fdcId);
 
   if (!food) {

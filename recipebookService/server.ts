@@ -41,7 +41,12 @@ app.use(express.json());
 if (process.env.NODE_ENV && process.env.NODE_ENV === "development") {
   app.use((req, res, next) => {
     const delay: number = Math.floor(Math.random() * 1000 + 100);
-    console.log(`Request received (+${delay}ms)`, req.method, req.url, req.body);
+    console.log(
+      `Request received (+${delay}ms)`,
+      req.method,
+      req.url,
+      req.body,
+    );
     setTimeout(next, delay);
   });
 }
