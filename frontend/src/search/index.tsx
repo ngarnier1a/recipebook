@@ -13,8 +13,11 @@ import { useLocation, useNavigate } from "react-router-dom";
 import * as client from "./client";
 import * as nutritionClient from "../nutrition/client";
 import FoodItems from "../nutrition/FoodItems";
+import { useSelector } from "react-redux";
+import { UserState } from "../store";
 
 function Search() {
+  const { currentUser } = useSelector((state: UserState) => state.users);
   const location = useLocation();
   const navigate = useNavigate();
   const [foods, setFoods] = useState<FDCFoodItem[]>([]);
@@ -25,6 +28,19 @@ function Search() {
   useEffect(() => {
     setIsLoading(true);
     setError("");
+
+    const sortFavoritedFoodFirst = (foods: FDCFoodItem[]) => {
+      if (!currentUser || !currentUser.favoriteFoods) {
+        return foods;
+      }
+      const favoritedFoods = foods.sort((a, b) => {
+        const aFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === a.fdcId);
+        const bFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === b.fdcId);
+        return aFavorited && !bFavorited ? -1 : !aFavorited && bFavorited ? 1 : 0;
+      });
+      return favoritedFoods;
+    }
+
     const fetchFoods = async (query: string) => {
       setSearchQuery(query);
       try {
@@ -36,6 +52,7 @@ function Search() {
           }
         } else {
           foods = await client.searchFoods(query);
+          foods = sortFavoritedFoodFirst(foods);
         }
         if (foods.length === 0) {
           setError(`No results for ${query}`);

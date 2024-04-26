@@ -70,6 +70,18 @@ function RecipeMakerFDCItem({
     }
   }, [ingredient]);
 
+  const sortFavoritedFoodFirst = (foods: FDCFoodItem[]) => {
+    if (!currentUser || !currentUser.favoriteFoods) {
+      return foods;
+    }
+    const favoritedFoods = foods.sort((a, b) => {
+        const aFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === a.fdcId);
+        const bFavorited = currentUser.favoriteFoods?.some(f => f.fdcId === b.fdcId);
+        return aFavorited && !bFavorited ? -1 : !aFavorited && bFavorited ? 1 : 0;
+    });
+    return favoritedFoods;
+  }
+
   const searchFDCItems = async () => {
     setIsLoading(true);
     try {
@@ -81,6 +93,7 @@ function RecipeMakerFDCItem({
         }
       } else {
         items = await searchClient.searchFoods(searchQuery);
+        items = sortFavoritedFoodFirst(items);
       }
       if (items.length === 0) {
         setSearchError(`No results for ${searchQuery}`);
